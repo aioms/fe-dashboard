@@ -269,3 +269,5 @@ export const InventoryStatistical: FC = () => {
     </div>
   );
 };
+
+export default InventoryStatistical;

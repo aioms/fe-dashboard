@@ -183,3 +183,5 @@ export const ImportStatistical: FC = () => {
     </div>
   );
 };
+
+export default ImportStatistical;

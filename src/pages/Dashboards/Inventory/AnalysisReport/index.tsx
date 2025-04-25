@@ -5,14 +5,11 @@ import {
   PackageMinus,
   Package,
 } from "lucide-react";
+import { toast } from "react-toastify";
+
 import { formatMoneyWithVND } from "helpers/utils";
 import { TimePicker } from "Common/Components/TimePIcker";
 import { getDate } from "helpers/date";
-
-// Components
-import BreadCrumb from "Common/BreadCrumb";
-import { MetricsCard } from "./components/MetricsCard";
-import { toast } from "react-toastify";
 import {
   getTotalInventory,
   getTotalOfImportNew,
@@ -20,37 +17,17 @@ import {
   getTotalValueInventory,
 } from "apis/inventory";
 
-import { ImportStatistical } from "./components/ImportStatistical";
-import { InventoryStatistical } from "./components/InventoryStatistical";
-import { InventoryTurnover } from "./components/InventoryTurnOver";
+// Shared Components
+import BreadCrumb from "Common/BreadCrumb";
 
-// Mock data for the 30-day metrics
-// const thirtyDayMetrics = {
-//   totalInventory: Array.from({ length: 30 }, (_, i) => ({
-//     x: getDate(new Date())
-//       .subtract(29 - i, "days")
-//       .format("YYYY-MM-DD"),
-//     y: Math.floor(Math.random() * (16000 - 14000) + 14000),
-//   })),
-//   totalValue: Array.from({ length: 30 }, (_, i) => ({
-//     x: getDate(new Date())
-//       .subtract(29 - i, "days")
-//       .format("YYYY-MM-DD"),
-//     y: Math.floor(Math.random() * (1300000000 - 1100000000) + 1100000000),
-//   })),
-//   newArrivals: Array.from({ length: 30 }, (_, i) => ({
-//     x: getDate(new Date())
-//       .subtract(29 - i, "days")
-//       .format("YYYY-MM-DD"),
-//     y: Math.floor(Math.random() * (500 - 400) + 400),
-//   })),
-//   returns: Array.from({ length: 30 }, (_, i) => ({
-//     x: getDate(new Date())
-//       .subtract(29 - i, "days")
-//       .format("YYYY-MM-DD"),
-//     y: Math.floor(Math.random() * (100 - 50) + 50),
-//   })),
-// };
+// Custom Components
+import { MetricsCard } from "./components/MetricsCard";
+import ImportStatistical from "./components/ImportStatistical";
+import InventoryStatistical from "./components/InventoryStatistical";
+import InventoryTurnover from "./components/InventoryTurnOver";
+import TopInventory from "./components/TopInventory";
+import DeadProductInventory from "./components/DeadProductInventory";
+import OutOfStockProducts from "./components/OutOfStockProducts";
 
 interface MetrictData {
   totalInventory: {
@@ -190,7 +167,7 @@ export default function AnalysisReport() {
         >
           <MetricsCard
             title="Giá trị hàng tồn"
-            value={formatMoneyWithVND(metricData.totalValue?.value)}
+            value={formatMoneyWithVND(metricData.totalValue.value)}
             icon={<PackageSearch className="size-5 text-custom-500" />}
             percentage={0}
             trend="up"
@@ -232,11 +209,14 @@ export default function AnalysisReport() {
         <ImportStatistical />
         <InventoryStatistical />
         <InventoryTurnover />
+        <OutOfStockProducts />
+        <DeadProductInventory />
+        <TopInventory />
 
         {/* <div className="card">
           <div className="card-body">
             <div className="flex items-center justify-between mb-4">
-              <h6 className="text-15"> Thống kê tồn kho </h6>
+              <h6 className="text-15"> Thống kê 10 hàng hóa tồn kho nhiều nhất </h6>
             </div>
             <div className="space-y-4">
               <div className="flex items-center justify-between p-3 rounded-md bg-slate-50 dark:bg-zink-600">

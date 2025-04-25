@@ -182,3 +182,5 @@ export const InventoryTurnover: FC = () => {
     </div>
   );
 };
+
+export default InventoryTurnover;

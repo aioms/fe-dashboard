@@ -161,3 +161,66 @@ export const getProductInventoryTurnOver = async (
 
   return response;
 }
+
+export const getTopInventoryProducts = async (
+  payload: Record<string, string | number>
+) => {
+  const query = convertObjToQueryString(payload);
+
+  const response: IHttpResponse = await request.get(
+    `/${PREFIX_PATH}/top-stock?${query}`
+  );
+
+  const { isHasError, message } = ErrorHandler.checkResponse(
+    response,
+    HttpStatusCode.OK
+  );
+
+  if (isHasError) {
+    throw new Error(message);
+  }
+
+  return response;
+}
+
+export const getDeadInventoryProducts = async (
+  payload: Record<string, string | number>
+) => {
+  const query = convertObjToQueryString(payload);
+
+  const response: IHttpResponse = await request.get(
+    `/${PREFIX_PATH}/dead-stock?${query}`
+  );
+
+  const { isHasError, message } = ErrorHandler.checkResponse(
+    response,
+    HttpStatusCode.OK
+  );
+
+  if (isHasError) {
+    throw new Error(message);
+  }
+
+  return response;
+}
+
+export const getOutOfStockProducts = async (
+  payload: Record<string, string | number>
+) => {
+  const query = convertObjToQueryString(payload);
+
+  const response: IHttpResponse = await request.get(
+    `/${PREFIX_PATH}/out-of-stock-dates?${query}`
+  );
+
+  const { isHasError, message } = ErrorHandler.checkResponse(
+    response,
+    HttpStatusCode.OK
+  );
+
+  if (isHasError) {
+    throw new Error(message);
+  }
+
+  return response;
+}

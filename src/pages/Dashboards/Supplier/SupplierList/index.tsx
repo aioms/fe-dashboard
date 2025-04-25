@@ -269,11 +269,9 @@ const SupplierList = () => {
         enableColumnFilter: false,
         cell: (cell: any) => {
           const data = cell.row.original;
-          console.log({ data, value: cell.getValue() });
-
           return (
             <Link
-              to={`/suppliers/${cell.row.original.id}`}
+              to={`/suppliers/${data.id}`}
               className="transition-all duration-150 ease-linear text-custom-500 hover:text-custom-600 user-id"
               onClick={() => handleUpdateDataClick(data)}
             >

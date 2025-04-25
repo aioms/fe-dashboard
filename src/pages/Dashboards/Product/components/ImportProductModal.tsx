@@ -155,7 +155,7 @@ const ImportProductModal: React.FC<props> = ({
         <Modal.Footer>
           <div className="flex items-center justify-between p-4 mt-auto border-t border-slate-200 dark:border-zink-500">
             <div className="flex flex-wrap gap-2">
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <input
                   id="radioInline1"
                   name="InlineRadio"
@@ -181,7 +181,7 @@ const ImportProductModal: React.FC<props> = ({
                 <label htmlFor="radioInline2" className="align-middle">
                   Cập nhật nếu trùng
                 </label>
-              </div>
+              </div> */}
             </div>
             <div className="flex justify-between">
               <button
