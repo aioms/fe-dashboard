@@ -180,16 +180,16 @@ const ProductListReceiptModal: FC<Props> = ({
                   !!selectedRows.find(
                     (row) =>
                       row.code?.toString() ===
-                      cell.row?.original?.productCode?.toString()
+                      cell.row?.original?.code?.toString()
                   )
                 }
                 onChange={() => {
-                  const { id, productCode, productName, costPrice, inventory } =
+                  const { id, code, productName, costPrice, inventory } =
                     cell.row.original;
 
                   handleCheckboxChange({
                     id,
-                    code: productCode,
+                    code: code,
                     name: productName,
                     price: costPrice,
                     inventory: inventory,
@@ -202,7 +202,7 @@ const ProductListReceiptModal: FC<Props> = ({
       },
       {
         header: "Mã hàng hóa",
-        accessorKey: "productCode",
+        accessorKey: "code",
         enableColumnFilter: false,
         cell: (cell: any) => (
           <Link

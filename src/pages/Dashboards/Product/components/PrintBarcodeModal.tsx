@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import Modal from "Common/Components/Modal";
 import { useReactToPrint } from "react-to-print";
 import Barcode from "react-barcode";
@@ -7,21 +7,157 @@ import { Printer } from "lucide-react";
 
 interface props {
   show: boolean;
-  barcode: string;
+  barcode?: string;
+  productName?: string;
   onClose?: () => void;
 }
 
-const PrintBarcodeModal: React.FC<props> = ({ show, barcode, onClose }) => {
+const PrintBarcodeModal: React.FC<props> = ({ show, barcode, productName, onClose }) => {
   const [quantity, setQuantity] = useState(1);
-  const barcodeRef = React.useRef(null);
-  const handlePrint = useReactToPrint({ contentRef: barcodeRef });
+  const barcodeRef = React.useRef<HTMLDivElement>(null);
+
+  // Configure print settings for label printer
+  const handlePrint = useReactToPrint({
+    contentRef: barcodeRef,
+    ignoreGlobalStyles: false,
+    // size: 35mm 22mm portrait;
+    pageStyle: `
+      @media print {
+        @page {
+          margin: 0;
+        }
+        html, body {
+          height: 100%;
+          margin: 0 !important;
+          padding: 0 !important;
+          overflow: hidden;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        body * {
+          visibility: hidden;
+          display: none;
+        }
+
+        .print-only,
+        .print-only * {
+          visibility: visible;
+          display: block;
+        }
+        .barcode-container {
+          margin: 0;
+          padding: 0;
+        }
+        .barcode-row {
+          display: flex;
+          justify-content: flex-start;
+          page-break-after: always;
+        }
+        .barcode-item {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          padding: 2mm !important;
+          padding-left: 0 !important;
+        }
+        .product-name {
+          font-size: 4pt !important;
+          text-align: center;
+          word-break: break-word;
+        }
+      }
+    `,
+  });
+
+  // Fix scroll issue when modal closes
+  useEffect(() => {
+    if (show) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [show]);
+
+  const barcodes = useMemo(() => {
+    if (!barcode) {
+      return null;
+    }
+
+    const barcodeItems = Array.from(
+      { length: quantity },
+      (_, idx) => `${idx}-${barcode}`
+    );
+
+    // Group barcodes into pairs for 2-column layout
+    const rows = [];
+    for (let i = 0; i < barcodeItems.length; i += 2) {
+      const row = (
+        <div key={`row-${i}`} className="barcode-row">
+          <div className="barcode-item">
+            {productName && (
+              <div className="text-pretty product-name">{productName}</div>
+            )}
+            <Barcode
+              value={barcode}
+              format="CODE128"
+              width={1}
+              height={20}
+              // margin={2}
+              fontSize={7}
+              background="#ffffff"
+              lineColor="#000000"
+              textAlign="center"
+              textPosition="bottom"
+            />
+          </div>
+          {i + 1 < barcodeItems.length && (
+            <div className="barcode-item">
+              {productName && (
+                <div className="text-pretty product-name">{productName}</div>
+              )}
+              <Barcode
+                value={barcode}
+                format="CODE128"
+                width={1}
+                height={20}
+                // margin={2}
+                fontSize={7}
+                background="#ffffff"
+                lineColor="#000000"
+                textAlign="center"
+                textPosition="bottom"
+              />
+            </div>
+          )}
+        </div>
+      );
+      rows.push(row);
+    }
+
+    return rows;
+  }, [quantity, barcode, productName]);
+
+  if (!barcode) {
+    return null;
+  }
+
+  const handleModalClose = () => {
+    // Ensure scroll is restored before closing
+    document.body.style.overflow = "auto";
+    if (onClose) onClose();
+  };
 
   return (
     <React.Fragment>
       <Modal
         show={show}
-        onHide={onClose}
-        id="extraSmallModal"
+        onHide={handleModalClose}
+        id="printBarcodeModal"
         modal-center="true"
         className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
         dialogClassName="w-screen md:w-[20rem] bg-white shadow rounded-md dark:bg-zink-600 flex flex-col h-full"
@@ -34,12 +170,15 @@ const PrintBarcodeModal: React.FC<props> = ({ show, barcode, onClose }) => {
         </Modal.Header>
         <Modal.Body className="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
           <div className="flex flex-col items-center justify-center">
+            {productName && (
+              <div className="text-center mb-2 font-medium">{productName}</div>
+            )}
             <Barcode
-              value={barcode} // Giá trị cần mã hóa
-              format="CODE128" // Định dạng barcode, ví dụ: "CODE128", "UPC", "EAN"
-              width={2} // Độ rộng của các vạch
-              height={100} // Chiều cao của barcode
-              displayValue={true} // Hiển thị giá trị mã hóa dưới barcode
+              value={barcode}
+              format="CODE128"
+              width={2}
+              height={100}
+              displayValue={true}
               marginBottom={20}
             />
 
@@ -63,21 +202,7 @@ const PrintBarcodeModal: React.FC<props> = ({ show, barcode, onClose }) => {
       </Modal>
 
       <div className="print-only" ref={barcodeRef}>
-        <div className={`flex justify-start flex-wrap`}>
-          {Array(quantity)
-            .fill(`${barcode}-${Math.random()}-${Date.now()}`)
-            .map((idx) => (
-              <div key={idx} className="p-2 grid justify-items-center">
-                <Barcode
-                  value={barcode}
-                  width={1}
-                  height={30}
-                  fontSize={10}
-                  marginLeft={10}
-                />
-              </div>
-            ))}
-        </div>
+        <div className="barcode-container">{barcodes}</div>
       </div>
     </React.Fragment>
   );

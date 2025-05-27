@@ -139,7 +139,7 @@ export const InventoryStatistical: FC = () => {
         const response = await getCategoryList({});
 
         if (response && response.data) {
-          const options = response.data.map((category: any) => ({
+          const options = response.data?.map?.((category: any) => ({
             value: category,
             label: category,
           }));

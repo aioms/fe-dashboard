@@ -207,7 +207,7 @@ const ReceiptImportList = () => {
       },
       {
         header: "Thời gian nhập",
-        accessorKey: "expectedImportDate",
+        accessorKey: "importDate",
         enableColumnFilter: false,
       },
       {

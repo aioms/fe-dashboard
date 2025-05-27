@@ -56,7 +56,7 @@ export const ImportStatistical: FC = () => {
         .unwrap()
         .then((response: any) => {
           if (response && response.data) {
-            const options = response.data.map((product: any) => ({
+            const options = response.data?.map?.((product: any) => ({
               value: product.id,
               label: product.name || product.productName,
             }));

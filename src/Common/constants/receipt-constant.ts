@@ -1,6 +1,7 @@
 export const RECEIPT_IMPORT_STATUS = {
   DRAFT: "draft",
   PROCESSING: "processing",
+  WAITING: "waiting",
   COMPLETED: "completed",
   CANCELLED: "cancelled",
   SHORT_RECEIVED: "short_received",

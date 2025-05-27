@@ -108,7 +108,7 @@ const UpdateReceiptCheck = (props: any) => {
     const payload = {
       note: values.note,
       status: values.status,
-      expectedImportDate: getDate(values.importDate).format(),
+      importDate: getDate(values.importDate).format(),
       paymentDate: getDate(values.paymentDate).format(),
       quantity,
       supplier: values.supplier,
@@ -143,8 +143,8 @@ const UpdateReceiptCheck = (props: any) => {
     enableReinitialize: true,
 
     initialValues: {
-      importDate: receiptInfo.expectedImportDate
-        ? getDate(receiptInfo.expectedImportDate).toDate()
+      importDate: receiptInfo.importDate
+        ? getDate(receiptInfo.importDate).toDate()
         : "",
       paymentDate: receiptInfo.paymentDate
         ? getDate(receiptInfo.paymentDate).toDate()

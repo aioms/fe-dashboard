@@ -79,7 +79,7 @@ const CreateReceiptImport = (props: any) => {
     const payload = {
       note: values.note,
       status: values.status,
-      expectedImportDate: getDate(values.importDate).format(),
+      importDate: getDate(values.importDate).format(),
       paymentDate: getDate(values.paymentDate).format(),
       quantity,
       supplier: values.supplier?.id,

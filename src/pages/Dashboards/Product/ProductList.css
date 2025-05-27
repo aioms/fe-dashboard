@@ -1,0 +1,79 @@
+/* .barcode-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+} */
+
+/* .barcode-item {
+  width: 90mm;
+  height: 20mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  border: 0.1mm solid #eee;
+  padding: 5mm;
+  font-size: 10pt;
+  overflow: hidden;
+  background-color: red;
+} */
+
+/* @media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-only,
+  .print-only * {
+    visibility: visible;
+  }
+
+  .print-only {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .barcode-container {
+    padding: 0;
+    margin: 0;
+  }
+
+  .barcode-row {
+    page-break-inside: avoid;
+    margin-bottom: 0;
+  }
+
+  .barcode-item {
+    border: none;
+  }
+
+  .barcode-item svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .barcode-item svg text {
+    font-size: 8pt !important;
+  }
+
+  .barcode-item .product-name {
+    font-size: 5pt !important;
+    line-height: 1.2;
+    margin-bottom: 2mm;
+  }
+} */
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  .print-only {
+    display: block;
+  }
+}

@@ -22,39 +22,3 @@ File: tailwind scss File
 @import "plugins/select";
 @import "plugins/multi-select";
 @import "custom/dropdown-fix";
-
-.group\/menu-link:hover,
-.animate {
-  animation-iteration-count: 2;
-  stroke-dasharray: 10;
-}
-
-@media print {
-  body * {
-    visibility: hidden;
-  }
-  .print-only,
-  .print-only * {
-    visibility: visible;
-  }
-  .print-only {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-  }
-  @page {
-    margin: 0;
-    size: auto;
-  }
-}
-
-.print-only {
-  display: none;
-}
-
-@media print {
-  .print-only {
-    display: block;
-  }
-}

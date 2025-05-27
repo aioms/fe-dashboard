@@ -9,7 +9,7 @@ import { ReceiptStatus as ReceiptReturnStatus } from "pages/Dashboards/Receipt/R
 export interface ReceiptImport {
   id: string;
   receiptNumber: string;
-  expectedImportDate: string;
+  importDate: string;
   totalProduct: number;
   totalAmount: number;
   status: string;
@@ -107,7 +107,7 @@ export const TransactionTable: React.FC<TransactionTableProps> = ({
                     <td className="p-3">
                       {getDate(
                         type === "import"
-                          ? (transaction as ReceiptImport).expectedImportDate
+                          ? (transaction as ReceiptImport).importDate
                           : (transaction as ReceiptReturn).returnDate
                       ).format("DD/MM/YYYY")}
                     </td>

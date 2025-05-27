@@ -90,6 +90,13 @@ export default function AnalysisReport() {
             getTotalOfReturn(params),
           ]);
 
+        console.log({
+          totalInventory,
+          totalValue,
+          newImports,
+          returns,
+        });
+
         setMetricData({
           totalInventory,
           totalValue,

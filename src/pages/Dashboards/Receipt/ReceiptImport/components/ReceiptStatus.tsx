@@ -14,6 +14,12 @@ export const ReceiptStatus = ({ item }: any) => {
           Đang xử lý
         </span>
       );
+    case RECEIPT_IMPORT_STATUS.WAITING:
+      return (
+        <span className="delivery_status px-2.5 py-0.5 text-xs inline-block font-medium rounded border bg-orange-100 border-orange-200 text-orange-500 dark:bg-orange-500/20 dark:border-orange-500/20">
+          Đang chờ duyệt
+        </span>
+      )
     case RECEIPT_IMPORT_STATUS.COMPLETED:
       return (
         <span className="delivery_status px-2.5 py-0.5 text-xs inline-block font-medium rounded border bg-green-100 border-green-200 text-green-500 dark:bg-green-500/20 dark:border-green-500/20">

@@ -34,17 +34,12 @@ import {
   deleteUserList as onDeleteUserList,
 } from "slices/thunk";
 import filterDataBySearch from "Common/filterDataBySearch";
-import { toast } from "react-toastify";
-
-const USER_STATUS = {
-  active: "active",
-  inactive: "inactive",
-};
+import { UserRole, UserStatus } from "Common/enums/user-enum";
 
 const options = [
   { value: "status", label: "Trạng thái" },
-  { value: USER_STATUS.active, label: "Hoạt động" },
-  { value: USER_STATUS.inactive, label: "Không hoạt động" },
+  { value: UserStatus.ACTIVE, label: "Hoạt động" },
+  { value: UserStatus.INACTIVE, label: "Không hoạt động" },
 ];
 
 const UserManagement = () => {
@@ -111,9 +106,8 @@ const UserManagement = () => {
       phone: (eventData && eventData.phone) || "",
       username: (eventData && eventData.username) || "",
       storeCode: (eventData && eventData.storeCode) || "",
-      status: (eventData && eventData.status) || USER_STATUS.active,
-      role: (eventData && eventData.role) || "",
-      password: "",
+      status: (eventData && eventData.status) || UserStatus.ACTIVE,
+      role: (eventData && eventData.role) || UserRole.EMPLOYEE
     },
     validationSchema: Yup.object({
       fullname: Yup.string().required("Vui lòng nhập họ và tên"),
@@ -133,12 +127,6 @@ const UserManagement = () => {
         // update user
         dispatch(onUpdateUserList(updateUser));
       } else {
-
-        if (!values.password) {
-          toast.warn("Vui lòng nhập mật khẩu");
-          return;
-        }
-
         const newUser = {
           ...values,
         };
@@ -176,14 +164,14 @@ const UserManagement = () => {
   // columns
   const Status = ({ item }: any) => {
     switch (item) {
-      case USER_STATUS.active:
+      case UserStatus.ACTIVE:
         return (
           <span className="px-2.5 py-0.5 text-xs font-medium rounded border bg-green-100 border-transparent text-green-500 dark:bg-green-500/20 dark:border-transparent inline-flex items-center status">
             <CheckCircle className="size-3 mr-1.5" />
             Đang hoạt động
           </span>
         );
-      case USER_STATUS.inactive:
+      case UserStatus.INACTIVE:
         return (
           <span className="px-2.5 py-0.5 inline-flex items-center text-xs font-medium rounded border bg-slate-100 border-transparent text-slate-500 dark:bg-slate-500/20 dark:text-zink-200 dark:border-transparent status">
             <Loader className="size-3 mr-1.5" />
@@ -611,7 +599,7 @@ const UserManagement = () => {
                 <p className="text-red-400">{validation.errors.username}</p>
               ) : null}
             </div>
-            <div className="mb-3">
+            {/* <div className="mb-3">
               <label
                 htmlFor="passwordInput"
                 className="inline-block mb-2 text-base font-medium"
@@ -630,7 +618,7 @@ const UserManagement = () => {
               {validation.touched.password && validation.errors.password ? (
                 <p className="text-red-400">{validation.errors.password}</p>
               ) : null}
-            </div>
+            </div> */}
             <div className="mb-3">
               <label
                 htmlFor="statusSelect"

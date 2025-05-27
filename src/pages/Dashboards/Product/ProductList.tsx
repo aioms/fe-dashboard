@@ -43,6 +43,8 @@ import { NoTableResult } from "Common/Components/NoTableResult";
 import { PRODUCT_STATUS } from "Common/constants/product-constant";
 import { ProductStatus } from "./components/ProductStatus";
 
+import "./ProductList.css";
+
 const optionsFilterStatus: any = [
   { value: "", label: "Trạng thái" },
   { value: PRODUCT_STATUS.DRAFT, label: "Nháp" },
@@ -191,7 +193,7 @@ const ProductList = () => {
     () => [
       {
         header: "Mã hàng hóa",
-        accessorKey: "productCode",
+        accessorKey: "code",
         enableColumnFilter: false,
         cell: (cell: any) => (
           <Link
@@ -268,7 +270,9 @@ const ProductList = () => {
         enableSorting: true,
         cell: (cell: any) => {
           const value = cell.getValue();
-          const supplier = value.map((supplier: any) => supplier.name).join(', ')
+          const supplier = value
+            .map((supplier: any) => supplier.name)
+            .join(", ");
           return supplier;
         },
       },
@@ -296,7 +300,11 @@ const ProductList = () => {
         enableColumnFilter: false,
         enableSorting: true,
         cell: (cell: any) => (
-          <Dropdown className={`relative dropdown-product-action ${cell.row.index >= 7 ? 'dropdown-bottom' : ''}`}>
+          <Dropdown
+            className={`relative dropdown-product-action ${
+              cell.row.index >= 7 ? "dropdown-bottom" : ""
+            }`}
+          >
             <Dropdown.Trigger
               className="flex items-center justify-center size-[30px] dropdown-toggle p-0 text-slate-500 btn bg-slate-100 hover:text-white hover:bg-slate-600 focus:text-white focus:bg-slate-600 focus:ring focus:ring-slate-100 active:text-white active:bg-slate-600 active:ring active:ring-slate-100 dark:bg-slate-500/20 dark:text-slate-400 dark:hover:bg-slate-500 dark:hover:text-white dark:focus:bg-slate-500 dark:focus:text-white dark:active:bg-slate-500 dark:active:text-white dark:ring-slate-400/20"
               id={`productAction${cell.row.index}`}
@@ -378,13 +386,12 @@ const ProductList = () => {
         onCancel={createProductModalToggle}
         defaultData={eventData}
       />
-      {eventData?.productCode && (
-        <PrintBarcodeModal
-          barcode={eventData.productCode}
-          show={showBarcodeModal}
-          onClose={showBarcodeModalToggle}
-        />
-      )}
+      <PrintBarcodeModal
+        barcode={eventData.code}
+        productName={eventData.productName}
+        show={showBarcodeModal}
+        onClose={showBarcodeModalToggle}
+      />
       <div className="card" id="productListTable">
         <div className="card-body">
           <div className="flex items-center">
@@ -456,33 +463,29 @@ const ProductList = () => {
           </div>
         </div>
         {/* List Product */}
-        <div className="!pt-1 card-body w-full overflow-x-auto">
-          {productList && productList.length > 0 ? (
-            <TableCustom
-              isPagination={true}
-              columns={columns || []}
-              data={productList}
-              totalData={pagination.totalItems}
-              pageCount={pagination.totalPages}
-              pagination={paginationData}
-              setPaginationData={setPaginationData}
-              customPageSize={10}
-              divclassName="mt-5 w-full overflow-x-auto"
-              tableclassName="w-full overflow-x-auto"
-              theadclassName="ltr:text-left rtl:text-right bg-slate-100 dark:bg-zink-600"
-              thclassName="px-3.5 py-2.5 font-semibold text-slate-500 border-b border-slate-200 dark:border-zink-500 dark:text-zink-200"
-              tdclassName="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500"
-              PaginationClassName="flex flex-col items-center mt-5 md:flex-row"
-              // divclassName="overflow-x-auto"
-              // tableclassName="w-full whitespace-nowrap"
-              // theadclassName="ltr:text-left rtl:text-right bg-slate-100 dark:bg-zink-600"
-              // thclassName="px-3.5 py-2.5 font-semibold border-b border-slate-200 dark:border-zink-500"
-              // tdclassName="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500"
-              // PaginationClassName="flex flex-col items-center gap-4 px-4 mt-4 md:flex-row"
-            />
-          ) : (
-            <NoTableResult />
-          )}
+        <div className="!pt-1 card-body">
+          <div className="w-full overflow-x-auto">
+            {productList && productList.length > 0 ? (
+              <TableCustom
+                isPagination={true}
+                columns={columns || []}
+                data={productList}
+                totalData={pagination.totalItems}
+                pageCount={pagination.totalPages}
+                pagination={paginationData}
+                setPaginationData={setPaginationData}
+                customPageSize={10}
+                divclassName="mt-5"
+                tableclassName="w-full whitespace-nowrap min-w-[1000px]"
+                theadclassName="ltr:text-left rtl:text-right bg-slate-100 dark:bg-zink-600"
+                thclassName="px-3.5 py-2.5 font-semibold text-slate-500 border-b border-slate-200 dark:border-zink-500 dark:text-zink-200"
+                tdclassName="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500"
+                PaginationClassName="flex flex-col items-center mt-5 md:flex-row"
+              />
+            ) : (
+              <NoTableResult />
+            )}
+          </div>
         </div>
       </div>
     </React.Fragment>
