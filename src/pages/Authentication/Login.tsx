@@ -45,6 +45,14 @@ const Login = (props: any) => {
   });
 
   React.useEffect(() => {
+    const isAuth = localStorage.getItem("jwt");
+    console.log({ isAuth });
+
+    if (isAuth) {
+      props.router.navigate("/products");
+      return;
+    }
+
     document.title = "Login | Tailwick - React Admin & Dashboard Template";
 
     const bodyElement = document.body;
