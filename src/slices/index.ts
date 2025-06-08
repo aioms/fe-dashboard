@@ -22,6 +22,7 @@ import ReceiptCheckReducer from "./receipt-check/reducer";
 
 // Supplier Reducer
 import SupplierReducer from "./supplier/reducer";
+import CustomerReducer from "./customer/reducer";
 
 const rootReducer = combineReducers({
   Layout: LayoutReducer,
@@ -33,6 +34,7 @@ const rootReducer = combineReducers({
   ReceiptReturn: ReceiptReturnReducer,
   ReceiptCheck: ReceiptCheckReducer,
   Supplier: SupplierReducer,
+  Customer: CustomerReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

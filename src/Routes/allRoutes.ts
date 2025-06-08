@@ -31,6 +31,8 @@ import SupplierDetail from "pages/Dashboards/Supplier/SupplierDetail";
 // analytics
 import AnalyticsReport from "pages/Dashboards/Inventory/AnalysisReport";
 
+import CustomerList from "pages/Dashboards/Customer/CustomerList";
+
 interface RouteObject {
   path: string;
   component: React.ComponentType<any>; // Use React.ComponentType to specify the type of the component
@@ -64,6 +66,9 @@ const authProtectedRoutes: Array<RouteObject> = [
   // supplier
   { path: "/suppliers", component: SupplierList },
   { path: "/suppliers/:id", component: SupplierDetail },
+
+  // customer
+  { path: "/customers", component: CustomerList },
 
   // profile
   { path: "/user-profile", component: UserProfile },
