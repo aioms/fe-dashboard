@@ -59,14 +59,18 @@ const ImportProductModal: React.FC<props> = ({
     formData.append("file", file);
 
     try {
-      const response: IHttpResponse = await request.post(`/products/import?type=${importType}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const response: IHttpResponse = await request.post(
+        `/products/import?type=${importType}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
 
       if (!response.success) {
-        throw new Error('Có lỗi xảy ra khi nhập file excel sản phẩm!');
+        throw new Error("Có lỗi xảy ra khi nhập file excel sản phẩm!");
       }
-      
+
       toast.success("Nhập file excel sản phẩm thành công!");
     } catch (error: any) {
       toast.error(error.message);
@@ -78,10 +82,10 @@ const ImportProductModal: React.FC<props> = ({
     }
   };
 
-  const onRadioImportTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setImportType(value);
-  };
+  // const onRadioImportTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   setImportType(value);
+  // };
 
   const handleClose = () => {
     setExcelData([]);

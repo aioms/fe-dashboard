@@ -89,6 +89,17 @@ interface TableContainerProps {
   isPagination: boolean;
   PaginationClassName?: string;
   SearchPlaceholder?: string;
+  metadata?: {
+    currentPage: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
+    limit: number;
+    offset: number;
+    totalItems: number;
+    totalPages: number;
+  };
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
 }
 
 const TableContainer = ({
@@ -107,7 +118,10 @@ const TableContainer = ({
   customPageSize,
   isGlobalFilter,
   PaginationClassName,
-  SearchPlaceholder
+  SearchPlaceholder,
+  metadata,
+  onPageChange,
+  onPageSizeChange
 }: TableContainerProps) => {
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -137,7 +151,9 @@ const TableContainer = ({
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel()
+    getSortedRowModel: getSortedRowModel(),
+    manualPagination: !!metadata, // Use manual pagination when metadata is provided
+    pageCount: metadata?.totalPages || -1,
   });
 
   const {
@@ -150,17 +166,41 @@ const TableContainer = ({
     getState,
     getCanPreviousPage,
     getCanNextPage,
-    nextPage,
-    previousPage,
+    // nextPage,
+    // previousPage,
   } = table;
 
   useEffect(() => {
     Number(customPageSize) && setPageSize(Number(customPageSize));
   }, [customPageSize, setPageSize]);
 
+  // Handle page changes with metadata
+  const handlePageChange = (page: number) => {
+    if (metadata && onPageChange) {
+      onPageChange(page);
+    } else {
+      setPageIndex(page - 1);
+    }
+  };
+
+  const handlePageSizeChange = (pageSize: number) => {
+    if (metadata && onPageSizeChange) {
+      onPageSizeChange(pageSize);
+    } else {
+      setPageSize(pageSize);
+    }
+  };
+
+  // Get current pagination info
+  const currentPage = metadata ? metadata.currentPage : getState().pagination.pageIndex + 1;
+  const pageSize = metadata ? metadata.limit : getState().pagination.pageSize;
+  const totalItems = metadata ? metadata.totalItems : data.length;
+  const totalPages = metadata ? metadata.totalPages : Math.ceil(data.length / pageSize) //getPageOptions().length;
+  const canPreviousPage = metadata ? metadata.hasPrevious : getCanPreviousPage();
+  const canNextPage = metadata ? metadata.hasNext : getCanNextPage();
+
   return (
     <Fragment>
-
       <div className="grid grid-cols-12 lg:grid-cols-12 gap-3">
         {
           isSelect &&
@@ -168,7 +208,7 @@ const TableContainer = ({
             <label>Show
               <select name="basic_tables_length" aria-controls="basic_tables"
                 className="px-3 py-2 form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 inline-block w-auto"
-                onClick={(event: any) => setPageSize(event.target.value)}>
+                onChange={(event: any) => handlePageSizeChange(Number(event.target.value))}>
                 <option value="10">10</option>
                 <option value="25">25</option>
                 <option value="50">50</option>
@@ -273,25 +313,42 @@ const TableContainer = ({
           <div className={PaginationClassName}>
             <div className="mb-4 grow md:mb-0">
               <div className="text-slate-500 dark:text-zink-200">Showing
-                <b> {getState().pagination.pageSize}</b> of
-                <b> {data.length}</b> Results</div>
+                <b> {pageSize}</b> of
+                <b> {totalItems}</b> Results</div>
             </div>
             <ul className="flex flex-wrap items-center gap-2 shrink-0">
               <li>
-                <Link to="#!" className={`inline-flex items-center justify-center bg-white dark:bg-zink-700 h-8 px-3 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-500 dark:[&.active]:text-custom-500 [&.active]:bg-custom-50 dark:[&.active]:bg-custom-500/10 [&.active]:border-custom-50 dark:[&.active]:border-custom-500/10 [&.active]:hover:text-custom-700 dark:[&.active]:hover:text-custom-700 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto ${!getCanPreviousPage() && "disabled"}`} onClick={previousPage}>
-                  <ChevronLeft className="size-4 mr-1 rtl:rotate-180"></ChevronLeft> Prev</Link>
+                <Link to="#!" className={`inline-flex items-center justify-center bg-white dark:bg-zink-700 h-8 px-3 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-500 dark:[&.active]:text-custom-500 [&.active]:bg-custom-50 dark:[&.active]:bg-custom-500/10 [&.active]:border-custom-50 dark:[&.active]:border-custom-500/10 [&.active]:hover:text-custom-700 dark:[&.active]:hover:text-custom-700 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto ${currentPage === 1 && "disabled"}`} onClick={() => handlePageChange(1)}>
+                  Trang đầu
+                </Link>
               </li>
-              {getPageOptions().map((item: any, key: number) => (
-                <React.Fragment key={key}>
-                  <li>
-                    <Link to="#" className={`inline-flex items-center justify-center bg-white dark:bg-zink-700 size-8 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-100 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-white dark:[&.active]:text-white [&.active]:bg-custom-500 dark:[&.active]:bg-custom-500 [&.active]:border-custom-500 dark:[&.active]:border-custom-500 [&.active]:hover:text-custom-700 dark:[&.active]:hover:text-custom-700 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto ${getState().pagination.pageIndex === item && "active"}`} onClick={() => setPageIndex(item)}>{item + 1}</Link>
-                  </li>
-                </React.Fragment>
-              ))}
               <li>
-                <Link to="#!" className={`inline-flex items-center justify-center bg-white dark:bg-zink-700 h-8 px-3 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-500 dark:[&.active]:text-custom-500 [&.active]:bg-custom-50 dark:[&.active]:bg-custom-500/10 [&.active]:border-custom-50 dark:[&.active]:border-custom-500/10 [&.active]:hover:text-custom-700 dark:[&.active]:hover:text-custom-700 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto 
-                ${!getCanNextPage() && ""}`} onClick={() => getCanNextPage() && nextPage()}>
-                  Next <ChevronRight className="size-4 ml-1 rtl:rotate-180"></ChevronRight> </Link>
+                <Link to="#!" className={`inline-flex items-center justify-center bg-white dark:bg-zink-700 h-8 px-3 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-500 dark:[&.active]:text-custom-500 [&.active]:bg-custom-50 dark:[&.active]:bg-custom-500/10 [&.active]:border-custom-50 dark:[&.active]:border-custom-500/10 [&.active]:hover:text-custom-700 dark:[&.active]:hover:text-custom-700 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto ${!canPreviousPage && "disabled"}`} onClick={() => canPreviousPage && handlePageChange(currentPage - 1)}>
+                  <ChevronLeft className="size-4 mr-1 rtl:rotate-180"></ChevronLeft> Trang trước
+                </Link>
+              </li>
+              
+              {/* Current page indicator */}
+              <li>
+                <span className="inline-flex items-center justify-center bg-custom-500 dark:bg-custom-500 size-8 transition-all duration-150 ease-linear border rounded border-custom-500 dark:border-custom-500 text-white dark:text-white">
+                  {currentPage}
+                </span>
+              </li>
+              <li>
+                <span className="text-slate-500 dark:text-zink-200 px-2">
+                  / {totalPages}
+                </span>
+              </li>
+              
+              <li>
+                <Link to="#!" className={`inline-flex items-center justify-center bg-white dark:bg-zink-700 h-8 px-3 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-500 dark:[&.active]:text-custom-500 [&.active]:bg-custom-50 dark:[&.active]:bg-custom-500/10 [&.active]:border-custom-50 dark:[&.active]:border-custom-500/10 [&.active]:hover:text-custom-700 dark:[&.active]:hover:text-custom-700 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto ${!canNextPage && "disabled"}`} onClick={() => canNextPage && handlePageChange(currentPage + 1)}>
+                  Trang tiếp theo <ChevronRight className="size-4 ml-1 rtl:rotate-180"></ChevronRight>
+                </Link>
+              </li>
+              <li>
+                <Link to="#!" className={`inline-flex items-center justify-center bg-white dark:bg-zink-700 h-8 px-3 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 focus:bg-custom-50 dark:focus:bg-custom-500/10 focus:text-custom-500 dark:focus:text-custom-500 [&.active]:text-custom-500 dark:[&.active]:text-custom-500 [&.active]:bg-custom-50 dark:[&.active]:bg-custom-500/10 [&.active]:border-custom-50 dark:[&.active]:border-custom-500/10 [&.active]:hover:text-custom-700 dark:[&.active]:hover:text-custom-700 [&.disabled]:text-slate-400 dark:[&.disabled]:text-zink-300 [&.disabled]:cursor-auto ${currentPage === totalPages && "disabled"}`} onClick={() => handlePageChange(totalPages)}>
+                  Trang cuối
+                </Link>
               </li>
             </ul>
           </div>

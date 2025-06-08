@@ -125,6 +125,12 @@ const menuData: any = [
     icon: <CalendarDays />,
     subItems: [
       {
+        id: "customer-page",
+        label: "Khách hàng",
+        link: "/customers",
+        parentId: "sales-dashboard",
+      },
+      {
         id: "suppliers-page",
         label: "Nhà cung cấp",
         link: "/suppliers",
