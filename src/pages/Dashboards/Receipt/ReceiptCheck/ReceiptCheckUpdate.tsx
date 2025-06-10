@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
 // Icons
-import { Mail, PackageOpen, UserX2, Plus, Trash2 } from "lucide-react";
+import { Mail, PackageOpen, UserX2, Plus, Trash2, ChevronLeft } from "lucide-react";
 import ProductListReceiptModal from "../components/ProductListReceiptModal";
 import { Counter } from "Common/Components/Counter";
 import { formatMoney, formatMoneyWithVND } from "helpers/utils";
@@ -204,8 +204,12 @@ const UpdateReceiptCheck = (props: any) => {
     }
   };
 
+  const handleBackToList = () => {
+    props.router.navigate("/receipt-checks/list");
+  };
+
   if (!receiptId) {
-    return <Navigate to="/receipt-import/list" />;
+    return <Navigate to="/receipt-imports/list" />;
   }
 
   return (
@@ -237,6 +241,18 @@ const UpdateReceiptCheck = (props: any) => {
       />
       <ToastContainer closeButton={false} limit={1} />
       <BreadCrumb title="Cập nhật phiếu nhập" pageTitle="Products" />
+
+      {/* Back Button */}
+      <div className="mb-4">
+        <button
+          onClick={handleBackToList}
+          className="inline-flex items-center px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:text-slate-700 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-200 dark:hover:bg-zink-600 dark:hover:text-zink-100 transition-all duration-200"
+        >
+          <ChevronLeft className="size-4 mr-1" />
+          Quay lại danh sách
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-x-5">
         <div className="xl:col-span-9">
           <div className="card">
@@ -517,7 +533,7 @@ const UpdateReceiptCheck = (props: any) => {
                 {/* Action button */}
                 <div className="flex justify-end gap-2 mt-8">
                   <Link
-                    to={"/receipt-import/list"}
+                    to={"/receipt-checks/list"}
                     className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-700 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
                   >
                     Hủy bỏ

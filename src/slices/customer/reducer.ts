@@ -12,10 +12,14 @@ export const initialState = {
   message: {},
 };
 
-const CustomerSlice = createSlice({
+export const CustomerSlice = createSlice({
   name: "Customer",
   initialState,
-  reducers: {},
+  reducers: {
+    resetMessage: (state: any) => {
+      state.message = {};
+    }
+  },
   extraReducers: (builder) => {
     // List
     builder.addCase(getCustomersThunk.fulfilled, (state: any, action: any) => {
@@ -82,5 +86,7 @@ const CustomerSlice = createSlice({
     });
   },
 });
+
+export const { resetMessage } = CustomerSlice.actions;
 
 export default CustomerSlice.reducer;

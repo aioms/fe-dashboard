@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
 // Icons
-import { Mail, PackageOpen, UserX2, Plus, Trash2 } from "lucide-react";
+import { Mail, PackageOpen, UserX2, Plus, Trash2, ChevronLeft } from "lucide-react";
 import ProductListReceiptModal from "../components/ProductListReceiptModal";
 import { Counter } from "Common/Components/Counter";
 import { formatMoney, formatMoneyWithVND } from "helpers/utils";
@@ -74,10 +74,8 @@ const UpdateReceiptImport = (props: any) => {
     if (!receiptItems.length) return;
 
     const items = receiptItems.map((item: any) => ({
-      id: item.id,
-      code: item.code,
+      ...item,
       name: item.productName,
-      quantity: item.quantity,
       price: item.costPrice,
     }));
     setRows(items);
@@ -109,7 +107,7 @@ const UpdateReceiptImport = (props: any) => {
 
     const items = rows.map((row) => ({
       productId: row.id,
-      productCode: row.code,
+      productCode: row.productCode,
       productName: row.name,
       quantity: row.quantity,
       costPrice: row.price,
@@ -216,6 +214,10 @@ const UpdateReceiptImport = (props: any) => {
     }
   };
 
+  const handleBackToList = () => {
+    props.router.navigate("/receipt-import/list");
+  };
+
   if (!receiptId) {
     return <Navigate to="/receipt-import/list" />;
   }
@@ -236,6 +238,7 @@ const UpdateReceiptImport = (props: any) => {
 
               return {
                 id: item.id,
+                productCode: item.productCode,
                 code: item.code,
                 name: item.name,
                 quantity: 1,
@@ -249,6 +252,17 @@ const UpdateReceiptImport = (props: any) => {
       />
       <ToastContainer closeButton={false} limit={1} />
       <BreadCrumb title="Cập nhật phiếu nhập" pageTitle="Products" />
+
+      {/* Back Button */}
+      <div className="mb-4">
+        <button
+          onClick={handleBackToList}
+          className="inline-flex items-center px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:text-slate-700 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-200 dark:hover:bg-zink-600 dark:hover:text-zink-100 transition-all duration-200"
+        >
+          <ChevronLeft className="size-4 mr-1" />
+          Quay lại danh sách
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-x-5">
         <div className="xl:col-span-9">

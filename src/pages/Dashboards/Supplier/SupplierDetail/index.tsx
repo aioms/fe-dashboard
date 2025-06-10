@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { request } from "helpers/axios";
 import { IHttpResponse } from "types";
+import { ChevronLeft } from "lucide-react";
+import withRouter from "Common/withRouter";
 
 // Components
 import BreadCrumb from "Common/BreadCrumb";
@@ -19,7 +21,7 @@ import {
   SupplierInformation,
 } from "./components/SupplierInformation";
 
-export default function SupplierDetail() {
+function SupplierDetail(props: any) {
   const { id } = useParams();
   const [supplier, setSupplier] = useState<Supplier | null>(null);
   const [receiptImports, setReceiptImports] = useState<ReceiptImport[]>([]);
@@ -35,6 +37,10 @@ export default function SupplierDetail() {
   const [hasMoreProducts, setHasMoreProducts] = useState(true);
 
   const [loadingMore, setLoadingMore] = useState(false);
+
+  const handleBackToList = () => {
+    props.router.navigate("/suppliers");
+  };
 
   useEffect(() => {
     const fetchSupplierData = async () => {
@@ -119,6 +125,17 @@ export default function SupplierDetail() {
     <React.Fragment>
       <BreadCrumb title="Chi tiết nhà cung cấp" pageTitle="Nhà cung cấp" />
 
+      {/* Back Button */}
+      <div className="mb-4">
+        <button
+          onClick={handleBackToList}
+          className="inline-flex items-center px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:text-slate-700 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-200 dark:hover:bg-zink-600 dark:hover:text-zink-100 transition-all duration-200"
+        >
+          <ChevronLeft className="size-4 mr-1" />
+          Quay lại danh sách
+        </button>
+      </div>
+
       <div className="card">
         <div className="card-body">
           <Tab.Container defaultActiveKey="basic-info">
@@ -187,3 +204,5 @@ export default function SupplierDetail() {
     </React.Fragment>
   );
 }
+
+export default withRouter(SupplierDetail);

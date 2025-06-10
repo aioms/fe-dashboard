@@ -16,12 +16,10 @@ type Props = {
 };
 
 export const ReceiptLog: FC<Props> = ({ receipt }) => {
-  console.log({ receipt });
-
   if (!receipt?.changeLog?.length) {
     return (
       <div className="text-gray-500 text-center py-4">
-        No status change history available
+        Không có lịch sử thay đổi
       </div>
     );
   }

@@ -1,13 +1,12 @@
 import React from "react";
 import { FormikProps } from "formik";
-import { CUSTOMER_STATUS } from "Common/constants/customer-constant";
 
 interface CustomerFormData {
   id?: string;
   name: string;
-  phone: string;
+  phone?: string;
   email?: string;
-  taxId?: string;
+  taxCode?: string;
   company?: string;
   address?: string;
   note?: string;
@@ -42,26 +41,6 @@ const CustomerAdditionalInfo: React.FC<CustomerAdditionalInfoProps> = ({
           onChange={validation.handleChange}
           value={validation.values.note || ""}
         />
-      </div>
-
-      {/* Status */}
-      <div>
-        <label
-          htmlFor="statusSelect"
-          className="inline-block mb-2 text-base font-medium"
-        >
-          Trạng thái
-        </label>
-        <select
-          className="form-input border-slate-300 focus:outline-none focus:border-custom-500"
-          id="statusSelect"
-          name="status"
-          onChange={validation.handleChange}
-          value={validation.values.status || ""}
-        >
-          <option value={CUSTOMER_STATUS.ACTIVE}>Hoạt động</option>
-          <option value={CUSTOMER_STATUS.INACTIVE}>Không hoạt động</option>
-        </select>
       </div>
     </div>
   );

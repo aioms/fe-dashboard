@@ -52,10 +52,9 @@ export const createCustomer = async (payload: Record<string, any>) => {
     throw new Error(message);
   }
 
-  const { id, code } = response.data;
+  const { id } = response.data;
   const data = {
     id,
-    code,
     ...payload,
   };
 
@@ -63,9 +62,10 @@ export const createCustomer = async (payload: Record<string, any>) => {
 };
 
 export const updateCustomer = async (payload: Record<string, any>) => {
+  const { id, ...body } = payload;
   const response: IHttpResponse = await request.put(
-    `/customers/${payload.id}`,
-    payload
+    `/customers/${id}`,
+    body
   );
   const { isHasError, message } = ErrorHandler.checkResponse(
     response,
@@ -78,7 +78,7 @@ export const updateCustomer = async (payload: Record<string, any>) => {
 
   return {
     id: response.data?.id,
-    ...payload,
+    ...body,
   };
 };
 

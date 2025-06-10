@@ -32,6 +32,7 @@ import SupplierDetail from "pages/Dashboards/Supplier/SupplierDetail";
 import AnalyticsReport from "pages/Dashboards/Inventory/AnalysisReport";
 
 import CustomerList from "pages/Dashboards/Customer/CustomerList";
+import CustomerDetail from "pages/Dashboards/Customer/CustomerDetail";
 
 interface RouteObject {
   path: string;
@@ -69,6 +70,7 @@ const authProtectedRoutes: Array<RouteObject> = [
 
   // customer
   { path: "/customers", component: CustomerList },
+  { path: "/customers/:id", component: CustomerDetail },
 
   // profile
   { path: "/user-profile", component: UserProfile },
