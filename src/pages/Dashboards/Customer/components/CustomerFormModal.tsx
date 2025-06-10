@@ -8,9 +8,9 @@ import CustomerAdditionalInfo from "./CustomerAdditionalInfo";
 interface CustomerFormData {
   id?: string;
   name: string;
-  phone: string;
+  phone?: string;
   email?: string;
-  taxId?: string;
+  taxCode?: string;
   company?: string;
   address?: string;
   note?: string;

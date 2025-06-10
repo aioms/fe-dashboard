@@ -46,7 +46,6 @@ const Login = (props: any) => {
 
   React.useEffect(() => {
     const isAuth = localStorage.getItem("jwt");
-    console.log({ isAuth });
 
     if (isAuth) {
       props.router.navigate("/products");

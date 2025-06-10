@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
 // Icons
-import { Mail, PackageOpen, UserX2, Plus, Trash2 } from "lucide-react";
+import { Mail, PackageOpen, UserX2, Plus, Trash2, ChevronLeft } from "lucide-react";
 import ProductListReceiptModal from "../components/ProductListReceiptModal";
 import { Counter } from "Common/Components/Counter";
 import { formatMoney, formatMoneyWithVND } from "helpers/utils";
@@ -256,6 +256,10 @@ const UpdateReceiptReturn = (props: any) => {
     dispatch(onGetReceiptReturnInfo(receiptId));
   }, [dispatch, receiptId]);
 
+  const handleBackToList = () => {
+    props.router.navigate("/receipt-return/list");
+  };
+
   if (!receiptId) {
     return <Navigate to="/receipt-return/list" />;
   }
@@ -289,6 +293,20 @@ const UpdateReceiptReturn = (props: any) => {
       />
       <ToastContainer closeButton={false} limit={1} />
       <BreadCrumb title="Cập nhật phiếu trả" pageTitle="Receipt Return" />
+
+{/* Back Button */}
+<div className="mb-4">
+        <button
+          onClick={handleBackToList}
+          className="inline-flex items-center px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:text-slate-700 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-200 dark:hover:bg-zink-600 dark:hover:text-zink-100 transition-all duration-200"
+        >
+          <ChevronLeft className="size-4 mr-1" />
+          Quay lại danh sách
+        </button>
+      
+      </div>o
+
+
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-x-5">
         <div className="xl:col-span-9">
           <div className="card">

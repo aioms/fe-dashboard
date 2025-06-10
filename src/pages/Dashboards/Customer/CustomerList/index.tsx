@@ -38,11 +38,12 @@ import {
   deleteCustomerThunk,
 } from "slices/customer/thunk";
 import { formatMoney } from "helpers/utils";
+import { resetMessage } from "slices/customer/reducer";
 
 interface CustomerFormData {
   id?: string;
   name: string;
-  phone: string;
+  phone?: string;
   email?: string;
   taxCode?: string;
   company?: string;
@@ -117,10 +118,11 @@ const CustomerList = () => {
       status: (eventData && eventData.status) || CUSTOMER_STATUS.ACTIVE,
     },
     validationSchema: Yup.object({
-      code: Yup.string().required("Vui lòng nhập mã khách hàng"),
       name: Yup.string().required("Vui lòng nhập tên khách hàng"),
-      phone: Yup.string().required("Vui lòng nhập số điện thoại"),
-      email: Yup.string().email("Email không hợp lệ"),
+      phone: Yup.string()
+        .matches(/^[0-9]{10,11}$/, "Số điện thoại không hợp lệ")
+        .nullable(),
+      email: Yup.string().email("Email không hợp lệ").nullable(),
     }),
     onSubmit: (values) => {
       if (isEdit) {
@@ -157,10 +159,11 @@ const CustomerList = () => {
 
   // Debounced search function
   const debouncedSearch = useMemo(
-    () => debounce((searchValue: string) => {
-      setSearchKeyword(searchValue);
-      setCurrentPage(1); // Reset to first page when searching
-    }, 500),
+    () =>
+      debounce((searchValue: string) => {
+        setSearchKeyword(searchValue);
+        setCurrentPage(1); // Reset to first page when searching
+      }, 500),
     []
   );
 
@@ -186,8 +189,11 @@ const CustomerList = () => {
       } else {
         toast.error(message.text);
       }
+
+      // Reset message state
+      dispatch(resetMessage());
     }
-  }, [message, fetchCustomers]);
+  }, [message, fetchCustomers, dispatch]);
 
   // Delete functions
   const onClickDelete = (customer: any) => {
@@ -208,7 +214,7 @@ const CustomerList = () => {
   const handleUpdateDataClick = (customer: any) => {
     setEventData({ ...customer });
     setIsEdit(true);
-    toggle();
+    setShow(true);
   };
 
   // Modal toggle

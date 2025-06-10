@@ -82,7 +82,7 @@ const PrintMultipleBarcodeModal: React.FC<props> = ({
                         href="#!"
                         className="transition-all duration-150 ease-linear text-custom-500 hover:text-custom-600"
                       >
-                        {product.productCode}
+                        {product.code}
                       </a>
                     </td>
                     <td className="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500">

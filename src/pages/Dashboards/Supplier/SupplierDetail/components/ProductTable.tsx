@@ -4,7 +4,8 @@ import { NoTableResult } from "Common/Components/NoTableResult";
 
 export interface Product {
   id: string;
-  productCode: string;
+  code: string;
+  productCode: number;
   productName: string;
   costPrice: number;
   inventory: number;
@@ -38,7 +39,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
           {products.length > 0 ? (
             products.map((product) => (
               <tr key={product.id}>
-                <td className="p-3">{product.productCode}</td>
+                <td className="p-3">{product.code}</td>
                 <td className="p-3">{product.productName}</td>
                 <td className="p-3">{formatMoney(product.costPrice)}</td>
                 <td className="p-3">{product.inventory}</td>
