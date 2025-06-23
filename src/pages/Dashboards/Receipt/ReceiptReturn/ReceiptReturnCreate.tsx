@@ -76,7 +76,7 @@ const CreateReceiptReturn = (props: any) => {
 
     const items = rows.map((row) => ({
       productId: row.id,
-      productCode: row.code,
+      productCode: row.productCode,
       productName: row.name,
       quantity: row.quantity,
       inventory: row.inventory,
@@ -196,6 +196,7 @@ const CreateReceiptReturn = (props: any) => {
 
               return {
                 id: item.id,
+                productCode: item.productCode,
                 code: item.code,
                 name: item.name,
                 quantity: 1,

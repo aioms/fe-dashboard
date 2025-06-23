@@ -19,3 +19,7 @@ export const formatMoneyWithVND = (amount: number) => {
     currency: "VND",
   }).format(amount);
 };
+
+export const isHasKey = (obj: Record<string, any>) => {
+  return Object.keys(obj).length;
+};

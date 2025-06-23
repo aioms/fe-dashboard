@@ -136,13 +136,32 @@ const ProductList = () => {
   };
 
   // Filter Data
+  // Add refs for UI components
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const statusSelectRef = useRef<any>(null);
+
   const filterSearchData = (e: any) => {
-    const keyword = e.target.value;
+    const keyword = e.target.value.trim();
     setFilters((prev) => ({
       ...prev,
       keyword,
       page: 1,
     }));
+  };
+
+  // Update resetFilters to clear UI components
+  const resetFilters = () => {
+    setFilters({ status: "", keyword: "" });
+
+    // Clear search input
+    if (searchInputRef.current) {
+      searchInputRef.current.value = "";
+    }
+
+    // Reset status dropdown to default
+    if (statusSelectRef.current) {
+      statusSelectRef.current.setValue(optionsFilterStatus[0]);
+    }
   };
 
   const filterStatusData = (event: any) => {
@@ -158,8 +177,6 @@ const ProductList = () => {
       }));
     }
   };
-
-  const resetFilters = () => setFilters({ status: "" });
 
   const onClickImportFile = () => {
     const button: any = importInputFile.current;
@@ -211,16 +228,6 @@ const ProductList = () => {
         enableSorting: true,
         cell: (cell: any) => (
           <h6 className="product_name">{cell.getValue()}</h6>
-          // <Link
-          //   to="/apps-ecommerce-product-overview"
-          //   className="flex items-center gap-2"
-          // >
-          //   <img
-          //     src={cell.row.original.img}
-          //     alt="Product images"
-          //     className="h-6"
-          //   />
-          // </Link>
         ),
       },
       {
@@ -330,15 +337,6 @@ const ProductList = () => {
                   <span className="align-middle">In tem mã</span>
                 </a>
               </li>
-              {/* <li> */}
-              {/*   <Link */}
-              {/*     className="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" */}
-              {/*     to="/apps-ecommerce-product-overview" */}
-              {/*   > */}
-              {/*     <Eye className="inline-block size-3 ltr:mr-1 rtl:ml-1" />{" "} */}
-              {/*     <span className="align-middle">Chi tiết</span> */}
-              {/*   </Link> */}
-              {/* </li> */}
               <li>
                 <a
                   href="#!"
@@ -413,6 +411,7 @@ const ProductList = () => {
             <div className="xl:col-span-3">
               <div className="relative">
                 <input
+                  ref={searchInputRef}
                   type="text"
                   className="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                   placeholder="Tìm mã, tên hàng,..."
@@ -424,6 +423,7 @@ const ProductList = () => {
             </div>
             <div className="xl:col-span-2">
               <Select
+                ref={statusSelectRef}
                 className="border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                 options={optionsFilterStatus}
                 isSearchable={false}

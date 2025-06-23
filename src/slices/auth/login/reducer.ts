@@ -22,7 +22,7 @@ const initialState: LoginState = {
 };
 
 const loginSlice = createSlice({
-    name: "login",
+    name: "Login",
     initialState,
     reducers: {
         loginSuccess(state: LoginState, action: PayloadAction<IUserLogin>) {

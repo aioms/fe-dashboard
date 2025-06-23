@@ -1,0 +1,8 @@
+.table-dropdown-container {
+  overflow: visible !important;
+}
+
+.table-dropdown-container .dropdown-content {
+  position: fixed;
+  z-index: 9999;
+}

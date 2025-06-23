@@ -20,7 +20,7 @@ const initialState: ProfileState = {
 };
 
 const profileSlice = createSlice({
-    name: "profile",
+    name: "Profile",
     initialState,
     reducers: {
         profileSuccess(state: ProfileState, action: PayloadAction<IUserLogin>) {

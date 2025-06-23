@@ -11,7 +11,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
 // Icons
-import { Mail, PackageOpen, UserX2, Plus, Trash2, ChevronLeft } from "lucide-react";
+import {
+  Mail,
+  PackageOpen,
+  UserX2,
+  Plus,
+  Trash2,
+  ChevronLeft,
+} from "lucide-react";
 import ProductListReceiptModal from "../components/ProductListReceiptModal";
 import { Counter } from "Common/Components/Counter";
 import { formatMoney, formatMoneyWithVND } from "helpers/utils";
@@ -28,13 +35,6 @@ import { TimePicker } from "Common/Components/TimePIcker";
 import { getDate } from "helpers/date";
 import AsyncPaginatedSelect from "Common/Components/Select/AsyncPaginatedSelect";
 import { createSupplier } from "apis/supplier";
-
-// interface Option {
-//   readonly label: string;
-//   readonly value?: string;
-//   readonly options?: Option[];
-//   readonly isDisabled?: boolean;
-// }
 
 const receiptReturnStatus = [
   { label: "Nháp", value: "draft" },
@@ -66,10 +66,10 @@ const UpdateReceiptReturn = (props: any) => {
   const receiptId = searchParams.get("id");
   const dispatch = useDispatch<any>();
 
-  const selectDataProduct = createSelector(
-    (state: any) => state.Products,
+  const selectDataSupplier = createSelector(
+    (state: any) => state.Supplier,
     (state) => ({
-      supplierList: state.supplierList || [],
+      supplierList: state.suppliers || [],
     })
   );
 
@@ -81,7 +81,7 @@ const UpdateReceiptReturn = (props: any) => {
     })
   );
 
-  const { supplierList } = useSelector(selectDataProduct);
+  const { supplierList } = useSelector(selectDataSupplier);
   const { receiptInfo, receiptItems } = useSelector(selectDataReceipt);
 
   const [selectedReason, setSelectedReason] = useState("");
@@ -144,7 +144,7 @@ const UpdateReceiptReturn = (props: any) => {
 
     const items = rows.map((row) => ({
       productId: row.id,
-      productCode: row.code,
+      productCode: row.productCode,
       productName: row.name,
       quantity: row.quantity,
       costPrice: row.price,
@@ -225,7 +225,8 @@ const UpdateReceiptReturn = (props: any) => {
 
     const items = receiptItems.map((item: any) => ({
       id: item.id,
-      code: item.productCode,
+      productCode: item.productCode,
+      code: item.code,
       name: item.productName,
       quantity: item.quantity,
       price: item.costPrice,
@@ -276,10 +277,13 @@ const UpdateReceiptReturn = (props: any) => {
           setRows((prev) => {
             const newProducts = selectedProducts.map((item: any) => {
               const row = prev.find((row) => row.id === item.id);
+              console.log({ item, row });
+              
               if (row) return row;
 
               return {
                 id: item.id,
+                productCode: item.productCode,
                 code: item.code,
                 name: item.name,
                 quantity: 1,
@@ -293,9 +297,8 @@ const UpdateReceiptReturn = (props: any) => {
       />
       <ToastContainer closeButton={false} limit={1} />
       <BreadCrumb title="Cập nhật phiếu trả" pageTitle="Receipt Return" />
-
-{/* Back Button */}
-<div className="mb-4">
+      {/* Back Button */}
+      <div className="mb-4">
         <button
           onClick={handleBackToList}
           className="inline-flex items-center px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:text-slate-700 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-200 dark:hover:bg-zink-600 dark:hover:text-zink-100 transition-all duration-200"
@@ -303,9 +306,7 @@ const UpdateReceiptReturn = (props: any) => {
           <ChevronLeft className="size-4 mr-1" />
           Quay lại danh sách
         </button>
-      
-      </div>o
-
+      </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-x-5">
         <div className="xl:col-span-9">
@@ -427,8 +428,11 @@ const UpdateReceiptReturn = (props: any) => {
                             : null
                         }
                       />
-                      {validation.touched.supplier && validation.errors.supplier ? (
-                        <p className="text-red-400">{validation.errors.supplier}</p>
+                      {validation.touched.supplier &&
+                      validation.errors.supplier ? (
+                        <p className="text-red-400">
+                          {validation.errors.supplier}
+                        </p>
                       ) : null}
                     </div>
                   ) : (

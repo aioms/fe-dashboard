@@ -55,7 +55,6 @@ const Login = (props: any) => {
     document.title = "Login | Tailwick - React Admin & Dashboard Template";
 
     const bodyElement = document.body;
-
     bodyElement.classList.add(
       "flex",
       "items-center",
