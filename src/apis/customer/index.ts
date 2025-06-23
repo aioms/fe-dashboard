@@ -52,10 +52,12 @@ export const createCustomer = async (payload: Record<string, any>) => {
     throw new Error(message);
   }
 
-  const { id } = response.data;
+  const { id, code, customerCode } = response.data;
   const data = {
-    id,
     ...payload,
+    id,
+    code,
+    customerCode,
   };
 
   return data;

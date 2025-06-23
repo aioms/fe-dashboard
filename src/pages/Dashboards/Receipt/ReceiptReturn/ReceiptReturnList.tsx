@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import BreadCrumb from "Common/BreadCrumb";
 import debounce from "lodash.debounce";
 
@@ -136,9 +142,10 @@ const ReceiptReturnList = () => {
     }
   };
 
-  // Search Data
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
   const filterSearchData = (e: any) => {
-    const keyword = e.target.value;
+    const keyword = e.target.value.trim();
     setFilters((prev) => ({
       ...prev,
       keyword,
@@ -146,6 +153,7 @@ const ReceiptReturnList = () => {
     }));
   };
 
+  // Update resetFilters to clear search input
   const resetFilters = () => {
     setFilters((prev) => ({
       ...prev,
@@ -154,6 +162,11 @@ const ReceiptReturnList = () => {
       status: "",
       page: 1,
     }));
+
+    // Clear search input
+    if (searchInputRef.current) {
+      searchInputRef.current.value = "";
+    }
   };
 
   const [activeTab, setActiveTab] = useState("1");
@@ -350,6 +363,7 @@ const ReceiptReturnList = () => {
             <div className="lg:col-span-3">
               <div className="relative">
                 <input
+                  ref={searchInputRef}
                   type="text"
                   className="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
                   placeholder="Tìm kiếm theo mã phiếu, tên ..."

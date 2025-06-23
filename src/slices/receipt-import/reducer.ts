@@ -17,7 +17,11 @@ export const initialState = {
 const ReceiptSlice = createSlice({
   name: "ReceiptImport",
   initialState,
-  reducers: {},
+  reducers: {
+    resetMessage: (state: any) => {
+      state.error = {};
+    }
+  },
   extraReducers: (builder) => {
     // get list
     builder.addCase(
@@ -60,4 +64,5 @@ const ReceiptSlice = createSlice({
   },
 });
 
+export const { resetMessage } = ReceiptSlice.actions;
 export default ReceiptSlice.reducer;

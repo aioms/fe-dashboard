@@ -38,31 +38,31 @@ function CustomerDetail(props: any) {
       }
     };
 
-    const fetchSalesHistory = async () => {
-      try {
-        const response: IHttpResponse = await request.get(
-          `/customers/${id}/sales-history`
-        );
-        if (response.success) {
-          setSalesOrders(response.data);
-        }
-      } catch (error: any) {
-        toast.error(error.message);
-      }
-    };
+    // const fetchSalesHistory = async () => {
+    //   try {
+    //     const response: IHttpResponse = await request.get(
+    //       `/customers/${id}/sales-history`
+    //     );
+    //     if (response.success) {
+    //       setSalesOrders(response.data);
+    //     }
+    //   } catch (error: any) {
+    //     toast.error(error.message);
+    //   }
+    // };
 
-    const fetchDebtRecords = async () => {
-      try {
-        const response: IHttpResponse = await request.get(
-          `/customers/${id}/debt-records`
-        );
-        if (response.success) {
-          setDebtRecords(response.data);
-        }
-      } catch (error: any) {
-        toast.error(error.message);
-      }
-    };
+    // const fetchDebtRecords = async () => {
+    //   try {
+    //     const response: IHttpResponse = await request.get(
+    //       `/customers/${id}/debt-records`
+    //     );
+    //     if (response.success) {
+    //       setDebtRecords(response.data);
+    //     }
+    //   } catch (error: any) {
+    //     toast.error(error.message);
+    //   }
+    // };
 
     // Mock data for demonstration
     setSalesOrders([
@@ -178,7 +178,7 @@ function CustomerDetail(props: any) {
               <Tab.Pane eventKey="outstanding-debt">
                 <OutstandingDebt
                   debtRecords={debtRecords}
-                  totalDebt={customer?.totalDebt || 0}
+                  totalDebt={customer?.totalDebt || 1_000_000_000}
                 />
               </Tab.Pane>
             </Tab.Content>

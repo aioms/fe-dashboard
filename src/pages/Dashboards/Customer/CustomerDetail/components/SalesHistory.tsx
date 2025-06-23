@@ -39,28 +39,6 @@ const SalesHistory: React.FC<{ orders: ISalesOrder[] }> = ({ orders }) => {
             onChange={(e) => setDateFilter(e.target.value)}
           />
 
-          <select
-            className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
-            value={monthFilter}
-            onChange={(e) => setMonthFilter(e.target.value)}
-          >
-            <option value="">Tất cả tháng</option>
-            {Array.from({ length: 12 }, (_, i) => (
-              <option key={i + 1} value={i + 1}>
-                Tháng {i + 1}
-              </option>
-            ))}
-          </select>
-
-          <select
-            className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
-            value={yearFilter}
-            onChange={(e) => setYearFilter(e.target.value)}
-          >
-            <option value="">Tất cả năm</option>
-            <option value="2024">2024</option>
-            <option value="2023">2023</option>
-          </select>
         </div>
       </div>
 

@@ -15,7 +15,11 @@ export const initialState = {
 const UsersSlice = createSlice({
   name: "Users",
   initialState,
-  reducers: {},
+  reducers: {
+    resetMessage: (state: any) => {
+      state.error = {};
+    }
+  },
   extraReducers: (builder) => {
     // List
     builder.addCase(getUserList.fulfilled, (state: any, action: any) => {
@@ -59,5 +63,7 @@ const UsersSlice = createSlice({
     });
   },
 });
+
+export const { resetMessage } = UsersSlice.actions;
 
 export default UsersSlice.reducer;

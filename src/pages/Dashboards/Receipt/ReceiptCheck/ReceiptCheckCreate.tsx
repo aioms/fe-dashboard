@@ -17,7 +17,7 @@ import {
 } from "slices/thunk";
 
 // Icons
-import { PackageOpen, UserX2, Plus, Trash2 } from "lucide-react";
+import { PackageOpen, UserX2, Plus, Trash2, ChevronLeft } from "lucide-react";
 
 // Helpers
 import { IHttpResponse } from "types";
@@ -78,7 +78,7 @@ const CreateReceiptCheck = (props: any) => {
 
     const items = rows.map((row) => ({
       productId: row.id,
-      productCode: row.code,
+      productCode: row.productCode,
       productName: row.name,
       quantity: 1,
       inventory: row.inventory,
@@ -102,7 +102,7 @@ const CreateReceiptCheck = (props: any) => {
 
       if (response.statusCode !== 201) {
         toast.warn(response.message);
-        return '';
+        return "";
       }
 
       toast.success("Tạo phiếu thành công");
@@ -125,7 +125,9 @@ const CreateReceiptCheck = (props: any) => {
       checker: null,
     },
     validationSchema: Yup.object({
-      supplier: Yup.object({ id: Yup.string(), name: Yup.string() }).required("Vui lòng chọn nhà cung cấp"),
+      supplier: Yup.object({ id: Yup.string(), name: Yup.string() }).required(
+        "Vui lòng chọn nhà cung cấp"
+      ),
       date: Yup.string().required("Vui lòng chọn ngày kiểm hàng"),
       periodic: Yup.string().required("Vui lòng chọn đợt kiểm"),
       checker: Yup.string().required("Vui lòng chọn người kiểm"),
@@ -207,6 +209,10 @@ const CreateReceiptCheck = (props: any) => {
     }
   };
 
+  const handleBackToList = () => {
+    props.router.navigate("/receipt-check/list");
+  };
+
   return (
     <React.Fragment>
       <ProductListReceiptModal
@@ -223,6 +229,7 @@ const CreateReceiptCheck = (props: any) => {
 
               return {
                 id: item.id,
+                productCode: item.productCode,
                 code: item.code,
                 name: item.name,
                 quantity: 1,
@@ -237,6 +244,18 @@ const CreateReceiptCheck = (props: any) => {
       />
       {/* <ToastContainer closeButton={false} limit={1} /> */}
       <BreadCrumb title="Tạo mới phiếu kiểm" pageTitle="Products" />
+
+      {/* Back Button */}
+      <div className="mb-4">
+        <button
+          onClick={handleBackToList}
+          className="inline-flex items-center px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-200 rounded-md hover:bg-slate-50 hover:text-slate-700 dark:bg-zink-700 dark:border-zink-500 dark:text-zink-200 dark:hover:bg-zink-600 dark:hover:text-zink-100 transition-all duration-200"
+        >
+          <ChevronLeft className="size-4 mr-1" />
+          Quay lại danh sách
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-x-5">
         <div className="xl:col-span-9">
           <div className="card">
@@ -359,10 +378,12 @@ const CreateReceiptCheck = (props: any) => {
                     </label>
                     <AsyncPaginatedSelect
                       loadOptions={handleLoadUsers}
-                      defaultOptions={userList.map((user: Record<string, string>) => ({
-                        label: user.fullname,
-                        value: user.id,
-                      }))}
+                      defaultOptions={userList.map(
+                        (user: Record<string, string>) => ({
+                          label: user.fullname,
+                          value: user.id,
+                        })
+                      )}
                       placeholder="Chọn người kiểm"
                       debounceTimeout={500}
                       noOptionsMessage={() => "Không tìm thấy user"}

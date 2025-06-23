@@ -29,6 +29,8 @@ import { getDate } from "helpers/date";
 import AsyncPaginatedSelect from "Common/Components/Select/AsyncPaginatedSelect";
 import { createSupplier } from "apis/supplier";
 
+// !! CURRENTLY NOT USED THIS COMPONENTS (INSTEAD USE ON MOBILE)
+
 const UpdateReceiptCheck = (props: any) => {
   const [searchParams] = useSearchParams();
   const [rows, setRows] = useState<any[]>([]);
@@ -99,7 +101,7 @@ const UpdateReceiptCheck = (props: any) => {
 
     const items = rows.map((row) => ({
       productId: row.id,
-      productCode: row.code,
+      productCode: row.productCode,
       productName: row.name,
       quantity: row.quantity,
       costPrice: row.price,
@@ -228,6 +230,7 @@ const UpdateReceiptCheck = (props: any) => {
 
               return {
                 id: item.id,
+                productCode: item.productCode,
                 code: item.code,
                 name: item.name,
                 quantity: 1,

@@ -27,7 +27,11 @@ export const initialState: State = {
 const ReceiptSlice = createSlice({
   name: "ReceiptCheck",
   initialState,
-  reducers: {},
+  reducers: {
+    resetMessage: (state: any) => {
+      state.error = null;
+    }
+  },
   extraReducers: (builder) => {
     // get list
     builder
@@ -92,4 +96,5 @@ const ReceiptSlice = createSlice({
   },
 });
 
+export const { resetMessage } = ReceiptSlice.actions;
 export default ReceiptSlice.reducer;

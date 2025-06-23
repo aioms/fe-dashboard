@@ -19,7 +19,11 @@ export const initialState = {
 const ProductSlice = createSlice({
   name: "Products",
   initialState,
-  reducers: {},
+  reducers: {
+    resetMessage: (state: any) => {
+      state.message = {};
+    }
+  },
   extraReducers: (builder) => {
     // get list
     builder.addCase(getProductList.fulfilled, (state: any, action: any) => {
@@ -100,4 +104,5 @@ const ProductSlice = createSlice({
   },
 });
 
+export const { resetMessage } = ProductSlice.actions;
 export default ProductSlice.reducer;

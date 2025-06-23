@@ -15,7 +15,11 @@ export const initialState = {
 const SupplierSlice = createSlice({
   name: "Supplier",
   initialState,
-  reducers: {},
+  reducers: {
+    resetMessage: (state: any) => {
+      state.message = {};
+    }
+  },
   extraReducers: (builder) => {
     // List
     builder.addCase(getSuppliersThunk.fulfilled, (state: any, action: any) => {
@@ -83,4 +87,5 @@ const SupplierSlice = createSlice({
   },
 });
 
+export const { resetMessage } = SupplierSlice.actions;
 export default SupplierSlice.reducer;
