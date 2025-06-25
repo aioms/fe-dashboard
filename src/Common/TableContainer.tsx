@@ -160,7 +160,7 @@ const TableContainer = ({
     getHeaderGroups,
     getFooterGroups,
     getRowModel,
-    getPageOptions,
+    // getPageOptions,
     setPageIndex,
     setPageSize,
     getState,

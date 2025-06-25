@@ -82,7 +82,7 @@ const Login = (props: any) => {
         "font-public"
       );
     };
-  }, []);
+  }, [props.router]);
 
   return (
     <React.Fragment>

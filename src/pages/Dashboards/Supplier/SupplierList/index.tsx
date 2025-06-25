@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { Link } from "react-router-dom";
 import Select from "react-select";
-import lodash, { filter } from "lodash";
+import lodash from "lodash";
 
 // Icons
 import {
