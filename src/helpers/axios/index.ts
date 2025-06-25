@@ -3,20 +3,27 @@ import type { IExtraConfig, IHttpRequestConfig } from "../../types";
 
 const {
   REACT_APP_ENV,
-  REACT_APP_API_URL,
-  REACT_APP_SERVER_URL,
   REACT_APP_API_VERSION,
-  REACT_APP_API_URL_DEV,
-  REACT_APP_SERVER_URL_DEV,
+
+  REACT_APP_API_URL_LOCAL,
+  REACT_APP_SERVER_URL_LOCAL,
+
+  REACT_APP_API_URL_STG,
+  REACT_APP_SERVER_URL_STG,
+
+  REACT_APP_API_URL_PROD,
+  REACT_APP_SERVER_URL_PROD,
 } = process.env;
 
 const serverUrl: Record<string, string> = {
-  development: REACT_APP_SERVER_URL_DEV!,
-  production: REACT_APP_SERVER_URL!,
+  development: REACT_APP_SERVER_URL_LOCAL!,
+  staging: REACT_APP_SERVER_URL_STG!,
+  production: REACT_APP_SERVER_URL_PROD!,
 };
 const apiUrl: Record<string, string> = {
-  development: REACT_APP_API_URL_DEV!,
-  production: REACT_APP_API_URL!,
+  development: REACT_APP_API_URL_LOCAL!,
+  staging: REACT_APP_API_URL_STG!,
+  production: REACT_APP_API_URL_PROD!,
 };
 
 export const defaultConfig: IHttpRequestConfig = {

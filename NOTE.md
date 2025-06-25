@@ -15,7 +15,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@headlessui/react": "^0.0.0-insiders.0933dd5",
+    "@headlessui/react": "^0.0.0-insiders.b6f355d",
     "@popperjs/core": "^2.11.8",
     "@reduxjs/toolkit": "^2.1.0",
     "@tanstack/match-sorter-utils": "^8.11.7",
