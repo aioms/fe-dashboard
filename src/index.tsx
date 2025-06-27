@@ -7,10 +7,11 @@ import { PostHogProvider } from "posthog-js/react";
 
 import App from "./App";
 import rootReducer from "./slices";
-import { isDev } from "helpers/utils";
+import { isDev, getEnvironment } from "helpers/utils";
+import { Environment } from "Common/enums/common-enum";
 
 const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement,
+  document.getElementById("root") as HTMLElement
 );
 
 const store = configureStore({
@@ -18,22 +19,7 @@ const store = configureStore({
   devTools: isDev,
 });
 
-if (isDev) {
-  root.render(
-    <React.StrictMode>
-      <Provider store={store}>
-        <BrowserRouter
-          basename={process.env.PUBLIC_URL}
-          future={{
-            v7_relativeSplatPath: true,
-          }}
-        >
-          <App />
-        </BrowserRouter>
-      </Provider>
-    </React.StrictMode>,
-  );
-} else {
+if (getEnvironment() === Environment.PRODUCTION) {
   root.render(
     <React.StrictMode>
       <PostHogProvider
@@ -54,6 +40,21 @@ if (isDev) {
           </BrowserRouter>
         </Provider>
       </PostHogProvider>
-    </React.StrictMode>,
+    </React.StrictMode>
+  );
+} else {
+  root.render(
+    <React.StrictMode>
+      <Provider store={store}>
+        <BrowserRouter
+          basename={process.env.PUBLIC_URL}
+          future={{
+            v7_relativeSplatPath: true,
+          }}
+        >
+          <App />
+        </BrowserRouter>
+      </Provider>
+    </React.StrictMode>
   );
 }
