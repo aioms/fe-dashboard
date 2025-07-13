@@ -97,15 +97,6 @@ const CustomerList = () => {
 
   const { customers, pagination, message } = useSelector(selectCustomerList);
 
-  // const selectLayoutState = createSelector(
-  //   (state: any) => state.Layout,
-  //   (layout) => ({
-  //     sidebarVisibilitytype: layout.sidebarVisibilitytype,
-  //   })
-  // );
-
-  // const { sidebarVisibilitytype } = useSelector(selectLayoutState);
-
   // Validation
   const validation = useFormik({
     enableReinitialize: true,
@@ -212,6 +203,7 @@ const CustomerList = () => {
     if (eventData) {
       dispatch(deleteCustomerThunk(eventData.id));
       setDeleteModal(false);
+      fetchCustomers();
     }
   };
 

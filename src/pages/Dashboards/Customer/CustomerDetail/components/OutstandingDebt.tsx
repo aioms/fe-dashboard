@@ -113,7 +113,7 @@ const OutstandingDebt: React.FC<{
                 <td className="px-3.5 py-2.5 border-b border-slate-200 dark:border-zink-500">
                   <span
                     className={
-                      record.amount > 0 ? "text-red-500" : "text-green-500"
+                      record.amount > 0 ? "text-green-500" : "text-red-500"
                     }
                   >
                     {record.amount > 0 ? "+" : ""}

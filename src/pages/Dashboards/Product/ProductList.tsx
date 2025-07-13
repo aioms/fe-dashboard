@@ -214,7 +214,7 @@ const ProductList = () => {
         enableColumnFilter: false,
         cell: (cell: any) => (
           <Link
-            to="#"
+            to={`/products/${cell.row.original?.id}`}
             className="transition-all duration-150 ease-linear product_code text-custom-500 hover:text-custom-600"
           >
             {cell.getValue()}
@@ -308,7 +308,7 @@ const ProductList = () => {
         enableSorting: true,
         cell: (cell: any) => (
           <Dropdown
-            className={`relative dropdown-product-action ${
+            className={`relative dropdown-action-custom ${
               cell.row.index >= 7 ? "dropdown-bottom" : ""
             }`}
           >

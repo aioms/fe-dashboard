@@ -185,21 +185,6 @@ const ReceiptCheckList = () => {
   const columns = useMemo(
     () => [
       {
-        enableSorting: false,
-        id: "checkAll",
-        cell: (cell: any) => {
-          return (
-            <div className="flex items-center h-full">
-              <input
-                id={"Checkbox" + cell.row.original.id}
-                className="size-4 cursor-pointer bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm appearance-none arrow-none relative after:absolute after:content-['\eb7b'] after:top-0 after:left-0 after:font-remix after:leading-none after:opacity-0 checked:after:opacity-100 after:text-custom-500 checked:border-custom-500 dark:after:text-custom-500 dark:checked:border-custom-800"
-                type="checkbox"
-              />
-            </div>
-          );
-        },
-      },
-      {
         header: "Mã phiếu",
         accessorKey: "receiptNumber",
         enableColumnFilter: false,
@@ -291,18 +276,22 @@ const ReceiptCheckList = () => {
         enableColumnFilter: false,
         enableSorting: true,
         cell: (cell: any) => (
-          <Dropdown className="relative z-dropdown">
+          <Dropdown
+            className={`relative dropdown-action-custom ${
+              cell.row.index >= 7 ? "dropdown-bottom" : ""
+            }`}
+          >
             <Dropdown.Trigger
-              id="orderAction1"
+              id={`dropdownAction${cell.row.index}`}
               data-bs-toggle="dropdown"
               className="flex items-center justify-center size-[30px] p-0 text-slate-500 btn bg-slate-100 hover:text-white hover:bg-slate-600 focus:text-white focus:bg-slate-600 focus:ring focus:ring-slate-100 active:text-white active:bg-slate-600 active:ring active:ring-slate-100 dark:bg-slate-500/20 dark:text-slate-400 dark:hover:bg-slate-500 dark:hover:text-white dark:focus:bg-slate-500 dark:focus:text-white dark:active:bg-slate-500 dark:active:text-white dark:ring-slate-400/20"
             >
               <MoreHorizontal className="size-3" />
             </Dropdown.Trigger>
             <Dropdown.Content
-              placement={cell.row.index ? "top-end" : "right-end"}
-              className="absolute z-50 py-2 mt-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-md min-w-[10rem] dark:bg-zink-600"
-              aria-labelledby="orderAction1"
+              placement="right-end"
+              className="absolute z-[1001] py-2 px-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-lg border border-slate-200 dropdown-menu min-w-[10rem] dark:bg-zink-600 dark:border-zink-500"
+              aria-labelledby={`dropdownAction${cell.row.index}`}
             >
               <li>
                 <a
@@ -525,7 +514,7 @@ const ReceiptCheckList = () => {
               setPaginationData={setPaginationData}
               customPageSize={10}
               divclassName="mt-5"
-              tableclassName="w-full whitespace-nowrap overflow-x-auto"
+              tableclassName="w-full"
               theadclassName="ltr:text-left rtl:text-right bg-slate-100 dark:bg-zink-600"
               thclassName="px-3.5 py-2.5 font-semibold text-slate-500 border-b border-slate-200 dark:border-zink-500 dark:text-zink-200"
               tdclassName="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500"

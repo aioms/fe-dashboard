@@ -50,7 +50,7 @@ const CreateReceiptImport = (props: any) => {
 
   const totalAmount = useMemo(() => {
     return rows.reduce((total, row) => {
-      return total + row.quantity * row.totalPrice;
+      return total + row.totalPrice;
     }, 0);
   }, [rows]);
 
