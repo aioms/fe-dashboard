@@ -184,7 +184,7 @@ const ProductListReceiptModal: FC<Props> = ({
                   )
                 }
                 onChange={() => {
-                  const { id, code, productCode, productName, costPrice, inventory } =
+                  const { id, code, productCode, productName, costPrice, inventory, suppliers } =
                     cell.row.original;
 
                   handleCheckboxChange({
@@ -194,6 +194,7 @@ const ProductListReceiptModal: FC<Props> = ({
                     name: productName,
                     price: costPrice,
                     inventory: inventory,
+                    suppliers,
                   });
                 }}
               />
@@ -265,12 +266,12 @@ const ProductListReceiptModal: FC<Props> = ({
       },
       {
         header: "Nhà cung cấp",
-        accessorKey: "supplier",
+        accessorKey: "suppliers",
         enableColumnFilter: false,
         enableSorting: true,
         cell: (cell: any) => {
-          const value = cell.getValue();
-          return value?.name ?? ''
+          const suppliers = cell.getValue();
+          return suppliers?.map((supplier: any) => supplier.name).join(", ") ?? ''
         },
       },
       {

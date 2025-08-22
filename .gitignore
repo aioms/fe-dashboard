@@ -26,3 +26,5 @@ yarn-error.log*
 # yarn.lock*
 
 .vercel
+fe-dashboard-new
+fe-dashboard-new-trae

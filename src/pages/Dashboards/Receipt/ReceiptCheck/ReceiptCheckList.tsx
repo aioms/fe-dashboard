@@ -208,15 +208,6 @@ const ReceiptCheckList = () => {
         enableSorting: true,
       },
       {
-        header: "Nhà cung cấp",
-        accessorKey: "supplier",
-        enableColumnFilter: false,
-        cell: (cell: any) => {
-          const value = cell.getValue();
-          return value?.name ?? "";
-        },
-      },
-      {
         header: "Tồn hệ thống",
         accessorKey: "systemInventory",
         enableColumnFilter: false,
