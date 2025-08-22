@@ -29,7 +29,7 @@ const ImportProductModal: React.FC<props> = ({
   const [excelData, setExcelData] = useState<ExcelData[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [isButtonLoading, setButtonLoading] = useState(false);
-  const [importType, setImportType] = useState("1");
+  const [importType] = useState("1");
 
   const columns = React.useMemo<ColumnDef<ExcelData>[]>(() => {
     if (excelData.length === 0) return [];

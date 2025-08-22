@@ -8,6 +8,7 @@ import UserManagement from "pages/Dashboards/User/UserManagement";
 
 // product
 import ProductList from "pages/Dashboards/Product/ProductList";
+import ProductDetail from "pages/Dashboards/Product/ProductDetail";
 
 // receipt import
 import ReceiptImportCreate from "pages/Dashboards/Receipt/ReceiptImport/ReceiptImportCreate";
@@ -47,6 +48,7 @@ const authProtectedRoutes: Array<RouteObject> = [
 
   // product
   { path: "/products", component: ProductList },
+  { path: "/products/:id", component: ProductDetail },
 
   // receipt import
   { path: "/receipt-import/create", component: ReceiptImportCreate },

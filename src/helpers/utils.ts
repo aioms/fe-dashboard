@@ -1,4 +1,21 @@
+import { Environment } from "Common/enums/common-enum";
+
 export const isDev = process.env.REACT_APP_ENV === "development";
+
+export const getEnvironment = (): Environment => {
+  const env = process.env.REACT_APP_ENV;
+
+  switch (env) {
+    case "production":
+      return Environment.PRODUCTION;
+    case "staging":
+      return Environment.STAGING;
+    case "development":
+      return Environment.DEVELOPMENT;
+    default:
+      throw new Error("Invalid environment");
+  }
+};
 
 export const convertObjToQueryString = (params: Record<string, any>) => {
   return Object.keys(params)

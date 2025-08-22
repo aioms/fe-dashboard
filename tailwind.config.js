@@ -7,7 +7,7 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
     "./node_modules/simplebar-react/**/*",
     "./node_modules/apexcharts/**/*",
-    "./node_modules/@fullcalendar/**/*",
+    // "./node_modules/@fullcalendar/**/*",
     "./node_modules/swiper/**/*",
     "./node_modules/prismjs/**/**/*",
     "./node_modules/flatpickr/**/*",

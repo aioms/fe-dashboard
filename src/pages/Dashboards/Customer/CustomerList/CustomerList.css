@@ -1,8 +1,129 @@
 .table-dropdown-container {
-  overflow: visible !important;
+  overflow-x: scroll !important;
+  overflow-y: visible !important;
 }
 
 .table-dropdown-container .dropdown-content {
   position: fixed;
   z-index: 9999;
+}
+
+/* Additional responsive improvements */
+.table-dropdown-container table {
+  min-width: 1200px; /* Ensure minimum width for all columns */
+}
+
+/* Dropdown positioning - always on top and to the left */
+.dropdown-customer-action {
+  position: relative;
+}
+
+.dropdown-customer-action .dropdown-content {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  right: auto !important;
+  transform: translateX(-90%) !important;
+  z-index: 10000 !important;
+  margin-top: 4px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* For dropdowns near the bottom of the table */
+.dropdown-bottom .dropdown-content {
+  top: auto !important;
+  bottom: 100% !important;
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+
+/* Force scrollbar to always be visible */
+.table-dropdown-container::-webkit-scrollbar {
+  height: 12px;
+  width: 12px;
+}
+
+.table-dropdown-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 6px;
+}
+
+.table-dropdown-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 6px;
+}
+
+.table-dropdown-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* For Firefox */
+.table-dropdown-container {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+/* Ensure dropdown actions remain visible on mobile */
+@media (max-width: 768px) {
+  .table-dropdown-container {
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  }
+
+  .dropdown-customer-action .dropdown-content {
+    transform: translateX(-95%) !important;
+    min-width: 120px;
+  }
+}
+
+/* Prevent text wrapping in table cells for better horizontal scroll experience */
+.table-dropdown-container td {
+  white-space: nowrap;
+}
+
+/* Allow some columns to wrap if needed (like names and addresses) */
+.table-dropdown-container td:nth-child(3), /* Name column */
+.table-dropdown-container td:nth-child(4), /* Company column */
+.table-dropdown-container td:nth-child(7) {
+  /* Address column if exists */
+  white-space: normal;
+  max-width: 200px;
+  word-wrap: break-word;
+}
+
+/* Ensure the action column (last column) has proper positioning context */
+.table-dropdown-container td:last-child {
+  position: relative;
+  overflow: visible;
+}
+
+/* Additional styling for better dropdown visibility */
+.dropdown-customer-action .dropdown-content {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  background: white;
+  backdrop-filter: blur(10px);
+}
+
+/* Dark mode support for dropdown */
+.dark .dropdown-customer-action .dropdown-content {
+  background: #374151;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Dark mode scrollbar */
+.dark .table-dropdown-container::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.dark .table-dropdown-container::-webkit-scrollbar-thumb {
+  background: #6b7280;
+}
+
+.dark .table-dropdown-container::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+.dark .table-dropdown-container {
+  scrollbar-color: #6b7280 #374151;
 }

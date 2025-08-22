@@ -5,8 +5,8 @@ import { formatMoney } from "helpers/utils";
 const SalesHistory: React.FC<{ orders: ISalesOrder[] }> = ({ orders }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("");
-  const [monthFilter, setMonthFilter] = useState("");
-  const [yearFilter, setYearFilter] = useState("");
+  // const [monthFilter, setMonthFilter] = useState("");
+  // const [yearFilter, setYearFilter] = useState("");
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch = order.orderCode

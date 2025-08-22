@@ -11,10 +11,7 @@ import { createSelector } from "reselect";
 import { toast } from "react-toastify";
 
 // Slices
-import {
-  getSuppliersThunk as onGetSupplierList,
-  getUserList as onGetUserList,
-} from "slices/thunk";
+import { getUserList as onGetUserList } from "slices/thunk";
 
 // Icons
 import { PackageOpen, UserX2, Plus, Trash2, ChevronLeft } from "lucide-react";
@@ -30,7 +27,6 @@ import withRouter from "Common/withRouter";
 import { TimePicker } from "Common/Components/TimePIcker";
 import AsyncPaginatedSelect from "Common/Components/Select/AsyncPaginatedSelect";
 import ProductListReceiptModal from "../components/ProductListReceiptModal";
-import { createSupplier } from "apis/supplier";
 
 const CreateReceiptCheck = (props: any) => {
   const [rows, setRows] = useState<any[]>([]);
@@ -49,19 +45,10 @@ const CreateReceiptCheck = (props: any) => {
     })
   );
 
-  const supplierSelector = createSelector(
-    (state: any) => state.Supplier,
-    (state) => ({
-      supplierList: state.suppliers || [],
-    })
-  );
-
   const { userList } = useSelector(userSelector);
-  const { supplierList } = useSelector(supplierSelector);
 
   useEffect(() => {
     dispatch(onGetUserList({}));
-    dispatch(onGetSupplierList({}));
   }, [dispatch]);
 
   const totalAmount = useMemo(() => {
@@ -89,7 +76,6 @@ const CreateReceiptCheck = (props: any) => {
       date: getDate(values.date).format(),
       note: values.note,
       periodic: values.periodic,
-      supplier: values.supplier?.id,
       checker: values.checker,
       items,
     };
@@ -120,61 +106,16 @@ const CreateReceiptCheck = (props: any) => {
 
     initialValues: {
       date: "",
-      supplier: null,
       periodic: "",
       checker: null,
     },
     validationSchema: Yup.object({
-      supplier: Yup.object({ id: Yup.string(), name: Yup.string() }).required(
-        "Vui lòng chọn nhà cung cấp"
-      ),
       date: Yup.string().required("Vui lòng chọn ngày kiểm hàng"),
       periodic: Yup.string().required("Vui lòng chọn đợt kiểm"),
       checker: Yup.string().required("Vui lòng chọn người kiểm"),
     }),
     onSubmit: handleSubmitForm,
   });
-
-  const handleCreateSupplier = async (name: string) => {
-    const result = await createSupplier({ name });
-    return {
-      value: result.id,
-      label: name,
-    };
-  };
-
-  const handleLoadSuppliers = async (inputValue: string, page: number) => {
-    try {
-      const response: IHttpResponse = await request.get(
-        `/suppliers?keyword=${inputValue}&page=${page}&limit=10`
-      );
-
-      if (
-        (response.statusCode && response.statusCode !== 200) ||
-        !response.success
-      ) {
-        throw new Error(response.message);
-      }
-
-      const { data, metadata } = response;
-
-      return {
-        results: data?.map((item: Record<string, string>) => ({
-          value: item.id,
-          label: item.name,
-        })),
-        hasMore: metadata?.hasNext,
-        page: metadata?.currentPage,
-      };
-    } catch (error) {
-      toast.error((error as Error).message);
-      return {
-        results: [],
-        hasMore: false,
-        page: 1,
-      };
-    }
-  };
 
   const handleLoadUsers = async (inputValue: string, page: number) => {
     try {
@@ -235,6 +176,7 @@ const CreateReceiptCheck = (props: any) => {
                 quantity: 1,
                 price: item.price,
                 inventory: item.inventory,
+                suppliers: item.suppliers,
               };
             });
 
@@ -400,50 +342,6 @@ const CreateReceiptCheck = (props: any) => {
                     ) : null}
                   </div>
 
-                  <div className="xl:col-span-4">
-                    <label
-                      htmlFor="supplierSelect"
-                      className="inline-block mb-2 text-base font-medium"
-                    >
-                      Nhà cung cấp
-                    </label>
-                    <AsyncPaginatedSelect
-                      loadOptions={handleLoadSuppliers}
-                      defaultOptions={supplierList.map(
-                        (supplier: Record<string, string>) => ({
-                          label: supplier.name,
-                          value: supplier.id,
-                        })
-                      )}
-                      placeholder="Chọn nhà cung cấp"
-                      debounceTimeout={500}
-                      noOptionsMessage={() => "Không thấy nhà cung cấp"}
-                      createOption={handleCreateSupplier}
-                      onChange={(option) => {
-                        if (option) {
-                          validation.setFieldValue("supplier", {
-                            id: option.value,
-                            name: option.label,
-                          });
-                        }
-                      }}
-                      value={
-                        validation.values.supplier
-                          ? {
-                              label: validation.values?.supplier?.name,
-                              value: validation.values?.supplier?.id,
-                            }
-                          : null
-                      }
-                    />
-                    {validation.touched.supplier &&
-                    validation.errors.supplier ? (
-                      <p className="text-red-400">
-                        {validation.errors.supplier}
-                      </p>
-                    ) : null}
-                  </div>
-
                   <div className="lg:col-span-2 xl:col-span-12">
                     <div className="flex justify-start">
                       <button
@@ -468,6 +366,9 @@ const CreateReceiptCheck = (props: any) => {
                               Tên
                             </th>
                             <th className="px-3.5 py-2.5 font-semibold text-slate-500 dark:text-zink-200 border-b border-slate-200 dark:border-zink-500">
+                              Nhà cung cấp
+                            </th>
+                            <th className="px-3.5 py-2.5 font-semibold text-slate-500 dark:text-zink-200 border-b border-slate-200 dark:border-zink-500">
                               Tồn kho
                             </th>
                             <th className="px-3.5 py-2.5 font-semibold text-slate-500 dark:text-zink-200 border-b border-slate-200 dark:border-zink-500">
@@ -487,6 +388,9 @@ const CreateReceiptCheck = (props: any) => {
                               </td>
                               <td className="px-3.5 py-2.5 border-b border-slate-200 dark:border-zink-500">
                                 <h6 className="mb-1 text-wrap">{row.name}</h6>
+                              </td>
+                              <td className="px-3.5 py-2.5 border-b border-slate-200 dark:border-zink-500">
+                                <h6 className="mb-1 text-wrap">{row.suppliers?.map((supplier: any) => supplier.name).join(", ")}</h6>
                               </td>
                               <td className="px-3.5 py-2.5 border-b border-slate-200 dark:border-zink-500">
                                 {row.inventory}
