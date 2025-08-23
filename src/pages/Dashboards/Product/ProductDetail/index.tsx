@@ -45,7 +45,6 @@ function ProductDetail(props: any) {
 
         // Fetch product details
         const response: IHttpResponse = await request.get(`/products/${id}`);
-        console.log({ response });
         if (response.success) {
           setProduct(response.data);
         } else {

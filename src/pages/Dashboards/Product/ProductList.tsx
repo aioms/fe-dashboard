@@ -246,6 +246,8 @@ const ProductList = () => {
         enableColumnFilter: false,
         enableSorting: true,
         cell: (cell: any) => {
+          // const data = cell.row.original;
+          // console.log({ data });
           return formatMoney(cell.getValue());
         },
       },

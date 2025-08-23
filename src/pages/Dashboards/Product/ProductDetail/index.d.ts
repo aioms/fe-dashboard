@@ -11,6 +11,7 @@ export interface IProduct {
   costPrice: number;
   inventory: number;
   description?: string;
+  note?: string;
   warehouse?: string;
   status: PRODUCT_STATUS;
   suppliers?: IProductSupplier[];
