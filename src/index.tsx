@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { configureStore } from "@reduxjs/toolkit";
+import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 
 import App from "./App";
@@ -20,14 +21,20 @@ const store = configureStore({
 });
 
 if (getEnvironment() === Environment.PRODUCTION) {
+  posthog.init(process.env.REACT_APP_PUBLIC_POSTHOG_KEY!, {
+    api_host: process.env.REACT_APP_POSTHOG_HOST || "https://us.i.posthog.com",
+    defaults: "2025-05-24",
+  });
+
   root.render(
     <React.StrictMode>
       <PostHogProvider
-        apiKey={process.env.REACT_APP_PUBLIC_POSTHOG_KEY!}
-        options={{
-          api_host:
-            process.env.REACT_APP_POSTHOG_HOST || "https://eu.i.posthog.com",
-        }}
+        client={posthog}
+        // apiKey={process.env.REACT_APP_PUBLIC_POSTHOG_KEY!}
+        // options={{
+        //   api_host:
+        //     process.env.REACT_APP_POSTHOG_HOST || "https://eu.i.posthog.com",
+        // }}
       >
         <Provider store={store}>
           <BrowserRouter

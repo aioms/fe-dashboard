@@ -53,6 +53,16 @@ const ProductInformation: React.FC<ProductInformationProps> = ({ product }) => {
             </div>
           </div>
           {renderField("Mô tả", product.description)}
+          <div className="xl:col-span-2">
+            <label className="inline-block mb-2 text-base font-medium">Ghi chú</label>
+            <div className="p-3 bg-white dark:bg-zink-700 border border-slate-200 dark:border-zink-500 rounded-md">
+              <p className={`text-base whitespace-pre-wrap ${
+                !product.note ? "text-slate-400 dark:text-zink-300 italic" : "text-slate-600 dark:text-zink-200"
+              }`}>
+                {product.note || "Chưa có ghi chú"}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
