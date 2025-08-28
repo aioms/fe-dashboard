@@ -1,7 +1,8 @@
-import { Counter } from "Common/Components/Counter";
-import { formatMoney } from "helpers/utils";
 import { Trash2 } from "lucide-react";
 import { FC, useEffect, useState } from "react";
+
+import { Counter } from "Common/Components/Counter";
+import { formatMoney, parseCurrencyInput } from "helpers/utils";
 
 type Props = {
   index: number;
@@ -17,11 +18,6 @@ export const ReceiptItem: FC<Props> = ({ item, index, onRemove, onUpdate }) => {
   );
   const [newCostPrice, setNewCostPrice] = useState<number>(item.price);
   const [newDiscount, setNewDiscount] = useState<number>(item.discount);
-
-  const parseCurrencyInput = (value: string): number => {
-    // Remove all non-digit characters and parse to number
-    return parseInt(value.replace(/\D/g, "")) || 0;
-  };
 
   const handleCostPriceChange = (value: string | null | undefined) => {
     if (value !== null && value !== undefined) {
