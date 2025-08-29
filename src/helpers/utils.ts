@@ -40,3 +40,8 @@ export const formatMoneyWithVND = (amount: number) => {
 export const isHasKey = (obj: Record<string, any>) => {
   return Object.keys(obj).length;
 };
+
+export const parseCurrencyInput = (value: string): number => {
+  // Remove all non-digit characters and parse to number
+  return parseInt(value.replace(/\D/g, "")) || 0;
+};

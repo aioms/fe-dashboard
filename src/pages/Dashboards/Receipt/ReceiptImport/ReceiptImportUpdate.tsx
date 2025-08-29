@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import BreadCrumb from "Common/BreadCrumb";
 import Barcode from "react-barcode";
+import { toast, ToastContainer } from "react-toastify";
 
 // Formik
 import * as Yup from "yup";
@@ -13,14 +14,12 @@ import { createSelector } from "reselect";
 // Icons
 import { Mail, PackageOpen, UserX2, Plus, Trash2, ChevronLeft } from "lucide-react";
 import ProductListReceiptModal from "../components/ProductListReceiptModal";
-import { Counter } from "Common/Components/Counter";
 import { formatMoney, formatMoneyWithVND } from "helpers/utils";
 import withRouter from "Common/withRouter";
 import {
   getSuppliersThunk as onGetSupplierList,
   getReceiptImportInfo as onGetReceiptImportInfo,
 } from "slices/thunk";
-import { toast, ToastContainer } from "react-toastify";
 import { IHttpResponse } from "types";
 import { request } from "helpers/axios";
 import { Link, Navigate, useSearchParams } from "react-router-dom";
@@ -541,7 +540,8 @@ const UpdateReceiptImport = (props: any) => {
                                       </h6>
                                     </td>
                                     <td className="px-3.5 py-2.5 border-b border-slate-200 dark:border-zink-500">
-                                      <Counter
+                                      {row.quantity}
+                                      {/* <Counter
                                         name="quantity"
                                         initialValue={row.quantity}
                                         onCountChange={(value) => {
@@ -553,7 +553,7 @@ const UpdateReceiptImport = (props: any) => {
                                             );
                                           });
                                         }}
-                                      />
+                                      /> */}
                                     </td>
                                     <td className="px-3.5 py-2.5 border-b border-slate-200 dark:border-zink-500">
                                       {formatMoney(row.price)}
