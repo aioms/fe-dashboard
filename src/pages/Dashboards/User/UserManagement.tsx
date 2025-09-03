@@ -571,8 +571,7 @@ const UserManagement = () => {
                 value={validation.values.storeCode || ""}
               >
                 <option value="">Chọn chi nhánh</option>
-                <option value="KS1">KS1</option>
-                <option value="KS2">KS2</option>
+                <option value="KS">KS</option>
                 <option value="KH">KH</option>
               </select>
               {validation.touched.storeCode && validation.errors.storeCode ? (

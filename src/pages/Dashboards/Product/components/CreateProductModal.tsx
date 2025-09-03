@@ -689,9 +689,8 @@ const CreateProductModal: FC<props> = memo(
                             onChange={validation.handleChange}
                             value={validation.values.warehouse || "Chọn"}
                           >
-                            <option value="Kho KS1">Kho KS1</option>
-                            <option value="Kho KS2">Kho KS2</option>
-                            <option value="Kho KH">Kho KH</option>
+                            <option value="KS">Kho KS</option>
+                            <option value="KH">Kho KH</option>
                           </select>
                           {validation.touched.warehouse &&
                           validation.errors.warehouse ? (
