@@ -401,9 +401,8 @@ const CreateReceiptReturn = (props: any) => {
                       value={validation.values.warehouse || ""}
                     >
                       <option value="">Chọn kho</option>
-                      <option value="Kho KS1">Kho KS1</option>
-                      <option value="Kho KS2">Kho KS2</option>
-                      <option value="Kho KH">Kho KH</option>
+                      <option value="KS">Kho KS</option>
+                      <option value="KH">Kho KH</option>
                     </select>
                     {validation.touched.warehouse &&
                     validation.errors.warehouse ? (
