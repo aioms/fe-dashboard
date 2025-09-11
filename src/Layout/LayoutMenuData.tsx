@@ -145,7 +145,7 @@ const menuData: any = [
       {
         id: "bill-page",
         label: "Hóa đơn",
-        link: "/bill",
+        link: "/orders",
         parentId: "sales-dashboard",
       },
       {

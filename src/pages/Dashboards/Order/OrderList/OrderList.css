@@ -1,0 +1,74 @@
+/* Order List Styles */
+.dropdown-order-action {
+  position: relative;
+}
+
+.dropdown-order-action.dropdown-bottom .dropdown-content {
+  top: auto;
+  bottom: 100%;
+  margin-bottom: 0.25rem;
+  margin-top: 0;
+}
+
+.order-id {
+  font-weight: 500;
+}
+
+.order-id:hover {
+  text-decoration: underline;
+}
+
+.table-dropdown-container {
+  position: relative;
+}
+
+.table-dropdown-container .dropdown {
+  position: static;
+}
+
+.table-dropdown-container .dropdown-content {
+  position: absolute;
+  z-index: 1001;
+}
+
+/* Status badges */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dropdown-order-action .dropdown-content {
+    right: 0;
+    left: auto;
+    transform: none;
+  }
+}
+
+/* Loading states */
+.order-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Search input focus */
+.search:focus {
+  box-shadow: 0 0 0 3px rgba(var(--custom-500), 0.1);
+}
+
+/* Filter section */
+.filter-section {
+  background: rgba(248, 250, 252, 0.5);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dark .filter-section {
+  background: rgba(39, 39, 42, 0.5);
+}
