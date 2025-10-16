@@ -19,6 +19,7 @@ import ProductReducer from "./products/reducer";
 import ReceiptImportReducer from "./receipt-import/reducer";
 import ReceiptReturnReducer from "./receipt-return/reducer";
 import ReceiptCheckReducer from "./receipt-check/reducer";
+import ReceiptPaymentReducer from "./receipt-payment/reducer";
 
 // Supplier Reducer
 import SupplierReducer from "./supplier/reducer";
@@ -34,6 +35,7 @@ const rootReducer = combineReducers({
   ReceiptImport: ReceiptImportReducer,
   ReceiptReturn: ReceiptReturnReducer,
   ReceiptCheck: ReceiptCheckReducer,
+  ReceiptPayment: ReceiptPaymentReducer,
   Supplier: SupplierReducer,
   Customer: CustomerReducer,
   Order: OrderReducer,

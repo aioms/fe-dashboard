@@ -154,6 +154,12 @@ const menuData: any = [
         link: "/sales-channel",
         parentId: "sales-dashboard",
       },
+      {
+        id: "debt-management-page",
+        label: "Công nợ",
+        link: "/receipt-payment",
+        parentId: "sales-dashboard",
+      },
     ],
   },
   {

@@ -19,8 +19,22 @@ export const getEnvironment = (): Environment => {
 
 export const convertObjToQueryString = (params: Record<string, any>) => {
   return Object.keys(params)
-    .map((key) => key + "=" + params[key])
+    .filter((key) => params[key] !== undefined && params[key] !== null && params[key] !== "")
+    .map((key) => key + "=" + encodeURIComponent(params[key]))
     .join("&");
+};
+
+export const cleanObject = <T extends Record<string, any>>(obj: T): Partial<T> => {
+  const cleaned: Partial<T> = {};
+  
+  Object.keys(obj).forEach((key) => {
+    const value = obj[key];
+    if (value !== undefined && value !== null && value !== "") {
+      cleaned[key as keyof T] = value;
+    }
+  });
+  
+  return cleaned;
 };
 
 export const formatMoney = (amount: number) => {
