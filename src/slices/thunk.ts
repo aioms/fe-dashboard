@@ -19,5 +19,6 @@ export * from "./products/thunk";
 export * from "./receipt-import/thunk";
 export * from "./receipt-return/thunk";
 export * from "./receipt-check/thunk";
+export * from "./receipt-payment/thunk";
 export * from "./supplier/thunk";
 export * from "./customer/thunk";

@@ -25,6 +25,12 @@ import ReceiptCheckCreate from "pages/Dashboards/Receipt/ReceiptCheck/ReceiptChe
 import ReceiptCheckUpdate from "pages/Dashboards/Receipt/ReceiptCheck/ReceiptCheckUpdate";
 import ReceiptCheckList from "pages/Dashboards/Receipt/ReceiptCheck/ReceiptCheckList";
 
+// receipt payment
+import ReceiptPaymentManagement from "pages/Dashboards/Receipt/ReceiptPayment/ReceiptPaymentManagement";
+import ReceiptPaymentCreate from "pages/Dashboards/Receipt/ReceiptPayment/ReceiptPaymentCreate";
+import ReceiptPaymentDetail from "pages/Dashboards/Receipt/ReceiptPayment/ReceiptPaymentDetail";
+import ReceiptDebtDetail from "pages/Dashboards/Receipt/ReceiptPayment/ReceiptDebtDetail";
+
 // supplier
 import SupplierList from "pages/Dashboards/Supplier/SupplierList";
 import SupplierDetail from "pages/Dashboards/Supplier/SupplierDetail";
@@ -69,6 +75,12 @@ const authProtectedRoutes: Array<RouteObject> = [
   { path: "/receipt-check/update", component: ReceiptCheckUpdate },
   { path: "/receipt-check/list", component: ReceiptCheckList },
   { path: "/receipt-check/analysis-inventory", component: AnalyticsReport },
+
+  // receipt payment
+  { path: "/receipt-payment", component: ReceiptPaymentManagement },
+  { path: "/receipt-payment/create", component: ReceiptPaymentCreate },
+  { path: "/receipt-payment/detail/:id", component: ReceiptPaymentDetail },
+  { path: "/receipt-debt/detail/:id", component: ReceiptDebtDetail },
 
   // supplier
   { path: "/suppliers", component: SupplierList },
