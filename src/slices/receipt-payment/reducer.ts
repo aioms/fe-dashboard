@@ -4,15 +4,12 @@ import {
   ReceiptPaymentListResponse,
   ReceiptDebt,
   ReceiptDebtListResponse,
-  ReceiptCollection,
-  ReceiptCollectionListResponse,
   ReceiptDebtPaymentHistory
 } from "types/receiptPayment";
 
 export interface ReceiptPaymentState {
   data: ReceiptPayment[];
   debtData: ReceiptDebt[];
-  collectionData: ReceiptCollection[];
   pagination: {
     page: number;
     limit: number;
@@ -25,15 +22,8 @@ export interface ReceiptPaymentState {
     totalItems: number;
     totalPages: number;
   };
-  collectionPagination: {
-    page: number;
-    limit: number;
-    totalItems: number;
-    totalPages: number;
-  };
   loading: boolean;
   debtLoading: boolean;
-  collectionLoading: boolean;
   paymentHistoryLoading: boolean;
   error: string | null;
   selectedPayment: ReceiptPayment | null;
@@ -44,7 +34,6 @@ export interface ReceiptPaymentState {
 const initialState: ReceiptPaymentState = {
   data: [],
   debtData: [],
-  collectionData: [],
   pagination: {
     page: 1,
     limit: 10,
@@ -57,15 +46,8 @@ const initialState: ReceiptPaymentState = {
     totalItems: 0,
     totalPages: 0,
   },
-  collectionPagination: {
-    page: 1,
-    limit: 10,
-    totalItems: 0,
-    totalPages: 0,
-  },
   loading: false,
   debtLoading: false,
-  collectionLoading: false,
   paymentHistoryLoading: false,
   error: null,
   selectedPayment: null,
@@ -93,7 +75,7 @@ const receiptPaymentSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Receipt Debt Actions
+    // Receipt Debt Actions (consolidated)
     getReceiptDebtListStart: (state) => {
       state.debtLoading = true;
       state.error = null;
@@ -105,6 +87,21 @@ const receiptPaymentSlice = createSlice({
       state.error = null;
     },
     getReceiptDebtListFailure: (state, action: PayloadAction<string>) => {
+      state.debtLoading = false;
+      state.error = action.payload;
+    },
+
+    // Delete Receipt Debt
+    deleteReceiptDebtStart: (state) => {
+      state.debtLoading = true;
+      state.error = null;
+    },
+    deleteReceiptDebtSuccess: (state, action: PayloadAction<string>) => {
+      state.debtLoading = false;
+      state.debtData = state.debtData.filter(item => item.id !== action.payload);
+      state.error = null;
+    },
+    deleteReceiptDebtFailure: (state, action: PayloadAction<string>) => {
       state.debtLoading = false;
       state.error = action.payload;
     },
@@ -136,37 +133,6 @@ const receiptPaymentSlice = createSlice({
     },
     getReceiptDebtPaymentHistoryFailure: (state, action: PayloadAction<string>) => {
       state.paymentHistoryLoading = false;
-      state.error = action.payload;
-    },
-
-    // Receipt Collection Actions
-    getReceiptCollectionListStart: (state) => {
-      state.collectionLoading = true;
-      state.error = null;
-    },
-    getReceiptCollectionListSuccess: (state, action: PayloadAction<ReceiptCollectionListResponse>) => {
-      state.collectionLoading = false;
-      state.collectionData = action.payload.data;
-      state.collectionPagination = action.payload.pagination;
-      state.error = null;
-    },
-    getReceiptCollectionListFailure: (state, action: PayloadAction<string>) => {
-      state.collectionLoading = false;
-      state.error = action.payload;
-    },
-
-    // Delete Receipt Collection
-    deleteReceiptCollectionStart: (state) => {
-      state.collectionLoading = true;
-      state.error = null;
-    },
-    deleteReceiptCollectionSuccess: (state, action: PayloadAction<string>) => {
-      state.collectionLoading = false;
-      state.collectionData = state.collectionData.filter(item => item.id !== action.payload);
-      state.error = null;
-    },
-    deleteReceiptCollectionFailure: (state, action: PayloadAction<string>) => {
-      state.collectionLoading = false;
       state.error = action.payload;
     },
 
@@ -243,12 +209,9 @@ export const {
   getReceiptDebtPaymentHistoryStart,
   getReceiptDebtPaymentHistorySuccess,
   getReceiptDebtPaymentHistoryFailure,
-  getReceiptCollectionListStart,
-  getReceiptCollectionListSuccess,
-  getReceiptCollectionListFailure,
-  deleteReceiptCollectionStart,
-  deleteReceiptCollectionSuccess,
-  deleteReceiptCollectionFailure,
+  deleteReceiptDebtStart,
+  deleteReceiptDebtSuccess,
+  deleteReceiptDebtFailure,
   createReceiptPaymentStart,
   createReceiptPaymentSuccess,
   createReceiptPaymentFailure,

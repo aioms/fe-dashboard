@@ -460,7 +460,7 @@ const ReceiptPaymentDetail: React.FC = () => {
                   <div className="flex justify-between">
                     <span className="text-slate-500 dark:text-zink-200">Cập nhật lần cuối:</span>
                     <span className="text-slate-700 dark:text-zink-100">
-                      {new Date(payment.updatedAt).toLocaleString('vi-VN')}
+                      {payment.updatedAt ? new Date(payment.updatedAt).toLocaleString('vi-VN') : 'Chưa cập nhật'}
                     </span>
                   </div>
                 </div>

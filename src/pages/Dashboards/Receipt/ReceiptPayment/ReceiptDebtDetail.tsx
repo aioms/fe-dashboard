@@ -61,6 +61,13 @@ interface ReceiptDebtDetailResponse {
 // Status badge component
 const DebtStatusBadge: React.FC<{ status: ReceiptDebtStatus }> = ({ status }) => {
   const statusConfig = {
+    [ReceiptDebtStatus.DEBT]: {
+      bg: "bg-orange-100",
+      text: "text-orange-800",
+      darkBg: "dark:bg-orange-900",
+      darkText: "dark:text-orange-300",
+      label: "Công nợ"
+    },
     [ReceiptDebtStatus.PENDING]: {
       bg: "bg-red-100",
       text: "text-red-800",
@@ -173,7 +180,7 @@ const ReceiptDebtDetail: React.FC = () => {
 
   const isOverdue = () => {
     if (!debt || debt.status === ReceiptDebtStatus.COMPLETED) return false;
-    return new Date(debt.dueDate) < new Date();
+    return debt.dueDate && new Date(debt.dueDate) < new Date();
   };
 
   const canEdit = debt && debt.status !== ReceiptDebtStatus.COMPLETED;
@@ -372,7 +379,7 @@ const ReceiptDebtDetail: React.FC = () => {
               <div>
                 <div className="font-medium text-red-800">Cảnh báo: Công nợ đã quá hạn</div>
                 <div className="text-sm text-red-600 mt-1">
-                  Hạn thanh toán: {new Date(debt.dueDate).toLocaleDateString('vi-VN')}
+                  Hạn thanh toán: {debt.dueDate ? new Date(debt.dueDate).toLocaleDateString('vi-VN') : ''}
                 </div>
               </div>
             </div>
@@ -394,13 +401,13 @@ const ReceiptDebtDetail: React.FC = () => {
                     <div>
                       <div className="text-sm text-slate-500 dark:text-zink-200">Hạn thanh toán</div>
                       <div className={`font-medium mt-1 ${overdueStatus ? "text-red-600" : "text-slate-700 dark:text-zink-100"}`}>
-                        {new Date(debt.dueDate).toLocaleDateString('vi-VN', {
+                        {debt.dueDate ? new Date(debt.dueDate).toLocaleDateString('vi-VN', {
                           year: 'numeric',
                           month: 'long',
                           day: 'numeric',
                           hour: '2-digit',
                           minute: '2-digit'
-                        })}
+                        }) : "Chưa xác định"}
                       </div>
                     </div>
                   </div>

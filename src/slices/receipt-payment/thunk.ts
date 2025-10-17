@@ -12,12 +12,9 @@ import {
   getReceiptDebtPaymentHistoryStart,
   getReceiptDebtPaymentHistorySuccess,
   getReceiptDebtPaymentHistoryFailure,
-  getReceiptCollectionListStart,
-  getReceiptCollectionListSuccess,
-  getReceiptCollectionListFailure,
-  deleteReceiptCollectionStart,
-  deleteReceiptCollectionSuccess,
-  deleteReceiptCollectionFailure,
+  deleteReceiptDebtStart,
+  deleteReceiptDebtSuccess,
+  deleteReceiptDebtFailure,
   createReceiptPaymentStart,
   createReceiptPaymentSuccess,
   createReceiptPaymentFailure,
@@ -31,7 +28,6 @@ import {
 import {
   ReceiptPaymentFilterDto,
   ReceiptDebtFilterDto,
-  ReceiptCollectionFilterDto,
   CreateReceiptPaymentRequestDto,
   UpdateReceiptPaymentRequestDto,
 } from "types/receiptPayment";
@@ -77,14 +73,14 @@ export const getReceiptPaymentDetail = createAsyncThunk(
   }
 );
 
-// Get Receipt Debt List
+// Get Receipt Debt List (consolidated)
 export const getReceiptDebtList = createAsyncThunk(
   "receiptPayment/getDebtList",
   async (filters: ReceiptDebtFilterDto, { dispatch, rejectWithValue }) => {
     try {
       dispatch(getReceiptDebtListStart());
 
-      const response = await receiptPaymentAPI.getReceiptDebts(filters);
+      const response = await receiptPaymentAPI.getReceiptDebtList(filters);
 
       const data = {
         data: response.data,
@@ -96,6 +92,25 @@ export const getReceiptDebtList = createAsyncThunk(
     } catch (error: any) {
       const errorMessage = error.message || 'An error occurred while fetching receipt debts';
       dispatch(getReceiptDebtListFailure(errorMessage));
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+// Delete Receipt Debt (consolidated)
+export const deleteReceiptDebt = createAsyncThunk(
+  "receiptPayment/deleteDebt",
+  async (id: string, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(deleteReceiptDebtStart());
+
+      await receiptPaymentAPI.deleteReceiptDebt(id);
+
+      dispatch(deleteReceiptDebtSuccess(id));
+      return id;
+    } catch (error: any) {
+      const errorMessage = error.message || 'An error occurred while deleting receipt debt';
+      dispatch(deleteReceiptDebtFailure(errorMessage));
       return rejectWithValue(errorMessage);
     }
   }
@@ -191,49 +206,6 @@ export const deleteReceiptPayment = createAsyncThunk(
     } catch (error: any) {
       const errorMessage = error.message || 'An error occurred while deleting receipt payment';
       dispatch(deleteReceiptPaymentFailure(errorMessage));
-      return rejectWithValue(errorMessage);
-    }
-  }
-);
-
-// Get Receipt Collection List
-export const getReceiptCollectionList = createAsyncThunk(
-  "receiptPayment/getCollectionList",
-  async (filters: ReceiptCollectionFilterDto, { dispatch, rejectWithValue }) => {
-    try {
-      dispatch(getReceiptCollectionListStart());
-
-      const response = await receiptPaymentAPI.getReceiptCollections(filters);
-
-      const data = {
-        data: response.data,
-        pagination: response.metadata
-      };
-
-      dispatch(getReceiptCollectionListSuccess(data));
-      return data;
-    } catch (error: any) {
-      const errorMessage = error.message || 'An error occurred while fetching receipt collections';
-      dispatch(getReceiptCollectionListFailure(errorMessage));
-      return rejectWithValue(errorMessage);
-    }
-  }
-);
-
-// Delete Receipt Collection
-export const deleteReceiptCollection = createAsyncThunk(
-  "receiptPayment/deleteCollection",
-  async (id: string, { dispatch, rejectWithValue }) => {
-    try {
-      dispatch(deleteReceiptCollectionStart());
-
-      await receiptPaymentAPI.deleteReceiptCollection(id);
-
-      dispatch(deleteReceiptCollectionSuccess(id));
-      return id;
-    } catch (error: any) {
-      const errorMessage = error.message || 'An error occurred while deleting receipt collection';
-      dispatch(deleteReceiptCollectionFailure(errorMessage));
       return rejectWithValue(errorMessage);
     }
   }

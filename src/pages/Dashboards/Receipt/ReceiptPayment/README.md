@@ -60,7 +60,6 @@ src/pages/Dashboards/Receipt/ReceiptPayment/
 ├── ReceiptPaymentCreate.tsx        # Create new payment form
 ├── ReceiptPaymentDetail.tsx        # Payment detail view
 ├── ReceiptDebtDetail.tsx           # Debt detail view (NEW)
-├── mockData.ts                     # Mock data for testing
 ├── components/
 │   ├── ReceiptPaymentList.tsx      # Payment list component
 │   ├── ReceiptDebtList.tsx         # Debt list component

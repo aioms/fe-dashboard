@@ -34,7 +34,7 @@ import {
   ReceiptDebtStatus,
   ReceiptDebtType
 } from "types/receiptPayment";
-import { getReceiptDebtList, deleteReceiptCollection } from "slices/receipt-payment/thunk";
+import { getReceiptDebtList, deleteReceiptDebt } from "slices/receipt-payment/thunk";
 
 // Status filter options
 const statusOptions = [
@@ -137,7 +137,7 @@ const ReceiptDebtList: React.FC = () => {
 
   const handleDelete = () => {
     if (selectedCollection) {
-      dispatch(deleteReceiptCollection(selectedCollection.id));
+      dispatch(deleteReceiptDebt(selectedCollection.id));
       setDeleteModal(false);
       setSelectedCollection(null);
     }
@@ -152,6 +152,13 @@ const ReceiptDebtList: React.FC = () => {
   // Get status badge
   const getStatusBadge = (status: ReceiptDebtStatus) => {
     const statusConfig = {
+      [ReceiptDebtStatus.DEBT]: {
+        bg: "bg-orange-100",
+        text: "text-orange-800",
+        darkBg: "dark:bg-orange-900",
+        darkText: "dark:text-orange-300",
+        label: "Công nợ"
+      },
       [ReceiptDebtStatus.PENDING]: {
         bg: "bg-red-100",
         text: "text-red-800",

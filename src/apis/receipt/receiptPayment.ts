@@ -7,8 +7,8 @@ import {
   CreateReceiptPaymentRequestDto,
   UpdateReceiptPaymentRequestDto,
   ReceiptPaymentFilterDto,
-  ReceiptCollectionFilterDto,
-  ReceiptDebtFilterDto
+  ReceiptDebtFilterDto,
+  UnpaidReceiptImportListResponse
 } from "types/receiptPayment";
 
 // Get Receipt Payments List
@@ -34,31 +34,8 @@ export const getReceiptPayments = async (
   };
 };
 
-// Get Receipt Collections List (Phiếu Thu)
-export const getReceiptCollections = async (
-  payload: ReceiptCollectionFilterDto
-) => {
-  const cleanedPayload = cleanObject(payload);
-  const query = convertObjToQueryString(cleanedPayload);
-
-  const response: IHttpResponse = await request.get(`/receipt-collections${query ? `?${query}` : ''}`);
-  const { isHasError, message } = ErrorHandler.checkResponse(
-    response,
-    HttpStatusCode.OK
-  );
-
-  if (isHasError) {
-    throw new Error(message);
-  }
-
-  return {
-    data: response.data,
-    metadata: response.metadata,
-  };
-};
-
-// Get Receipt Debts List
-export const getReceiptDebts = async (
+// Get Receipt Debts List (Phiếu Thu / Công Nợ)
+export const getReceiptDebtList = async (
   payload: ReceiptDebtFilterDto
 ) => {
   const cleanedPayload = cleanObject(payload);
@@ -158,9 +135,9 @@ export const deleteReceiptPayment = async (id: string) => {
   return id;
 };
 
-// Delete Receipt Collection
-export const deleteReceiptCollection = async (id: string) => {
-  const response: IHttpResponse = await request.delete(`/receipt-collections/${id}`);
+// Delete Receipt Debt
+export const deleteReceiptDebt = async (id: string) => {
+  const response: IHttpResponse = await request.delete(`/receipt-debts/${id}`);
   const { isHasError, message } = ErrorHandler.checkResponse(
     response,
     HttpStatusCode.NO_CONTENT
@@ -174,7 +151,7 @@ export const deleteReceiptCollection = async (id: string) => {
 };
 
 // Get Unpaid Receipts for Supplier Payment
-export const getUnpaidReceipts = async (supplierId?: string) => {
+export const getUnpaidReceipts = async (supplierId?: string): Promise<UnpaidReceiptImportListResponse> => {
   const params = cleanObject({ supplierId });
   const query = convertObjToQueryString(params);
 
@@ -188,7 +165,12 @@ export const getUnpaidReceipts = async (supplierId?: string) => {
     throw new Error(message);
   }
 
-  return response.data;
+  return {
+    data: response.data,
+    metadata: response.metadata,
+    success: response.success,
+    statusCode: response.statusCode
+  };
 };
 
 // Get Receipt Debt Payment History

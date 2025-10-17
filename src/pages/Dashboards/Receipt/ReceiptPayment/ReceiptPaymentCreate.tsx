@@ -15,10 +15,11 @@ import {
   ReceiptPaymentExpenseType,
   ReceiptPaymentStatus,
   PaymentMethod,
-  Attachment
+  Attachment,
+  UnpaidReceiptImport,
+  UnpaidReceiptImportListResponse
 } from "types/receiptPayment";
 import { createReceiptPayment, getUnpaidReceipts } from "slices/receipt-payment/thunk";
-import { UnpaidReceipt } from "./mockData";
 
 const expenseTypeOptions = [
   { value: ReceiptPaymentExpenseType.SUPPLIER_PAYMENT, label: "Chi tiền hàng NCC" },
@@ -54,22 +55,28 @@ const ReceiptPaymentCreate: React.FC = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [loadingReceipts, setLoadingReceipts] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-  const [selectedReceipt, setSelectedReceipt] = useState<UnpaidReceipt | null>(null);
-  const [unpaidReceipts, setUnpaidReceipts] = useState<UnpaidReceipt[]>([]);
+  const [selectedReceipt, setSelectedReceipt] = useState<UnpaidReceiptImport | null>(null);
+  const [unpaidReceipts, setUnpaidReceipts] = useState<UnpaidReceiptImport[]>([]);
 
   // Load unpaid receipts when expense type is supplier payment
   useEffect(() => {
     if (formData.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT) {
       // Load unpaid receipts from API
+      setLoadingReceipts(true);
       dispatch(getUnpaidReceipts(undefined))
         .unwrap()
-        .then((receipts: UnpaidReceipt[]) => {
-          setUnpaidReceipts(receipts);
+        .then((response: UnpaidReceiptImportListResponse) => {
+          setUnpaidReceipts(response.data || []);
         })
         .catch((error: any) => {
           console.error('Error loading unpaid receipts:', error);
+          toast.error('Không thể tải danh sách phiếu nhập chưa thanh toán');
           setUnpaidReceipts([]);
+        })
+        .finally(() => {
+          setLoadingReceipts(false);
         });
     } else {
       setUnpaidReceipts([]);
@@ -86,12 +93,15 @@ const ReceiptPaymentCreate: React.FC = () => {
   // Update form data when receipt is selected
   useEffect(() => {
     if (selectedReceipt) {
+      // Calculate remaining amount (totalAmount - paidAmount if available)
+      const remainingAmount = selectedReceipt.totalAmount || 0;
+      
       setFormData(prev => ({
         ...prev,
         receiptImportId: selectedReceipt.id,
         supplierId: selectedReceipt.supplier.id,
-        paymentObject: `${selectedReceipt.code} - ${selectedReceipt.supplier.name}`,
-        amount: selectedReceipt.remainingAmount,
+        paymentObject: `${selectedReceipt.receiptNumber} - ${selectedReceipt.supplier.name}`,
+        amount: remainingAmount,
       }));
     }
   }, [selectedReceipt]);
@@ -241,12 +251,15 @@ const ReceiptPaymentCreate: React.FC = () => {
                     className="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
                     value={selectedReceipt?.id || ''}
                     onChange={(e) => handleReceiptSelect(e.target.value)}
+                    disabled={loadingReceipts}
                     required
                   >
-                    <option value="">Chọn phiếu nhập</option>
+                    <option value="">
+                      {loadingReceipts ? 'Đang tải...' : 'Chọn phiếu nhập'}
+                    </option>
                     {unpaidReceipts.map((receipt) => (
                       <option key={receipt.id} value={receipt.id}>
-                        {receipt.code} - {receipt.supplier.name} - Còn lại: {receipt.remainingAmount.toLocaleString('vi-VN')}₫
+                        {receipt.receiptNumber} - {receipt.supplier.name} - Tổng: {receipt.totalAmount.toLocaleString('vi-VN')}₫
                       </option>
                     ))}
                   </select>
@@ -280,14 +293,17 @@ const ReceiptPaymentCreate: React.FC = () => {
                       <Info className="size-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <div className="text-sm">
                         <div className="font-medium text-blue-700 dark:text-blue-300 mb-1">
-                          Thông tin phiếu nhập: {selectedReceipt.code}
+                          Thông tin phiếu nhập: {selectedReceipt.receiptNumber}
                         </div>
                         <div className="text-blue-600 dark:text-blue-400 space-y-1">
                           <div>Nhà cung cấp: <span className="font-medium">{selectedReceipt.supplier.name}</span></div>
                           <div>Tổng tiền: <span className="font-medium">{selectedReceipt.totalAmount.toLocaleString('vi-VN')}₫</span></div>
-                          <div>Đã thanh toán: <span className="font-medium">{selectedReceipt.paidAmount.toLocaleString('vi-VN')}₫</span></div>
-                          <div>Còn lại: <span className="font-medium text-red-600">{selectedReceipt.remainingAmount.toLocaleString('vi-VN')}₫</span></div>
-                          <div>Hạn thanh toán: <span className="font-medium">{new Date(selectedReceipt.dueDate).toLocaleDateString('vi-VN')}</span></div>
+                          <div>Kho: <span className="font-medium">{selectedReceipt.warehouse || '-'}</span></div>
+                          <div>Ngày nhập: <span className="font-medium">{selectedReceipt.importDate ? new Date(selectedReceipt.importDate).toLocaleDateString('vi-VN') : '-'}</span></div>
+                          <div>Hạn thanh toán: <span className="font-medium">{selectedReceipt.paymentDate ? new Date(selectedReceipt.paymentDate).toLocaleDateString('vi-VN') : '-'}</span></div>
+                          {selectedReceipt.note && (
+                            <div>Ghi chú: <span className="font-medium">{selectedReceipt.note}</span></div>
+                          )}
                         </div>
                       </div>
                     </div>
