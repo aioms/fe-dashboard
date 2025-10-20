@@ -112,7 +112,7 @@ export class HttpRequest {
           window.location.replace("/login");
         }
 
-        return error;
+        return data;
       },
     );
 
