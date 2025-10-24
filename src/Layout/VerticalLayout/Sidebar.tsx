@@ -9,6 +9,7 @@ import logoDarkSm from "assets/images/logo/logo5-sm.png";
 import logoLightSm from "assets/images/logo/logo6-sm.png";
 import logoDark from "assets/images/logo/logo5.png";
 import logoLight from "assets/images/logo/logo6.png";
+import logoVerifyNK from "assets/images/logo/logo_verify_nk.png";
 
 import VerticalLayout from "../VerticalLayout/Index";
 import withRouter from "Common/withRouter";
@@ -138,6 +139,27 @@ const Sidebar = ({ layoutType, layoutSidebarSizeType }: any) => {
             </div>
           </div>
         )}
+
+        {/* Bottom Logo Section */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-vertical-menu-border group-data-[sidebar=dark]:border-vertical-menu-border-dark group-data-[sidebar=brand]:border-vertical-menu-border-brand group-data-[sidebar=modern]:border-vertical-menu-border-modern group-data-[sidebar=dark]:dark:border-zink-600 bg-vertical-menu group-data-[sidebar=dark]:bg-vertical-menu-dark group-data-[sidebar=brand]:bg-vertical-menu-brand group-data-[sidebar=modern]:bg-gradient-to-tr group-data-[sidebar=modern]:to-vertical-menu-to-modern group-data-[sidebar=modern]:from-vertical-menu-form-modern group-data-[sidebar=dark]:dark:bg-zink-700">
+          <div className="flex flex-col items-center text-center group-data-[sidebar-size=sm]:hidden">
+            <img
+              src={logoVerifyNK}
+              alt="Ngân Kim Trading Company Limited"
+              className="h-20 mx-auto object-contain transition-opacity duration-200 hover:opacity-80"
+            />
+            <div className="text-xs font-medium text-vertical-menu-item group-data-[sidebar=dark]:text-vertical-menu-item-dark group-data-[sidebar=brand]:text-vertical-menu-item-brand group-data-[sidebar=modern]:text-vertical-menu-item-modern group-data-[sidebar=dark]:dark:text-zink-200 leading-tight tracking-wide opacity-90" style={{ marginTop: -5 }}>
+              Ngân Kim Trading<br />Company Limited
+            </div>
+          </div>
+          <div className="hidden group-data-[sidebar-size=sm]:flex group-data-[sidebar-size=sm]:justify-center">
+            <img
+              src={logoVerifyNK}
+              alt="Ngân Kim Trading Company Limited"
+              className="h-6 object-contain transition-opacity duration-200 hover:opacity-80"
+            />
+          </div>
+        </div>
       </div>
 
       <div
