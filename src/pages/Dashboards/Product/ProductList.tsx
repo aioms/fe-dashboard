@@ -67,7 +67,9 @@ const ProductList = () => {
 
   const [eventData, setEventData] = useState<any>({});
   const [fileImport, setFileImport] = useState(null);
-  const [filters, setFilters] = useState<Record<string, string | number>>({});
+  const [filters, setFilters] = useState<Record<string, string | number>>({
+    withSuppliers: "true"
+  });
   const importInputFile = useRef(null);
 
   // Modals
