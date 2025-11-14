@@ -21,15 +21,38 @@ export interface IProduct {
   imageUrls?: string[];
 }
 
-export interface IInventoryRecord {
+export enum InventoryChangeType { 
+  IMPORT = "import", // From import receipt 
+  RETURN = "return", // From return receipt 
+  CHECK = "check", // From inventory check 
+  DEBT = "debt", // From debt receipt 
+  MANUAL = "manual", // Manual adjustment 
+  SYSTEM = "system", // System adjustment 
+  ORDER = "order", // From order (negative inventory change) 
+}
+
+export interface IInventoryLog {
   id: string;
-  date: string;
-  type: "import" | "export" | "adjustment";
-  quantity: number;
-  reason: string;
-  reference?: string;
-  remainingStock: number;
-  note?: string;
+  changeType: InventoryChangeType;
+  previousInventory: number;
+  inventoryChange: number;
+  currentInventory: number;
+  previousCostPrice: number;
+  costPriceChange: number;
+  currentCostPrice: number;
+  referenceId: string;
+  user: {
+    id: string,
+    fullname: string,
+  },
+  createdAt: string;
+}
+
+export interface IInventoryLogsQueryParams {
+  page?: number;
+  limit?: number;
+  sortField?: string;
+  sortOrder?: "asc" | "desc";
 }
 
 export interface IProductSupplier {

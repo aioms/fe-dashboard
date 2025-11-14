@@ -51,6 +51,39 @@ export const formatMoneyWithVND = (amount: number) => {
   }).format(amount);
 };
 
+export const formatNumberWithSeparator = (number: number) => {
+  if (!number && number !== 0) return "";
+  return number.toLocaleString("vi-VN");
+};
+
+export const formatDateTime = (dateString: string) => {
+  if (!dateString) return "";
+  
+  const date = new Date(dateString);
+  return date.toLocaleDateString("vi-VN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  });
+};
+
+export const formatDateTimeLong = (dateString: string) => {
+  if (!dateString) return "";
+  
+  const date = new Date(dateString);
+  return date.toLocaleDateString("vi-VN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  });
+};
+
 export const isHasKey = (obj: Record<string, any>) => {
   return Object.keys(obj).length;
 };
