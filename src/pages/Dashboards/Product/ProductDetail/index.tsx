@@ -16,14 +16,11 @@ import InventoryHistory from "./components/InventoryHistory";
 import SupplierInfo from "./components/SupplierInfo";
 
 // Types
-import type { IProduct, IInventoryRecord } from "./index.d";
+import type { IProduct } from "./index.d";
 
 function ProductDetail(props: any) {
   const { id } = useParams();
   const [product, setProduct] = useState<IProduct | null>(null);
-  const [inventoryHistory, setInventoryHistory] = useState<IInventoryRecord[]>(
-    []
-  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,20 +48,7 @@ function ProductDetail(props: any) {
           throw new Error(response.message || "Failed to fetch product data");
         }
 
-        // Fetch inventory history
-        try {
-          const inventoryResponse: IHttpResponse = await request.get(
-            `/products/${id}/inventory-history`
-          );
-          if (inventoryResponse.success) {
-            setInventoryHistory(inventoryResponse.data);
-          }
-        } catch (inventoryError: any) {
-          console.warn(
-            "Failed to fetch inventory history:",
-            inventoryError.message
-          );
-        }
+        // Inventory history will be fetched by the InventoryHistory component itself
       } catch (error: any) {
         console.error("Error fetching product data:", error);
         setError(error.message || "Failed to load product information");
@@ -178,7 +162,7 @@ function ProductDetail(props: any) {
               </Tab.Pane>
 
               <Tab.Pane eventKey="inventory-history">
-                <InventoryHistory records={inventoryHistory} />
+                <InventoryHistory productId={id!} />
               </Tab.Pane>
 
               <Tab.Pane eventKey="supplier-info">

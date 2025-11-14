@@ -281,10 +281,14 @@ const ProductList = () => {
         enableSorting: true,
         cell: (cell: any) => {
           const value = cell.getValue();
-          const supplier = value
-            .map((supplier: any) => supplier.name)
-            .join(", ");
-          return supplier;
+          if (value && Array.isArray(value)) {
+            const supplier = value
+              .map((supplier: any) => supplier.name)
+              .join(", ");
+            return supplier;
+          }
+
+          return ""
         },
       },
       {
