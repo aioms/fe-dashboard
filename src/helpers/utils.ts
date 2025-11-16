@@ -17,6 +17,15 @@ export const getEnvironment = (): Environment => {
   }
 };
 
+export const getS3ImageUrl = (path: string) => {
+  // Check if path start with http, if so, return path as is
+  if (path.startsWith('http')) {
+    return path;
+  }
+
+  return `${process.env.REACT_APP_S3_URL}/${process.env.REACT_APP_S3_BUCKET}/${path}`;
+}
+
 export const convertObjToQueryString = (params: Record<string, any>) => {
   return Object.keys(params)
     .filter((key) => params[key] !== undefined && params[key] !== null && params[key] !== "")
