@@ -1,6 +1,6 @@
 import React from "react";
 import Barcode from "react-barcode";
-import { formatMoney } from "helpers/utils";
+import { formatMoney, getS3ImageUrl } from "helpers/utils";
 import { ProductStatus } from "../../components/ProductStatus";
 import type { IProduct } from "../index.d";
 
@@ -25,9 +25,8 @@ const ProductInformation: React.FC<ProductInformationProps> = ({ product }) => {
     <div>
       <label className="inline-block mb-2 text-base font-medium">{label}</label>
       <p
-        className={`text-base ${
-          !value ? "text-slate-400 dark:text-zink-300 italic" : ""
-        }`}
+        className={`text-base ${!value ? "text-slate-400 dark:text-zink-300 italic" : ""
+          }`}
       >
         {value ? (formatter ? formatter(value) : value) : `${label} đang trống`}
       </p>
@@ -56,9 +55,8 @@ const ProductInformation: React.FC<ProductInformationProps> = ({ product }) => {
           <div className="xl:col-span-2">
             <label className="inline-block mb-2 text-base font-medium">Ghi chú</label>
             <div className="p-3 bg-white dark:bg-zink-700 border border-slate-200 dark:border-zink-500 rounded-md">
-              <p className={`text-base whitespace-pre-wrap ${
-                !product.note ? "text-slate-400 dark:text-zink-300 italic" : "text-slate-600 dark:text-zink-200"
-              }`}>
+              <p className={`text-base whitespace-pre-wrap ${!product.note ? "text-slate-400 dark:text-zink-300 italic" : "text-slate-600 dark:text-zink-200"
+                }`}>
                 {product.note || "Chưa có ghi chú"}
               </p>
             </div>
@@ -84,13 +82,12 @@ const ProductInformation: React.FC<ProductInformationProps> = ({ product }) => {
               Tồn kho hiện tại
             </label>
             <p
-              className={`text-base font-semibold ${
-                product.inventory > 0
+              className={`text-base font-semibold ${product.inventory > 0
                   ? product.inventory > 10
                     ? "text-green-600"
                     : "text-orange-600"
                   : "text-red-600"
-              }`}
+                }`}
             >
               {product.inventory} {product.unit}
             </p>
@@ -123,24 +120,35 @@ const ProductInformation: React.FC<ProductInformationProps> = ({ product }) => {
       </div>
 
       {/* Product Image */}
-      {product.imageUrls && (
-        <div className="bg-slate-50 dark:bg-zink-600 p-4 rounded-lg">
-          <h5 className="text-lg font-medium mb-4">Hình ảnh sản phẩm</h5>
-          <div className="flex justify-start">
-            {product.imageUrls.map((url, index) => (
-              <img
-                src={url}
-                alt={product.productName}
-                key={index}
-                className="max-w-xs max-h-64 object-contain rounded-lg border border-slate-200 dark:border-zink-500"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = "none";
-                }}
-              />
-            ))}
-          </div>
+      <div className="bg-slate-50 dark:bg-zink-600 p-4 rounded-lg">
+        <h5 className="text-lg font-medium mb-4">Hình ảnh sản phẩm</h5>
+        <div className="flex justify-start">
+          {product.imageUrls && product.imageUrls.map((url, index) => (
+            <img
+              src={url}
+              alt={product.productName}
+              key={index}
+              className="max-w-xs max-h-64 object-contain rounded-lg border border-slate-200 dark:border-zink-500"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
+            />
+          ))}
+
+          {product.images && product.images.map((image) => (
+            <img
+              src={getS3ImageUrl(image.path)}
+              alt={product.productName}
+              key={image.id}
+              className="max-w-xs max-h-64 object-contain rounded-lg border border-slate-200 dark:border-zink-500"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
+            />
+          ))}
         </div>
-      )}
+      </div>
+
     </div>
   );
 };

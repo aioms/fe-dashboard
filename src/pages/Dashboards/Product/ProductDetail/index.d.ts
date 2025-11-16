@@ -19,6 +19,10 @@ export interface IProduct {
   updatedAt?: string;
   barcode?: string;
   imageUrls?: string[];
+  images?: Array<{
+    id: string;
+    path: string;
+  }>;
 }
 
 export enum InventoryChangeType { 
