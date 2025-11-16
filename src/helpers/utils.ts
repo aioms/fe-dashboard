@@ -19,30 +19,46 @@ export const getEnvironment = (): Environment => {
 
 export const getS3ImageUrl = (path: string) => {
   // Check if path start with http, if so, return path as is
-  if (path.startsWith('http')) {
+  if (path.startsWith("http")) {
     return path;
   }
 
-  return `${process.env.REACT_APP_CDN_URL || process.env.REACT_APP_S3_URL}/${process.env.REACT_APP_S3_BUCKET}/${path}`;
-}
+  const {
+    REACT_APP_ENABLE_CDN,
+    REACT_APP_CDN_URL,
+    REACT_APP_S3_URL,
+    REACT_APP_S3_BUCKET,
+  } = process.env;
+
+  if (REACT_APP_ENABLE_CDN === "true") {
+    return `${REACT_APP_CDN_URL}/${REACT_APP_S3_BUCKET}/${path}`;
+  }
+
+  return `${REACT_APP_S3_URL}/${REACT_APP_S3_BUCKET}/${path}`;
+};
 
 export const convertObjToQueryString = (params: Record<string, any>) => {
   return Object.keys(params)
-    .filter((key) => params[key] !== undefined && params[key] !== null && params[key] !== "")
+    .filter(
+      (key) =>
+        params[key] !== undefined && params[key] !== null && params[key] !== "",
+    )
     .map((key) => key + "=" + encodeURIComponent(params[key]))
     .join("&");
 };
 
-export const cleanObject = <T extends Record<string, any>>(obj: T): Partial<T> => {
+export const cleanObject = <T extends Record<string, any>>(
+  obj: T,
+): Partial<T> => {
   const cleaned: Partial<T> = {};
-  
+
   Object.keys(obj).forEach((key) => {
     const value = obj[key];
     if (value !== undefined && value !== null && value !== "") {
       cleaned[key as keyof T] = value;
     }
   });
-  
+
   return cleaned;
 };
 
@@ -67,7 +83,7 @@ export const formatNumberWithSeparator = (number: number) => {
 
 export const formatDateTime = (dateString: string) => {
   if (!dateString) return "";
-  
+
   const date = new Date(dateString);
   return date.toLocaleDateString("vi-VN", {
     year: "numeric",
@@ -75,13 +91,13 @@ export const formatDateTime = (dateString: string) => {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-    hour12: false
+    hour12: false,
   });
 };
 
 export const formatDateTimeLong = (dateString: string) => {
   if (!dateString) return "";
-  
+
   const date = new Date(dateString);
   return date.toLocaleDateString("vi-VN", {
     year: "numeric",
@@ -89,7 +105,7 @@ export const formatDateTimeLong = (dateString: string) => {
     day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-    hour12: true
+    hour12: true,
   });
 };
 
