@@ -23,7 +23,7 @@ export const getS3ImageUrl = (path: string) => {
     return path;
   }
 
-  return `${process.env.REACT_APP_S3_URL}/${process.env.REACT_APP_S3_BUCKET}/${path}`;
+  return `${process.env.REACT_APP_CDN_URL || process.env.REACT_APP_S3_URL}/${process.env.REACT_APP_S3_BUCKET}/${path}`;
 }
 
 export const convertObjToQueryString = (params: Record<string, any>) => {
