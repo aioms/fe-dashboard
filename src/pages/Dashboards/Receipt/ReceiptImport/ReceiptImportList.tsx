@@ -1,7 +1,6 @@
 import React, {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -17,14 +16,9 @@ import {
   PackageX,
   Plus,
   RefreshCcw,
-  MoreHorizontal,
-  Trash2,
-  FileEdit,
-  Eye,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { Dropdown } from "Common/Components/Dropdown";
 import DeleteModal from "Common/DeleteModal";
 
 // react-redux
@@ -38,14 +32,12 @@ import {
 } from "slices/thunk";
 import { ToastContainer } from "react-toastify";
 import { PaginationState } from "@tanstack/react-table";
-import TableCustom from "Common/TableCustom";
-import { formatMoney } from "helpers/utils";
 import PrintMultipleBarcodeModal from "../components/PrintMultipleBarcodeModal";
 import PrintSingleBarcodeModal from "../components/PrintSingleBarcodeModal";
 import { TimePicker } from "Common/Components/TimePIcker";
 import { getDate } from "helpers/date";
-import { ReceiptStatus } from "./components/ReceiptStatus";
 import { NoTableResult } from "Common/Components/NoTableResult";
+import ExpandableReceiptTable from "./components/ExpandableReceiptTable";
 
 const ReceiptImportList = () => {
   const dispatch = useDispatch<any>();
@@ -107,8 +99,10 @@ const ReceiptImportList = () => {
 
   const showPrintMultipleModalToggle = () =>
     setShowPrintMultipleModal(!showPrintMultipleModal);
+
   const showPrintSingleModalToggle = () =>
     setShowPrintSingleModal(!showPrintSingleModal);
+
   const deleteToggle = () => setDeleteModal(!deleteModal);
 
   // Delete Data
@@ -185,149 +179,7 @@ const ReceiptImportList = () => {
     }
   };
 
-  const columns = useMemo(
-    () => [
-      // {
-      //   enableSorting: false,
-      //   id: "checkAll",
-      //   cell: (cell: any) => {
-      //     return (
-      //       <div className="flex items-center h-full">
-      //         <input
-      //           id={"Checkbox" + cell.row.original.id}
-      //           className="size-4 cursor-pointer bg-white border border-slate-200 checked:bg-none dark:bg-zink-700 dark:border-zink-500 rounded-sm appearance-none arrow-none relative after:absolute after:content-['\eb7b'] after:top-0 after:left-0 after:font-remix after:leading-none after:opacity-0 checked:after:opacity-100 after:text-custom-500 checked:border-custom-500 dark:after:text-custom-500 dark:checked:border-custom-800"
-      //           type="checkbox"
-      //         />
-      //       </div>
-      //     );
-      //   },
-      // },
-      {
-        header: "Mã phiếu",
-        accessorKey: "receiptNumber",
-        enableColumnFilter: false,
-        enableSorting: false,
-        cell: (cell: any) => (
-          <>
-            <Link
-              to={`/receipt-import/update?id=${cell.row.original.id}`}
-              className="transition-all duration-150 ease-linear order_id text-custom-500 hover:text-custom-600"
-            >
-              {cell.getValue()}
-            </Link>
-          </>
-        ),
-      },
-      {
-        header: "Thời gian nhập",
-        accessorKey: "importDate",
-        enableColumnFilter: false,
-      },
-      {
-        header: "Nhà cung cấp",
-        accessorKey: "supplier",
-        enableColumnFilter: false,
-        cell: (cell: any) => {
-          const value = cell.getValue();
-          return value?.name ?? "";
-        },
-      },
-      {
-        header: "Dư nợ tổng",
-        accessorKey: "totalAmount",
-        enableColumnFilter: false,
-        cell: (cell: any) => formatMoney(cell.getValue()),
-      },
-      {
-        header: "Ghi chú",
-        accessorKey: "note",
-        enableColumnFilter: false,
-      },
-      {
-        header: "Trạng thái",
-        accessorKey: "status",
-        enableColumnFilter: false,
-        enableSorting: true,
-        cell: (cell: any) => <ReceiptStatus item={cell.getValue()} />,
-      },
-      {
-        header: "Action",
-        enableColumnFilter: false,
-        enableSorting: true,
-        cell: (cell: any) => (
-          <Dropdown
-            className={`relative dropdown-action-custom ${
-              cell.row.index >= 7 ? "dropdown-bottom" : ""
-            }`}
-          >
-            <Dropdown.Trigger
-              id={`dropdownAction${cell.row.index}`}
-              data-bs-toggle="dropdown"
-              className="flex items-center justify-center size-[30px] p-0 text-slate-500 btn bg-slate-100 hover:text-white hover:bg-slate-600 focus:text-white focus:bg-slate-600 focus:ring focus:ring-slate-100 active:text-white active:bg-slate-600 active:ring active:ring-slate-100 dark:bg-slate-500/20 dark:text-slate-400 dark:hover:bg-slate-500 dark:hover:text-white dark:focus:bg-slate-500 dark:focus:text-white dark:active:bg-slate-500 dark:active:text-white dark:ring-slate-400/20"
-            >
-              <MoreHorizontal className="size-3" />
-            </Dropdown.Trigger>
-            <Dropdown.Content
-              placement="right-end"
-              className="absolute z-[1001] py-2 px-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-lg border border-slate-200 dropdown-menu min-w-[10rem] dark:bg-zink-600 dark:border-zink-500"
-              aria-labelledby={`dropdownAction${cell.row.index}`}
-            >
-              <li>
-                <a
-                  href="#!"
-                  className="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                  onClick={() => {
-                    const data = cell.row.original;
-                    onClickShowPrintSingle(data);
-                  }}
-                >
-                  <Eye className="inline-block size-3 ltr:mr-1 rtl:ml-1" />{" "}
-                  <span className="align-middle">Barcode</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#!"
-                  className="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                  onClick={() => {
-                    const data = cell.row.original;
-                    onClickShowPrintMultiple(data);
-                  }}
-                >
-                  <Eye className="inline-block size-3 ltr:mr-1 rtl:ml-1" />{" "}
-                  <span className="align-middle">In tem mã</span>
-                </a>
-              </li>
-              <li>
-                <Link
-                  to={`/receipt-import/update?id=${cell.row.original.id}`}
-                  data-modal-target="addOrderModal"
-                  className="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                >
-                  <FileEdit className="inline-block size-3 ltr:mr-1 rtl:ml-1" />{" "}
-                  <span className="align-middle">Cập nhật</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="#!"
-                  className="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                  onClick={() => {
-                    const data = cell.row.original;
-                    onClickDelete(data);
-                  }}
-                >
-                  <Trash2 className="inline-block size-3 ltr:mr-1 rtl:ml-1" />{" "}
-                  <span className="align-middle">Xóa</span>
-                </Link>
-              </li>
-            </Dropdown.Content>
-          </Dropdown>
-        ),
-      },
-    ],
-    []
-  );
+
 
   return (
     <React.Fragment>
@@ -499,22 +351,110 @@ const ReceiptImportList = () => {
           </ul>
 
           {receipts && receipts.length > 0 ? (
-            <TableCustom
-              isPagination={true}
-              columns={columns || []}
-              data={receipts || []}
-              totalData={pagination.totalItems}
-              pageCount={pagination.totalPages}
-              pagination={paginationData}
-              setPaginationData={setPaginationData}
-              customPageSize={10}
-              divclassName="mt-5"
-              tableclassName="w-full whitespace-nowrap overflow-x-scroll"
-              theadclassName="ltr:text-left rtl:text-right bg-slate-100 dark:bg-zink-600"
-              thclassName="px-3.5 py-2.5 font-semibold text-slate-500 border-b border-slate-200 dark:border-zink-500 dark:text-zink-200"
-              tdclassName="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500"
-              PaginationClassName="flex flex-col items-center mt-5 md:flex-row"
-            />
+            <>
+              <ExpandableReceiptTable
+                receipts={receipts}
+                onClickDelete={onClickDelete}
+                onClickShowPrintSingle={onClickShowPrintSingle}
+                onClickShowPrintMultiple={onClickShowPrintMultiple}
+                onExportCSV={() => {
+                  // TODO: Implement CSV export functionality
+                  console.log("Export CSV clicked");
+                }}
+              />
+              
+              {/* Pagination */}
+              {pagination && pagination.totalPages > 1 && (
+                <div className="flex flex-col items-center mt-5 md:flex-row">
+                  <div className="mb-4 grow md:mb-0">
+                    <div className="text-slate-500 dark:text-zink-200">
+                      Hiển trị <b>{paginationData.pageSize}</b> kết quả trên tổng{" "}
+                      <b>{pagination.totalItems}</b> dữ liệu
+                    </div>
+                  </div>
+                  <ul className="flex flex-wrap items-center gap-2 shrink-0">
+                    <li>
+                      <button
+                        className={`inline-flex items-center justify-center bg-white dark:bg-zink-700 h-8 px-3 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 ${
+                          paginationData.pageIndex === 0 ? "disabled opacity-50 cursor-not-allowed" : ""
+                        }`}
+                        onClick={() => {
+                          if (paginationData.pageIndex > 0) {
+                            setPaginationData({ ...paginationData, pageIndex: 0 });
+                          }
+                        }}
+                        disabled={paginationData.pageIndex === 0}
+                      >
+                        Trang đầu
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className={`inline-flex items-center justify-center bg-white dark:bg-zink-700 h-8 px-3 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 ${
+                          paginationData.pageIndex === 0 ? "disabled opacity-50 cursor-not-allowed" : ""
+                        }`}
+                        onClick={() => {
+                          if (paginationData.pageIndex > 0) {
+                            setPaginationData({
+                              ...paginationData,
+                              pageIndex: paginationData.pageIndex - 1,
+                            });
+                          }
+                        }}
+                        disabled={paginationData.pageIndex === 0}
+                      >
+                        Trang trước
+                      </button>
+                    </li>
+                    <li>
+                      <span className="inline-flex items-center justify-center bg-custom-50 dark:bg-custom-500/10 h-8 px-3 border rounded border-custom-500 text-custom-500">
+                        {paginationData.pageIndex + 1} / {pagination.totalPages}
+                      </span>
+                    </li>
+                    <li>
+                      <button
+                        className={`inline-flex items-center justify-center bg-white dark:bg-zink-700 h-8 px-3 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 ${
+                          paginationData.pageIndex >= pagination.totalPages - 1
+                            ? "disabled opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
+                        onClick={() => {
+                          if (paginationData.pageIndex < pagination.totalPages - 1) {
+                            setPaginationData({
+                              ...paginationData,
+                              pageIndex: paginationData.pageIndex + 1,
+                            });
+                          }
+                        }}
+                        disabled={paginationData.pageIndex >= pagination.totalPages - 1}
+                      >
+                        Trang sau
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        className={`inline-flex items-center justify-center bg-white dark:bg-zink-700 h-8 px-3 transition-all duration-150 ease-linear border rounded border-slate-200 dark:border-zink-500 text-slate-500 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500 hover:bg-custom-50 dark:hover:bg-custom-500/10 ${
+                          paginationData.pageIndex >= pagination.totalPages - 1
+                            ? "disabled opacity-50 cursor-not-allowed"
+                            : ""
+                        }`}
+                        onClick={() => {
+                          if (paginationData.pageIndex < pagination.totalPages - 1) {
+                            setPaginationData({
+                              ...paginationData,
+                              pageIndex: pagination.totalPages - 1,
+                            });
+                          }
+                        }}
+                        disabled={paginationData.pageIndex >= pagination.totalPages - 1}
+                      >
+                        Trang cuối
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </>
           ) : (
             <NoTableResult />
           )}

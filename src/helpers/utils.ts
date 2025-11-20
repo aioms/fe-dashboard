@@ -18,6 +18,8 @@ export const getEnvironment = (): Environment => {
 };
 
 export const getS3ImageUrl = (path: string) => {
+  if (!path) return "";
+
   // Check if path start with http, if so, return path as is
   if (path.startsWith("http")) {
     return path;
