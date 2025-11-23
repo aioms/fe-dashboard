@@ -89,7 +89,7 @@ const ProductInformation: React.FC<ProductInformationProps> = ({ product }) => {
                   : "text-red-600"
                 }`}
             >
-              {product.inventory} {product.unit}
+              {product.inventory}
             </p>
           </div>
           {/* {renderField("Tồn kho tối thiểu", product.minStock)}
