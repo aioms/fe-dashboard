@@ -13,7 +13,7 @@ import {
   CreditCard,
   Paperclip
 } from "lucide-react";
-import { formatMoney, parseCurrencyInput } from "helpers/utils";
+import { formatDateTime, formatMoney, parseCurrencyInput } from "helpers/utils";
 import { ReceiptPayment, PaymentMethod, ReceiptPaymentStatus } from "types/receiptPayment";
 import { getReceiptPaymentDetail, updateReceiptPayment } from "slices/receipt-payment/thunk";
 import PaymentStatusBadge from "./components/PaymentStatusBadge";
@@ -279,7 +279,7 @@ const ReceiptPaymentDetail: React.FC = () => {
                         />
                       ) : (
                         <div className="font-medium text-slate-700 dark:text-zink-100">
-                          {new Date(payment.paymentDate).toLocaleDateString('vi-VN')}
+                          {formatDateTime(payment.paymentDate, true)}
                         </div>
                       )}
                     </div>

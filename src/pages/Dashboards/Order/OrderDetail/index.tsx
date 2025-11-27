@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import BreadCrumb from "Common/BreadCrumb";
 import withRouter from "Common/withRouter";
 import { getOrder } from "apis/order";
-import { formatMoney } from "helpers/utils";
+import { formatDateTime, formatMoney } from "helpers/utils";
 import {
   ORDER_STATUS_LABELS,
   PAYMENT_METHOD_LABELS,
@@ -221,13 +221,7 @@ const OrderDetail = (props: any) => {
                 Ngày tạo
               </label>
               <p className="text-slate-800 dark:text-zink-100">
-                {new Date(orderData.createdAt).toLocaleDateString("vi-VN", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                {formatDateTime(orderData.createdAt, true)}
               </p>
             </div>
             <div className="md:col-span-2">

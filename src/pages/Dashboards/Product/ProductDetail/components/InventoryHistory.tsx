@@ -277,7 +277,7 @@ const InventoryHistory: React.FC<InventoryHistoryProps> = ({ productId }) => {
                 <tr key={log.id} className="border-b border-slate-200 dark:border-zink-500 hover:bg-slate-50 dark:hover:bg-zink-700 transition-colors">
                   <td className="p-3">
                     <div className="text-sm font-medium">
-                      {formatDateTime(log.createdAt)}
+                      {formatDateTime(log.createdAt, true)}
                     </div>
                   </td>
                   <td className="p-3">

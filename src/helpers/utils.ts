@@ -1,20 +1,23 @@
 import { Environment } from "Common/enums/common-enum";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+// Extend dayjs with plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const isDev = process.env.REACT_APP_ENV === "development";
 
 export const getEnvironment = (): Environment => {
-  const env = process.env.REACT_APP_ENV;
+  const env = process.env.REACT_APP_ENV as Environment;
+  const validEnvs = [Environment.PRODUCTION, Environment.STAGING, Environment.DEVELOPMENT];
 
-  switch (env) {
-    case "production":
-      return Environment.PRODUCTION;
-    case "staging":
-      return Environment.STAGING;
-    case "development":
-      return Environment.DEVELOPMENT;
-    default:
-      throw new Error("Invalid environment");
+  if (!env || !validEnvs.includes(env)) {
+    throw new Error("Invalid environment");
   }
+
+  return env;
 };
 
 export const getS3ImageUrl = (path: string) => {
@@ -83,7 +86,20 @@ export const formatNumberWithSeparator = (number: number) => {
   return number.toLocaleString("vi-VN");
 };
 
-export const formatDateTime = (dateString: string) => {
+export const formatDateTime = (dateString: string, convertFromUTC: boolean = false, format: string = "DD/MM/YYYY HH:mm") => {
+  if (!dateString) return "";
+
+  let date = dayjs(dateString);
+
+  // Convert from UTC to local time if requested
+  if (convertFromUTC) {
+    date = date.utc(true).local();
+  }
+
+  return date.format(format);
+};
+
+export const formatDateTimeLocale = (dateString: string) => {
   if (!dateString) return "";
 
   const date = new Date(dateString);
@@ -94,20 +110,6 @@ export const formatDateTime = (dateString: string) => {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
-  });
-};
-
-export const formatDateTimeLong = (dateString: string) => {
-  if (!dateString) return "";
-
-  const date = new Date(dateString);
-  return date.toLocaleDateString("vi-VN", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
   });
 };
 

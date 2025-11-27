@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ISalesOrder } from "../index.d";
-import { formatMoney } from "helpers/utils";
+import { formatDateTime, formatMoney } from "helpers/utils";
 
 const SalesHistory: React.FC<{ orders: ISalesOrder[] }> = ({ orders }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -78,7 +78,7 @@ const SalesHistory: React.FC<{ orders: ISalesOrder[] }> = ({ orders }) => {
                   </button>
                 </td>
                 <td className="px-3.5 py-2.5 border-b border-slate-200 dark:border-zink-500">
-                  {new Date(order.createdAt).toLocaleDateString("vi-VN")}
+                  {formatDateTime(order.createdAt, true)}
                 </td>
                 <td className="px-3.5 py-2.5 border-b border-slate-200 dark:border-zink-500">
                   <span
