@@ -22,7 +22,7 @@ import {
   CheckCircle,
   XCircle
 } from "lucide-react";
-import { formatMoney } from "helpers/utils";
+import { formatDateTime, formatMoney } from "helpers/utils";
 import {
   ReceiptDebt,
   ReceiptDebtStatus,
@@ -69,10 +69,10 @@ const DebtStatusBadge: React.FC<{ status: ReceiptDebtStatus }> = ({ status }) =>
       label: "Công nợ"
     },
     [ReceiptDebtStatus.PENDING]: {
-      bg: "bg-red-100",
-      text: "text-red-800",
-      darkBg: "dark:bg-red-900",
-      darkText: "dark:text-red-300",
+      bg: "bg-purple-100",
+      text: "text-purple-800",
+      darkBg: "dark:bg-purple-900",
+      darkText: "dark:text-purple-300",
       label: "Chờ thanh toán"
     },
     [ReceiptDebtStatus.PARTIAL_PAID]: {
@@ -88,6 +88,13 @@ const DebtStatusBadge: React.FC<{ status: ReceiptDebtStatus }> = ({ status }) =>
       darkBg: "dark:bg-green-900",
       darkText: "dark:text-green-300",
       label: "Hoàn thành"
+    },
+    [ReceiptDebtStatus.CANCELLED]: {
+      bg: "bg-red-100",
+      text: "text-red-800",
+      darkBg: "dark:bg-red-900",
+      darkText: "dark:text-red-300",
+      label: "Hủy"
     },
     [ReceiptDebtStatus.OVERDUE]: {
       bg: "bg-red-100",
@@ -379,7 +386,7 @@ const ReceiptDebtDetail: React.FC = () => {
               <div>
                 <div className="font-medium text-red-800">Cảnh báo: Công nợ đã quá hạn</div>
                 <div className="text-sm text-red-600 mt-1">
-                  Hạn thanh toán: {debt.dueDate ? new Date(debt.dueDate).toLocaleDateString('vi-VN') : ''}
+                  Hạn thanh toán: {debt.dueDate ? formatDateTime(debt.dueDate, true) : ''}
                 </div>
               </div>
             </div>
@@ -401,13 +408,7 @@ const ReceiptDebtDetail: React.FC = () => {
                     <div>
                       <div className="text-sm text-slate-500 dark:text-zink-200">Hạn thanh toán</div>
                       <div className={`font-medium mt-1 ${overdueStatus ? "text-red-600" : "text-slate-700 dark:text-zink-100"}`}>
-                        {debt.dueDate ? new Date(debt.dueDate).toLocaleDateString('vi-VN', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        }) : "Chưa xác định"}
+                        {debt.dueDate ? formatDateTime(debt.dueDate, true, 'DD/MM/YYYY') : "Chưa xác định"}
                       </div>
                     </div>
                   </div>
@@ -443,11 +444,7 @@ const ReceiptDebtDetail: React.FC = () => {
                     <div>
                       <div className="text-sm text-slate-500 dark:text-zink-200">Ngày tạo</div>
                       <div className="font-medium text-slate-700 dark:text-zink-100 mt-1">
-                        {new Date(debt.createdAt).toLocaleDateString('vi-VN', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
+                        {formatDateTime(debt.createdAt, true)}
                       </div>
                     </div>
                   </div>
@@ -479,7 +476,7 @@ const ReceiptDebtDetail: React.FC = () => {
                       </div>
                       {debt.paymentDate && (
                         <div className="text-xs text-green-600 dark:text-green-400 mt-1">
-                          Ngày thanh toán: {new Date(debt.paymentDate).toLocaleDateString('vi-VN')}
+                          Ngày thanh toán: {formatDateTime(debt.paymentDate, true)}
                         </div>
                       )}
                     </div>
@@ -536,11 +533,7 @@ const ReceiptDebtDetail: React.FC = () => {
                           <div className="flex items-center gap-2">
                             <Calendar className="size-4 text-slate-500" />
                             <span className="font-medium text-slate-700 dark:text-zink-100">
-                              {new Date(date).toLocaleDateString('vi-VN', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                              })}
+                              {formatDateTime(date, true, 'DD/MM/YYYY')}
                             </span>
                             <span className="text-xs text-slate-500 dark:text-zink-200">
                               ({dateItems.length} sản phẩm)
@@ -569,8 +562,6 @@ const ReceiptDebtDetail: React.FC = () => {
                                       </div>
                                       <div className="text-sm text-slate-500 dark:text-zink-200 mt-1">
                                         Mã: <span className="font-mono">{item.code}</span>
-                                        {" • "}
-                                        Mã SP: <span className="font-mono">{item.productCode}</span>
                                       </div>
                                     </div>
                                   </div>
@@ -622,7 +613,7 @@ const ReceiptDebtDetail: React.FC = () => {
                         <div className="px-4 py-2 bg-slate-50 dark:bg-zink-600 border-t border-slate-200 dark:border-zink-500">
                           <div className="flex justify-between items-center">
                             <span className="text-sm font-medium text-slate-600 dark:text-zink-200">
-                              Tổng ngày {new Date(date).toLocaleDateString('vi-VN')}:
+                              Tổng ngày {formatDateTime(date, true, 'DD/MM/YYYY')}:
                             </span>
                             <span className="font-bold text-slate-700 dark:text-zink-100">
                               {formatMoney(
@@ -750,7 +741,7 @@ const ReceiptDebtDetail: React.FC = () => {
                         <div>
                           <div className="text-slate-500 dark:text-zink-200">Ngày tạo</div>
                           <div className="font-medium text-slate-700 dark:text-zink-100">
-                            {new Date(paymentHistory.payment.createdAt).toLocaleDateString('vi-VN')}
+                            {formatDateTime(paymentHistory.payment.createdAt, true)}
                           </div>
                         </div>
                       </div>
@@ -802,7 +793,7 @@ const ReceiptDebtDetail: React.FC = () => {
                                 <div>
                                   <div className="text-slate-500 dark:text-zink-200">Thời gian</div>
                                   <div className="font-medium text-slate-700 dark:text-zink-100">
-                                    {new Date(transaction.processedAt).toLocaleDateString('vi-VN')}
+                                    {formatDateTime(transaction.processedAt, true)}
                                   </div>
                                 </div>
                               </div>

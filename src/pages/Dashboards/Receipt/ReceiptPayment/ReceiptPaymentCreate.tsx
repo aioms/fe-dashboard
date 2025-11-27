@@ -20,6 +20,7 @@ import {
   UnpaidReceiptImportListResponse
 } from "types/receiptPayment";
 import { createReceiptPayment, getUnpaidReceipts } from "slices/receipt-payment/thunk";
+import { formatDateTime } from "helpers/utils";
 
 const expenseTypeOptions = [
   { value: ReceiptPaymentExpenseType.SUPPLIER_PAYMENT, label: "Chi tiền hàng NCC" },
@@ -299,8 +300,8 @@ const ReceiptPaymentCreate: React.FC = () => {
                           <div>Nhà cung cấp: <span className="font-medium">{selectedReceipt.supplier.name}</span></div>
                           <div>Tổng tiền: <span className="font-medium">{selectedReceipt.totalAmount.toLocaleString('vi-VN')}₫</span></div>
                           <div>Kho: <span className="font-medium">{selectedReceipt.warehouse || '-'}</span></div>
-                          <div>Ngày nhập: <span className="font-medium">{selectedReceipt.importDate ? new Date(selectedReceipt.importDate).toLocaleDateString('vi-VN') : '-'}</span></div>
-                          <div>Hạn thanh toán: <span className="font-medium">{selectedReceipt.paymentDate ? new Date(selectedReceipt.paymentDate).toLocaleDateString('vi-VN') : '-'}</span></div>
+                          <div>Ngày nhập: <span className="font-medium">{selectedReceipt.importDate ? formatDateTime(selectedReceipt.importDate, true, 'DD/MM/YYYY') : '-'}</span></div>
+                          <div>Hạn thanh toán: <span className="font-medium">{selectedReceipt.paymentDate ? formatDateTime(selectedReceipt.paymentDate, true, 'DD/MM/YYYY') : '-'}</span></div>
                           {selectedReceipt.note && (
                             <div>Ghi chú: <span className="font-medium">{selectedReceipt.note}</span></div>
                           )}

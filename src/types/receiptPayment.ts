@@ -116,7 +116,8 @@ export enum ReceiptDebtStatus {
   PENDING = "pending", // Chờ thanh toán
   PARTIAL_PAID = "partial_paid", // Đã thu/chi 1 phần
   COMPLETED = "completed", // Hoàn thành
-  OVERDUE = "overdue" // Trễ hạn
+  OVERDUE = "overdue", // Trễ hạn
+  CANCELLED = "cancelled" // Hủy
 }
 
 export enum ReceiptDebtType {

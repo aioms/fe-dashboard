@@ -22,7 +22,7 @@ import TableCustom from "Common/TableCustom";
 import { NoTableResult } from "Common/Components/NoTableResult";
 
 // Utils and helpers
-import { formatMoney, cleanObject } from "helpers/utils";
+import { formatMoney, cleanObject, formatDateTime } from "helpers/utils";
 
 // Types and actions
 import {
@@ -144,8 +144,8 @@ const ReceiptPaymentList: React.FC = () => {
         enableColumnFilter: false,
         enableSorting: true,
         cell: (cell: any) => {
-          const date = new Date(cell.getValue());
-          return date.toLocaleDateString('vi-VN');
+          const date = cell.getValue();
+          return date ? formatDateTime(date, true) : '-';
         },
       },
       {

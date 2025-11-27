@@ -25,7 +25,7 @@ import {
 import {
   getOrdersThunk,
 } from "slices/order/thunk";
-import { formatMoney, isHasKey } from "helpers/utils";
+import { formatDateTime, formatMoney, isHasKey } from "helpers/utils";
 import { resetMessage } from "slices/order/reducer";
 
 import "./OrderList.css";
@@ -290,7 +290,7 @@ const OrderList = () => {
         enableSorting: true,
         cell: (cell: any) => {
           const date = cell.getValue();
-          return date ? new Date(date).toLocaleDateString("vi-VN") : "";
+          return date ? formatDateTime(date, true) : "";
         },
       },
       {

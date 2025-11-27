@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { IDebtRecord } from "../index.d";
-import { formatMoney } from "helpers/utils";
+import { formatDateTime, formatMoney } from "helpers/utils";
 
 const OutstandingDebt: React.FC<{
   debtRecords: IDebtRecord[];
@@ -100,7 +100,7 @@ const OutstandingDebt: React.FC<{
                 className="hover:bg-slate-50 dark:hover:bg-zink-600"
               >
                 <td className="px-3.5 py-2.5 border-b border-slate-200 dark:border-zink-500">
-                  {new Date(record.date).toLocaleDateString("vi-VN")}
+                  {formatDateTime(record.date, true)}
                 </td>
                 <td className="px-3.5 py-2.5 border-b border-slate-200 dark:border-zink-500">
                   <button className="text-custom-500 hover:text-custom-600 font-medium">

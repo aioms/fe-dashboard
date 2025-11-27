@@ -28,3 +28,5 @@ yarn-error.log*
 .vercel
 fe-dashboard-new
 fe-dashboard-new-trae
+
+.yarn-tmp

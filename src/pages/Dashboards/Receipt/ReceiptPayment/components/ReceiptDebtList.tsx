@@ -26,7 +26,7 @@ import TableContainer from "Common/TableContainer";
 import { NoTableResult } from "Common/Components/NoTableResult";
 
 // Utils and helpers
-import { formatMoney, cleanObject } from "helpers/utils";
+import { formatMoney, cleanObject, formatDateTime } from "helpers/utils";
 
 // Types and actions
 import {
@@ -160,10 +160,10 @@ const ReceiptDebtList: React.FC = () => {
         label: "Công nợ"
       },
       [ReceiptDebtStatus.PENDING]: {
-        bg: "bg-red-100",
-        text: "text-red-800",
-        darkBg: "dark:bg-red-900",
-        darkText: "dark:text-red-300",
+        bg: "bg-purple-100",
+        text: "text-purple-800",
+        darkBg: "dark:bg-purple-900",
+        darkText: "dark:text-purple-300",
         label: "Chờ thanh toán"
       },
       [ReceiptDebtStatus.PARTIAL_PAID]: {
@@ -179,6 +179,13 @@ const ReceiptDebtList: React.FC = () => {
         darkBg: "dark:bg-green-900",
         darkText: "dark:text-green-300",
         label: "Hoàn thành"
+      },
+      [ReceiptDebtStatus.CANCELLED]: {
+        bg: "bg-red-100",
+        text: "text-red-800",
+        darkBg: "dark:bg-red-900",
+        darkText: "dark:text-red-300",
+        label: "Hủy"
       },
       [ReceiptDebtStatus.OVERDUE]: {
         bg: "bg-red-100",
@@ -244,13 +251,12 @@ const ReceiptDebtList: React.FC = () => {
         enableColumnFilter: false,
         enableSorting: true,
         cell: (cell: any) => {
-          const date = new Date(cell.getValue());
           const data = cell.row.original;
           const overdue = isOverdue(data.dueDate, data.status);
 
           return (
             <span className={overdue ? "text-red-600 font-semibold" : "text-slate-700"}>
-              {date.toLocaleDateString('vi-VN')}
+              {formatDateTime(cell.getValue(), true, 'DD/MM/YYYY')}
             </span>
           );
         },
