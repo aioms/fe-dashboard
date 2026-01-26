@@ -75,7 +75,7 @@ const InventoryHistory: React.FC<InventoryHistoryProps> = ({ productId }) => {
 
   useEffect(() => {
     fetchInventoryLogs();
-  }, [productId, pagination.currentPage, pagination.limit, sorting.field, sorting.order]);
+  }, [productId, pagination.currentPage, pagination.limit, sorting.field, sorting.order, fetchInventoryLogs]);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= pagination.totalPages) {
