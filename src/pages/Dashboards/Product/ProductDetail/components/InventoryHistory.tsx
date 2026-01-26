@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, ArrowUpDown } from "lucide-react";
 import { toast } from "react-toastify";
@@ -31,7 +31,7 @@ const InventoryHistory: React.FC<InventoryHistoryProps> = ({ productId }) => {
     order: "desc" as "asc" | "desc"
   });
 
-  const fetchInventoryLogs = async () => {
+  const fetchInventoryLogs = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -71,7 +71,7 @@ const InventoryHistory: React.FC<InventoryHistoryProps> = ({ productId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [productId, pagination.page, pagination.limit, sorting.field, sorting.order]);
 
   useEffect(() => {
     fetchInventoryLogs();

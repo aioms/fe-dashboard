@@ -288,7 +288,6 @@ const ReceiptDebtDetail: React.FC = () => {
   const debtType = debt.type === ReceiptDebtType.CUSTOMER_DEBT ? "Nợ khách hàng" : "Nợ nhà cung cấp";
   const partnerName = debt.customerName || debt.supplierName || "N/A";
   const overdueStatus = isOverdue();
-  const totalItems = Object.values(items).flat().length;
 
   return (
     <React.Fragment>

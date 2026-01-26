@@ -55,7 +55,7 @@ export const ReceiptItem: FC<Props> = ({ item, index, onRemove, onUpdate }) => {
         });
       }
     }
-  }, [newCostPrice, newDiscount, quantity]);
+  }, [newCostPrice, newDiscount, quantity, item, onUpdate]);
 
   return (
     <>

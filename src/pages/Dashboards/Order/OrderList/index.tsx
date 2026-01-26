@@ -62,8 +62,6 @@ const paymentMethodOptions = [
 const OrderList = () => {
   const dispatch = useDispatch<any>();
 
-  const [deleteModal, setDeleteModal] = useState<boolean>(false);
-  const [eventData, setEventData] = useState<any>();
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [paymentMethodFilter, setPaymentMethodFilter] = useState<string>("");
