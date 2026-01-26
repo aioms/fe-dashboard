@@ -210,13 +210,19 @@ const ReceiptReturnList = () => {
       {
         header: "Tên",
         cell: (cell: any) => {
-          const origin = cell.row.original;
-          return origin.name || origin.supplier?.name;
+          const { type, customer, supplier } = cell.row.original;
+          const name = type === "supplier" ? supplier?.name : (customer?.name || "Khách lẻ");
+          return name || "";
         },
       },
       {
-        header: "Số lượng trả",
-        accessorKey: "quantity",
+        header: "SL trả",
+        accessorKey: "totalQuantity",
+        enableColumnFilter: false,
+      },
+      {
+        header: "SL sản phẩm",
+        accessorKey: "totalProduct",
         enableColumnFilter: false,
       },
       {
