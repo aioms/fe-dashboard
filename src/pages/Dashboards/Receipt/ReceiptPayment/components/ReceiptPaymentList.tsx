@@ -52,7 +52,7 @@ const ReceiptPaymentList: React.FC = () => {
     })
   );
 
-  const { data: payments, pagination, loading, error } = useSelector(selectDataList);
+  const { data: payments, pagination, error } = useSelector(selectDataList);
 
   const [filters, setFilters] = useState<ReceiptPaymentFilterDto>({
     page: 1,

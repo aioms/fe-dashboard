@@ -30,3 +30,6 @@ fe-dashboard-new
 fe-dashboard-new-trae
 
 .yarn-tmp
+
+*storybook.log
+storybook-static

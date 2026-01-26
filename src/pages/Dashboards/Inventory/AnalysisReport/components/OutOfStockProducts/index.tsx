@@ -126,7 +126,7 @@ export const OutOfStockProducts: FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedTimeline]);
+  }, [selectedTimeline, paginationData.pageIndex, paginationData.pageSize]);
 
   useEffect(() => {
     fetchData();

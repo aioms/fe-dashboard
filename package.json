@@ -9,7 +9,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev": "TMPDIR=\"$(pwd)/.yarn-tmp\" yarn start",
+    "dev:temp": "TMPDIR=\"$(pwd)/.yarn-tmp\" yarn start",
+    "dev": "yarn start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -68,7 +69,8 @@
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "plugin:storybook/recommended"
     ]
   },
   "browserslist": {
@@ -85,11 +87,18 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@chromatic-com/storybook": "^5.0.0",
     "@types/node": "^24.0.4",
     "@types/prismjs": "^1.26.5",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "@types/react-flatpickr": "^3.8.11"
+    "@types/react-flatpickr": "^3.8.11",
+    "@vitest/browser-playwright": "^4.0.18",
+    "@vitest/coverage-v8": "^4.0.18",
+    "eslint-plugin-storybook": "^10.2.0",
+    "playwright": "^1.58.0",
+    "storybook": "^10.2.0",
+    "vitest": "^4.0.18"
   },
   "license": "MIT"
 }

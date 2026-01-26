@@ -78,12 +78,6 @@ const ExpandableReceiptTable: React.FC<ExpandableReceiptTableProps> = ({
     setExpandedRows(newExpandedRows);
   };
 
-  const getInventoryStatusColor = (inventory: number) => {
-    if (inventory === 0) return "text-red-500 bg-red-50 dark:bg-red-500/10";
-    if (inventory < 5) return "text-yellow-500 bg-yellow-50 dark:bg-yellow-500/10";
-    return "text-green-500 bg-green-50 dark:bg-green-500/10";
-  };
-
   return (
     <div className="mt-5 overflow-x-auto">
       {/* Export Button */}
