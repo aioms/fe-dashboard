@@ -46,16 +46,41 @@ export const RECEIPT_CHECK_STATUS_OPTIONS = [
   { label: "Đã cân bằng", value: RECEIPT_CHECK_STATUS.BALANCELLED },
 ];
 
-export const RECEIPT_DEBT_STATUS = {
-  UNPAID: "unpaid",
-  PARTIAL: "partial",
-  PAID: "paid",
-  CANCELLED: "cancelled",
-};
+export enum ReceiptDebtStatus {
+  PENDING = "pending",
+  PARTIAL_PAID = "partial_paid",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
+}
+
+export enum PaymentStatus {
+  PAID = 0,
+  PARTIALLY_PAID = 1,
+  CANCELLED = 2,
+}
+
+export enum PaymentType {
+  ORDER = 1,
+  RECEIPT_DEBT = 2,
+}
 
 export const RECEIPT_DEBT_STATUS_OPTIONS = [
-  { label: "Chưa thanh toán", value: RECEIPT_DEBT_STATUS.UNPAID },
-  { label: "Thanh toán một phần", value: RECEIPT_DEBT_STATUS.PARTIAL },
-  { label: "Đã thanh toán", value: RECEIPT_DEBT_STATUS.PAID },
-  { label: "Đã hủy", value: RECEIPT_DEBT_STATUS.CANCELLED },
+  { label: "Tất cả trạng thái", value: "all" },
+  { label: "Chờ xử lý", value: ReceiptDebtStatus.PENDING },
+  { label: "Thanh toán một phần", value: ReceiptDebtStatus.PARTIAL_PAID },
+  { label: "Hoàn thành", value: ReceiptDebtStatus.COMPLETED },
+  { label: "Đã hủy", value: ReceiptDebtStatus.CANCELLED },
+];
+
+export const PAYMENT_STATUS_OPTIONS = [
+  { label: "Tất cả trạng thái", value: "all" },
+  { label: "Đã thanh toán", value: PaymentStatus.PAID.toString() },
+  { label: "Thanh toán một phần", value: PaymentStatus.PARTIALLY_PAID.toString() },
+  { label: "Đã hủy", value: PaymentStatus.CANCELLED.toString() },
+];
+
+export const PAYMENT_TYPE_OPTIONS = [
+  { label: "Tất cả loại", value: "all" },
+  { label: "Đơn hàng", value: PaymentType.ORDER.toString() },
+  { label: "Công nợ", value: PaymentType.RECEIPT_DEBT.toString() },
 ];

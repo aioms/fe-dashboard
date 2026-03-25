@@ -42,6 +42,8 @@ const SummaryReport = () => {
     checks: searchParams.get("receiptCheckStatus") || "all",
     imports: searchParams.get("receiptImportStatus") || "all",
     returns: searchParams.get("receiptReturnStatus") || "all",
+    paymentStatus: searchParams.get("paymentStatus") || "all",
+    paymentType: searchParams.get("paymentType") || "all",
   }), [searchParams]);
 
   const [filters, setFilters] = useState<Record<string, string>>(initialFilters);
@@ -69,6 +71,8 @@ const SummaryReport = () => {
       if (filters.checks !== "all") params.receiptCheckStatus = filters.checks;
       if (filters.imports !== "all") params.receiptImportStatus = filters.imports;
       if (filters.returns !== "all") params.receiptReturnStatus = filters.returns;
+      if (filters.paymentStatus !== "all") params.paymentStatus = filters.paymentStatus;
+      if (filters.paymentType !== "all") params.paymentType = filters.paymentType;
 
       const response = await getTransactionSummary(params);
       setData(response.data);
@@ -91,6 +95,8 @@ const SummaryReport = () => {
       checks: "receiptCheckStatus",
       imports: "receiptImportStatus",
       returns: "receiptReturnStatus",
+      paymentStatus: "paymentStatus",
+      paymentType: "paymentType",
     };
 
     const paramName = sectionToQueryParam[section];
@@ -116,6 +122,8 @@ const SummaryReport = () => {
       checks: "all",
       imports: "all",
       returns: "all",
+      paymentStatus: "all",
+      paymentType: "all",
     });
   };
 
@@ -169,14 +177,14 @@ const SummaryReport = () => {
               <FilterX size={18} />
             </button>
             <div className="h-8 w-px bg-gray-200 dark:bg-zink-600 mx-1 hidden md:block"></div>
-            <button className="flex items-center px-5 py-2.5 bg-white dark:bg-zink-700 border border-gray-200 dark:border-zink-600 rounded-lg text-gray-700 dark:text-zink-100 hover:bg-gray-50 dark:hover:bg-zink-600 transition-colors shadow-sm text-base font-medium">
+            {/* <button className="flex items-center px-5 py-2.5 bg-white dark:bg-zink-700 border border-gray-200 dark:border-zink-600 rounded-lg text-gray-700 dark:text-zink-100 hover:bg-gray-50 dark:hover:bg-zink-600 transition-colors shadow-sm text-base font-medium">
               <Download size={18} className="mr-2" />
               Xuất PDF
             </button>
             <button className="flex items-center px-5 py-2.5 bg-blue-600 rounded-lg text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors shadow-md shadow-blue-200 dark:shadow-none text-base font-medium disabled:opacity-50"
             >
               {loading ? <Loader2 size={16} className="mr-2 animate-spin" /> : "Làm mới"}
-            </button>
+            </button> */}
           </div>
         </div>
 
@@ -337,6 +345,10 @@ const SummaryReport = () => {
                 paymentMethod: t.paymentMethod
               }))
             })) ?? []}
+            selectedStatus={filters.paymentStatus}
+            selectedType={filters.paymentType}
+            onStatusChange={(status) => handleStatusChange("paymentStatus", status)}
+            onTypeChange={(type) => handleStatusChange("paymentType", type)}
           />
         </div>
       </div>

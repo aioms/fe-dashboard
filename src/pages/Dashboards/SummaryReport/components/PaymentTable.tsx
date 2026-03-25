@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ChevronDown, ChevronRight, CreditCard } from "lucide-react";
+import { PAYMENT_STATUS_OPTIONS, PAYMENT_TYPE_OPTIONS } from "Common/constants/receipt-constant";
 
 interface Transaction {
   id: string;
@@ -23,9 +24,19 @@ interface Payment {
 
 interface PaymentTableProps {
   payments: Payment[];
+  onStatusChange?: (status: string) => void;
+  onTypeChange?: (type: string) => void;
+  selectedStatus?: string;
+  selectedType?: string;
 }
 
-const PaymentTable = ({ payments }: PaymentTableProps) => {
+const PaymentTable = ({
+  payments,
+  onStatusChange,
+  onTypeChange,
+  selectedStatus = "all",
+  selectedType = "all"
+}: PaymentTableProps) => {
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
   const toggleRow = (id: string) => {
@@ -83,9 +94,31 @@ const PaymentTable = ({ payments }: PaymentTableProps) => {
 
   return (
     <div className="bg-white dark:bg-zink-700 rounded-lg shadow-sm border border-gray-100 dark:border-zink-600 overflow-hidden">
-      <div className="p-4 border-b border-gray-100 dark:border-zink-600 flex items-center">
-        <CreditCard className="text-blue-500 mr-2" size={24} />
-        <h5 className="text-gray-800 dark:text-zink-50 font-bold mb-0 text-base">Danh sách Thanh toán và Giao dịch phụ hôm nay</h5>
+      <div className="p-4 border-b border-gray-100 dark:border-zink-600 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center">
+          <CreditCard className="text-blue-500 mr-2" size={24} />
+          <h5 className="text-gray-800 dark:text-zink-50 font-bold mb-0 text-base">Danh sách Thanh toán và Giao dịch phụ hôm nay</h5>
+        </div>
+        <div className="flex items-center gap-3">
+          <select
+            value={selectedType}
+            onChange={(e) => onTypeChange?.(e.target.value)}
+            className="text-sm border-gray-200 dark:border-zink-600 dark:bg-zink-700 dark:text-zink-100 rounded p-1.5 focus:ring-0 focus:border-blue-500 outline-none"
+          >
+            {PAYMENT_TYPE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+          <select
+            value={selectedStatus}
+            onChange={(e) => onStatusChange?.(e.target.value)}
+            className="text-sm border-gray-200 dark:border-zink-600 dark:bg-zink-700 dark:text-zink-100 rounded p-1.5 focus:ring-0 focus:border-blue-500 outline-none"
+          >
+            {PAYMENT_STATUS_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
@@ -165,6 +198,12 @@ const PaymentTable = ({ payments }: PaymentTableProps) => {
                                 <td className="py-3 text-right text-gray-800 dark:text-zink-100 font-medium text-base">{formatCurrency(txn.amount)}</td>
                               </tr>
                             ))}
+                            <tr className="bg-blue-50/50 dark:bg-blue-500/5 font-bold">
+                              <td colSpan={5} className="py-3 text-right text-gray-600 dark:text-zink-200">Tổng giao dịch:</td>
+                              <td className="py-3 text-right text-blue-600 dark:text-blue-400">
+                                {formatCurrency(payment.transactions.reduce((acc, txn) => acc + txn.amount, 0))}
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
