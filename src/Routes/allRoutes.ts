@@ -37,6 +37,7 @@ import SupplierDetail from "pages/Dashboards/Supplier/SupplierDetail";
 
 // analytics
 import AnalyticsReport from "pages/Dashboards/Inventory/AnalysisReport";
+import SummaryReport from "pages/Dashboards/SummaryReport";
 
 import CustomerList from "pages/Dashboards/Customer/CustomerList";
 import CustomerDetail from "pages/Dashboards/Customer/CustomerDetail";
@@ -75,6 +76,7 @@ const authProtectedRoutes: Array<RouteObject> = [
   { path: "/receipt-check/update", component: ReceiptCheckUpdate },
   { path: "/receipt-check/list", component: ReceiptCheckList },
   { path: "/receipt-check/analysis-inventory", component: AnalyticsReport },
+  { path: "/summary-report", component: SummaryReport },
 
   // receipt payment
   { path: "/receipt-payment", component: ReceiptPaymentManagement },

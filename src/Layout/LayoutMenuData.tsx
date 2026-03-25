@@ -185,6 +185,12 @@ const menuData: any = [
         link: "/analytics",
         parentId: "finance-dashboard",
       },
+      {
+        id: "summary-report-page",
+        label: "Báo cáo tổng hợp",
+        link: "/summary-report",
+        parentId: "finance-dashboard",
+      },
     ],
   },
   {
