@@ -124,8 +124,8 @@ const ReceiptDebtsTable = ({ receiptDebts, onStatusChange }: ReceiptDebtsTablePr
                             <tr className="text-gray-400 dark:text-zink-400 border-b border-gray-200 dark:border-zink-600">
                               <th className="pb-3 text-left font-semibold">Sản phẩm</th>
                               <th className="pb-3 text-right font-semibold">Số lượng</th>
-                              <th className="pb-3 text-right font-semibold">Giá vốn (Lúc nhập)</th>
-                              <th className="pb-3 text-right font-semibold">Giá vốn (Hiện tại)</th>
+                              <th className="pb-3 text-right font-semibold">Giá bán</th>
+                              <th className="pb-3 text-right font-semibold">Giá vốn</th>
                               <th className="pb-3 text-right font-semibold">Thành tiền</th>
                             </tr>
                           </thead>
