@@ -2,12 +2,15 @@ import React, { useState, useEffect } from "react";
 import BreadCrumb from "Common/BreadCrumb";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { ArrowLeft, Save, Info } from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 
 // Components
 import { FileUpload, UploadedFile } from "Common/Components/FileUpload";
 import { MoneyInput } from "Common/Components/MoneyInput";
+import { SupplierSelect } from "Common/Components/Select/SupplierSelect";
+import { SupplierSelector } from "./components/SupplierSelector";
+import { ReceiptImportSelector } from "./components/ReceiptImportSelector";
 
 // Types and actions
 import {
@@ -20,7 +23,6 @@ import {
   UnpaidReceiptImportListResponse
 } from "types/receiptPayment";
 import { createReceiptPayment, getUnpaidReceipts } from "slices/receipt-payment/thunk";
-import { formatDateTime } from "helpers/utils";
 
 const expenseTypeOptions = [
   { value: ReceiptPaymentExpenseType.SUPPLIER_PAYMENT, label: "Chi tiền hàng NCC" },
@@ -58,15 +60,19 @@ const ReceiptPaymentCreate: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [loadingReceipts, setLoadingReceipts] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
-  const [selectedReceipt, setSelectedReceipt] = useState<UnpaidReceiptImport | null>(null);
+  const [selectedSupplierId, setSelectedSupplierId] = useState<string | null>(null);
+  const [selectedSupplierName, setSelectedSupplierName] = useState<string>("");
+  const [selectedReceiptIds, setSelectedReceiptIds] = useState<string[]>([]);
   const [unpaidReceipts, setUnpaidReceipts] = useState<UnpaidReceiptImport[]>([]);
+  const [useSupplierForPaymentObject, setUseSupplierForPaymentObject] = useState(false);
+  const [paymentObjectSupplierId, setPaymentObjectSupplierId] = useState<string | null>(null);
+  const [paymentObjectSupplierName, setPaymentObjectSupplierName] = useState<string>("");
 
-  // Load unpaid receipts when expense type is supplier payment
+  // Load unpaid receipts when supplier is selected
   useEffect(() => {
-    if (formData.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT) {
-      // Load unpaid receipts from API
+    if (formData.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT && selectedSupplierId) {
       setLoadingReceipts(true);
-      dispatch(getUnpaidReceipts(undefined))
+      dispatch(getUnpaidReceipts(selectedSupplierId))
         .unwrap()
         .then((response: UnpaidReceiptImportListResponse) => {
           setUnpaidReceipts(response.data || []);
@@ -81,31 +87,59 @@ const ReceiptPaymentCreate: React.FC = () => {
         });
     } else {
       setUnpaidReceipts([]);
-      setSelectedReceipt(null);
+      setSelectedReceiptIds([]);
+    }
+  }, [selectedSupplierId, formData.expenseType, dispatch]);
+
+  // Reset supplier and receipts when expense type changes
+  useEffect(() => {
+    if (formData.expenseType !== ReceiptPaymentExpenseType.SUPPLIER_PAYMENT) {
+      setSelectedSupplierId(null);
+      setSelectedSupplierName("");
+      setSelectedReceiptIds([]);
+      setUnpaidReceipts([]);
+      setUseSupplierForPaymentObject(false);
+      setPaymentObjectSupplierId(null);
+      setPaymentObjectSupplierName("");
       setFormData(prev => ({
         ...prev,
         receiptImportId: undefined,
+        receiptImportIds: undefined,
         supplierId: undefined,
         paymentObject: getPaymentObjectName(prev.expenseType),
       }));
     }
-  }, [formData.expenseType, dispatch]);
+  }, [formData.expenseType]);
 
-  // Update form data when receipt is selected
+  // Update form data when supplier or receipts are selected
   useEffect(() => {
-    if (selectedReceipt) {
-      // Calculate remaining amount (totalAmount - paidAmount if available)
-      const remainingAmount = selectedReceipt.totalAmount || 0;
-      
-      setFormData(prev => ({
-        ...prev,
-        receiptImportId: selectedReceipt.id,
-        supplierId: selectedReceipt.supplier.id,
-        paymentObject: `${selectedReceipt.receiptNumber} - ${selectedReceipt.supplier.name}`,
-        amount: remainingAmount,
-      }));
+    if (formData.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT) {
+      if (selectedSupplierId && selectedReceiptIds.length > 0) {
+        const selectedReceipts = unpaidReceipts.filter(r => selectedReceiptIds.includes(r.id));
+        const totalAmount = selectedReceipts.reduce((sum, r) => sum + r.totalAmount, 0);
+        const receiptNumbers = selectedReceipts.map(r => r.receiptNumber).join(', ');
+        const supplierName = selectedReceipts[0]?.supplier.name || '';
+
+        setFormData(prev => ({
+          ...prev,
+          supplierId: selectedSupplierId,
+          receiptImportIds: selectedReceiptIds,
+          receiptImportId: undefined,
+          paymentObject: `${receiptNumbers} - ${supplierName}`,
+          amount: totalAmount,
+        }));
+      } else if (selectedSupplierId) {
+        setFormData(prev => ({
+          ...prev,
+          supplierId: selectedSupplierId,
+          receiptImportIds: undefined,
+          receiptImportId: undefined,
+          paymentObject: undefined,
+          amount: 0,
+        }));
+      }
     }
-  }, [selectedReceipt]);
+  }, [selectedSupplierId, selectedReceiptIds, unpaidReceipts, formData.expenseType]);
 
   // Update attachments when files change
   useEffect(() => {
@@ -131,9 +165,45 @@ const ReceiptPaymentCreate: React.FC = () => {
     }));
   };
 
-  const handleReceiptSelect = (receiptId: string) => {
-    const receipt = unpaidReceipts.find(r => r.id === receiptId);
-    setSelectedReceipt(receipt || null);
+  const handleSupplierChange = (supplierId: string | null, supplierName: string) => {
+    setSelectedSupplierId(supplierId);
+    setSelectedSupplierName(supplierName);
+    setSelectedReceiptIds([]);
+  };
+
+  const handleReceiptSelectionChange = (receiptIds: string[]) => {
+    setSelectedReceiptIds(receiptIds);
+  };
+
+  const handlePaymentObjectSupplierChange = (supplierId: string | null, supplierName: string) => {
+    setPaymentObjectSupplierId(supplierId);
+    setPaymentObjectSupplierName(supplierName);
+    if (supplierId) {
+      setFormData(prev => ({
+        ...prev,
+        supplierId,
+        paymentObject: supplierName,
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        supplierId: undefined,
+        paymentObject: getPaymentObjectName(formData.expenseType),
+      }));
+    }
+  };
+
+  const handleUseSupplierCheckboxChange = (checked: boolean) => {
+    setUseSupplierForPaymentObject(checked);
+    if (!checked) {
+      setPaymentObjectSupplierId(null);
+      setPaymentObjectSupplierName("");
+      setFormData(prev => ({
+        ...prev,
+        supplierId: undefined,
+        paymentObject: getPaymentObjectName(formData.expenseType),
+      }));
+    }
   };
 
   const getPaymentObjectName = (expenseType: ReceiptPaymentExpenseType): string => {
@@ -155,6 +225,19 @@ const ReceiptPaymentCreate: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate supplier payment
+    if (formData.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT) {
+      if (!selectedSupplierId) {
+        toast.error('Vui lòng chọn nhà cung cấp');
+        return;
+      }
+      if (selectedReceiptIds.length === 0) {
+        toast.error('Vui lòng chọn ít nhất một phiếu nhập');
+        return;
+      }
+    }
+
     setLoading(true);
 
     try {
@@ -242,89 +325,83 @@ const ReceiptPaymentCreate: React.FC = () => {
                 </div>
               )}
 
-              {/* Supplier Payment Selection - Same row as Status */}
+              {/* Supplier Selection */}
               {formData.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT && (
-                <div>
-                  <label className="inline-block mb-2 text-base font-medium">
-                    Chọn phiếu nhập chưa thanh toán <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    className="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
-                    value={selectedReceipt?.id || ''}
-                    onChange={(e) => handleReceiptSelect(e.target.value)}
-                    disabled={loadingReceipts}
-                    required
-                  >
-                    <option value="">
-                      {loadingReceipts ? 'Đang tải...' : 'Chọn phiếu nhập'}
-                    </option>
-                    {unpaidReceipts.map((receipt) => (
-                      <option key={receipt.id} value={receipt.id}>
-                        {receipt.receiptNumber} - {receipt.supplier.name} - Tổng: {receipt.totalAmount.toLocaleString('vi-VN')}₫
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <>
+                  <SupplierSelector
+                    value={selectedSupplierId}
+                    label={selectedSupplierName}
+                    onChange={handleSupplierChange}
+                  />
+
+                  {/* Status - Same row as Supplier Selection */}
+                  <div>
+                    <label className="inline-block mb-2 text-base font-medium">
+                      Trạng thái <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      className="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
+                      value={formData.status}
+                      onChange={(e) => handleInputChange('status', e.target.value)}
+                      required
+                    >
+                      {statusOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </>
               )}
 
-              {/* Status - Same row as Supplier Payment Selection */}
-              <div>
-                <label className="inline-block mb-2 text-base font-medium">
-                  Trạng thái <span className="text-red-500">*</span>
-                </label>
-                <select
-                  className="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
-                  value={formData.status}
-                  onChange={(e) => handleInputChange('status', e.target.value)}
-                  required
-                >
-                  {statusOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Receipt Information Display - Full width */}
-              {formData.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT && selectedReceipt && (
+              {/* Receipt Import Selection - Full width */}
+              {formData.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT && selectedSupplierId && (
                 <div className="lg:col-span-2">
-                  <div className="p-4 bg-blue-50 dark:bg-blue-500/10 rounded-lg border border-blue-200 dark:border-blue-500/20">
-                    <div className="flex items-start gap-2">
-                      <Info className="size-4 text-blue-500 mt-0.5 flex-shrink-0" />
-                      <div className="text-sm">
-                        <div className="font-medium text-blue-700 dark:text-blue-300 mb-1">
-                          Thông tin phiếu nhập: {selectedReceipt.receiptNumber}
-                        </div>
-                        <div className="text-blue-600 dark:text-blue-400 space-y-1">
-                          <div>Nhà cung cấp: <span className="font-medium">{selectedReceipt.supplier.name}</span></div>
-                          <div>Tổng tiền: <span className="font-medium">{selectedReceipt.totalAmount.toLocaleString('vi-VN')}₫</span></div>
-                          <div>Kho: <span className="font-medium">{selectedReceipt.warehouse || '-'}</span></div>
-                          <div>Ngày nhập: <span className="font-medium">{selectedReceipt.importDate ? formatDateTime(selectedReceipt.importDate, true, 'DD/MM/YYYY') : '-'}</span></div>
-                          <div>Hạn thanh toán: <span className="font-medium">{selectedReceipt.paymentDate ? formatDateTime(selectedReceipt.paymentDate, true, 'DD/MM/YYYY') : '-'}</span></div>
-                          {selectedReceipt.note && (
-                            <div>Ghi chú: <span className="font-medium">{selectedReceipt.note}</span></div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <ReceiptImportSelector
+                    receipts={unpaidReceipts}
+                    selectedReceiptIds={selectedReceiptIds}
+                    onSelectionChange={handleReceiptSelectionChange}
+                    loading={loadingReceipts}
+                  />
                 </div>
               )}
 
               {/* Payment Object - Same row as Status for non-supplier payments */}
               {formData.expenseType !== ReceiptPaymentExpenseType.SUPPLIER_PAYMENT && (
                 <div>
-                  <label className="inline-block mb-2 text-base font-medium">
-                    Đối tượng chi
-                  </label>
-                  <input
-                    type="text"
-                    className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
-                    placeholder="Nhập tên đối tượng chi"
-                    value={formData.paymentObject || getPaymentObjectName(formData.expenseType)}
-                    onChange={(e) => handleInputChange('paymentObject', e.target.value)}
-                  />
+                  <div className="flex items-center gap-2 mb-2">
+                    <label className="inline-block text-base font-medium">
+                      Đối tượng chi
+                    </label>
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="size-4 border rounded border-slate-200 dark:border-zink-500 text-custom-500 focus:ring focus:ring-custom-100 dark:focus:ring-custom-500/20"
+                        checked={useSupplierForPaymentObject}
+                        onChange={(e) => handleUseSupplierCheckboxChange(e.target.checked)}
+                      />
+                      <span className="ml-1.5 text-sm text-slate-600 dark:text-zink-300">
+                        Chọn từ NCC
+                      </span>
+                    </label>
+                  </div>
+                  {useSupplierForPaymentObject ? (
+                    <SupplierSelect
+                      value={paymentObjectSupplierId ? { value: paymentObjectSupplierId, label: paymentObjectSupplierName } : null}
+                      onChange={(option: any) => handlePaymentObjectSupplierChange(option?.value || null, option?.label || "")}
+                      isClearable={true}
+                      placeholder="Tìm kiếm và chọn nhà cung cấp"
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
+                      placeholder="Nhập tên đối tượng chi"
+                      value={formData.paymentObject || getPaymentObjectName(formData.expenseType)}
+                      onChange={(e) => handleInputChange('paymentObject', e.target.value)}
+                    />
+                  )}
                 </div>
               )}
 
@@ -400,23 +477,25 @@ const ReceiptPaymentCreate: React.FC = () => {
                 />
               </div>
 
-              {/* File Upload */}
-              <div className="lg:col-span-2">
-                <label className="inline-block mb-2 text-base font-medium">
-                  Đính kèm tài liệu
-                </label>
-                <FileUpload
-                  files={uploadedFiles}
-                  onFilesChange={setUploadedFiles}
-                  accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
-                  multiple={true}
-                  maxSize={10}
-                  maxFiles={5}
-                />
-                <p className="text-xs text-slate-500 dark:text-zink-300 mt-2">
-                  Có thể tải lên hóa đơn, biên lai, hình ảnh chứng từ (tối đa 5 file, mỗi file không quá 10MB)
-                </p>
-              </div>
+              {/* File Upload - Temporarily Hidden */}
+              {false && (
+                <div className="lg:col-span-2">
+                  <label className="inline-block mb-2 text-base font-medium">
+                    Đính kèm tài liệu
+                  </label>
+                  <FileUpload
+                    files={uploadedFiles}
+                    onFilesChange={setUploadedFiles}
+                    accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+                    multiple={true}
+                    maxSize={10}
+                    maxFiles={5}
+                  />
+                  <p className="text-xs text-slate-500 dark:text-zink-300 mt-2">
+                    Có thể tải lên hóa đơn, biên lai, hình ảnh chứng từ (tối đa 5 file, mỗi file không quá 10MB)
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Submit Buttons */}
