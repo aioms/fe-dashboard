@@ -71,7 +71,7 @@ export interface CreateReceiptPaymentRequestDto {
   attachments?: Attachment[];
   status?: ReceiptPaymentStatus;
   supplierId?: string;
-  receiptImportId?: string;
+  receiptImportIds?: string[];
 }
 
 export interface UpdateReceiptPaymentRequestDto {
@@ -85,7 +85,7 @@ export interface UpdateReceiptPaymentRequestDto {
   attachments?: Attachment[];
   status?: ReceiptPaymentStatus;
   supplierId?: string;
-  receiptImportId?: string;
+  receiptImportIds?: string[];
 }
 
 export interface ReceiptPaymentFilterDto {

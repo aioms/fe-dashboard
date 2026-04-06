@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import BreadCrumb from "Common/BreadCrumb";
 import {
@@ -8,9 +8,7 @@ import {
   ArrowUpCircle,
   ClipboardCheck,
   Calendar,
-  Download,
   FilterX,
-  Loader2,
   TrendingUp,
   DollarSign
 } from "lucide-react";
@@ -53,12 +51,10 @@ const SummaryReport = () => {
   }, [initialFilters]);
 
   const [activeTab, setActiveTab] = useState<"orders" | "debts">("orders");
-  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<TransactionSummaryResponse["data"] | null>(null);
 
   const fetchSummary = useCallback(async () => {
     try {
-      setLoading(true);
       const startDate = dateRange[0] ? dayjs(dateRange[0]).format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD");
 
       const params: any = {
@@ -78,8 +74,6 @@ const SummaryReport = () => {
       setData(response.data);
     } catch (error) {
       console.error("Failed to fetch transaction summary:", error);
-    } finally {
-      setLoading(false);
     }
   }, [dateRange, filters]);
 
