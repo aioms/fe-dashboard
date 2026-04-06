@@ -103,7 +103,6 @@ const ReceiptPaymentCreate: React.FC = () => {
       setPaymentObjectSupplierName("");
       setFormData(prev => ({
         ...prev,
-        receiptImportId: undefined,
         receiptImportIds: undefined,
         supplierId: undefined,
         paymentObject: getPaymentObjectName(prev.expenseType),
@@ -124,7 +123,6 @@ const ReceiptPaymentCreate: React.FC = () => {
           ...prev,
           supplierId: selectedSupplierId,
           receiptImportIds: selectedReceiptIds,
-          receiptImportId: undefined,
           paymentObject: `${receiptNumbers} - ${supplierName}`,
           amount: totalAmount,
         }));
@@ -133,7 +131,6 @@ const ReceiptPaymentCreate: React.FC = () => {
           ...prev,
           supplierId: selectedSupplierId,
           receiptImportIds: undefined,
-          receiptImportId: undefined,
           paymentObject: undefined,
           amount: 0,
         }));
