@@ -53,7 +53,7 @@ const ReceiptPaymentCreate: React.FC = () => {
     expenseType: ReceiptPaymentExpenseType.SUPPLIER_PAYMENT,
     amount: 0,
     paymentMethod: PaymentMethod.CASH,
-    status: ReceiptPaymentStatus.DRAFT,
+    status: ReceiptPaymentStatus.PAID,
     attachments: [],
   });
 
