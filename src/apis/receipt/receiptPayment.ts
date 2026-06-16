@@ -125,7 +125,7 @@ export const deleteReceiptPayment = async (id: string) => {
   const response: IHttpResponse = await request.delete(`/receipt-payments/${id}`);
   const { isHasError, message } = ErrorHandler.checkResponse(
     response,
-    HttpStatusCode.NO_CONTENT
+    HttpStatusCode.OK
   );
 
   if (isHasError) {

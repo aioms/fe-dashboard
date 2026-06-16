@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 import {
   getReceiptPaymentListStart,
   getReceiptPaymentListSuccess,
@@ -202,10 +203,12 @@ export const deleteReceiptPayment = createAsyncThunk(
       await receiptPaymentAPI.deleteReceiptPayment(id);
 
       dispatch(deleteReceiptPaymentSuccess(id));
+      toast.success("Xóa phiếu chi thành công", { autoClose: 2000 });
       return id;
     } catch (error: any) {
       const errorMessage = error.message || 'An error occurred while deleting receipt payment';
       dispatch(deleteReceiptPaymentFailure(errorMessage));
+      toast.error(errorMessage, { autoClose: 2000 });
       return rejectWithValue(errorMessage);
     }
   }
