@@ -39,25 +39,33 @@ import ReceiptPaymentFilters from "./ReceiptPaymentFilters";
 import PaymentStatusBadge from "./PaymentStatusBadge";
 import ExpenseTypeBadge from "./ExpenseTypeBadge";
 
+const selectDataList = createSelector(
+  (state: any) => state.ReceiptPayment,
+  (state) => ({
+    data: state?.data || [],
+    pagination: state?.pagination || {},
+    loading: state?.loading || false,
+    error: state?.error || null,
+  })
+);
+
+const areFiltersEqual = (
+  first: ReceiptPaymentFilterDto,
+  second: ReceiptPaymentFilterDto
+) => {
+  const keys = Array.from(
+    new Set([...Object.keys(first), ...Object.keys(second)])
+  ) as Array<keyof ReceiptPaymentFilterDto>;
+
+  return keys.every((key) => first[key] === second[key]);
+};
+
 const ReceiptPaymentList: React.FC = () => {
   const dispatch = useDispatch<any>();
 
-  const selectDataList = createSelector(
-    (state: any) => state.ReceiptPayment,
-    (state) => ({
-      data: state?.data || [],
-      pagination: state?.pagination || {},
-      loading: state?.loading || false,
-      error: state?.error || null,
-    })
-  );
+  const { data: payments, pagination, loading, error } = useSelector(selectDataList);
 
-  const { data: payments, pagination, error } = useSelector(selectDataList);
-
-  const [filters, setFilters] = useState<ReceiptPaymentFilterDto>({
-    page: 1,
-    limit: 10,
-  });
+  const [filters, setFilters] = useState<ReceiptPaymentFilterDto>({});
 
   const [paginationData, setPaginationData] = useState<PaginationState>({
     pageIndex: 0,
@@ -68,42 +76,99 @@ const ReceiptPaymentList: React.FC = () => {
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const pageIndex = paginationData.pageIndex;
+  const pageSize = paginationData.pageSize;
+
+  const updatePaginationData = useCallback(
+    (nextState: PaginationState | ((previous: PaginationState) => PaginationState)) => {
+      setPaginationData((previous) => {
+        const next =
+          typeof nextState === "function"
+            ? (nextState as (value: PaginationState) => PaginationState)(previous)
+            : nextState;
+
+        if (
+          previous.pageIndex === next.pageIndex &&
+          previous.pageSize === next.pageSize
+        ) {
+          return previous;
+        }
+
+        return next;
+      });
+    },
+    []
+  );
+
+  const updateFilters = useCallback<React.Dispatch<React.SetStateAction<ReceiptPaymentFilterDto>>>(
+    (nextFilters) => {
+      setPaginationData((prev) =>
+        prev.pageIndex === 0 ? prev : { ...prev, pageIndex: 0 }
+      );
+      setFilters((prev) => {
+        const next =
+          typeof nextFilters === "function"
+            ? (nextFilters as (value: ReceiptPaymentFilterDto) => ReceiptPaymentFilterDto)(prev)
+            : nextFilters;
+
+        return areFiltersEqual(prev, next) ? prev : next;
+      });
+    },
+    []
+  );
 
   const fetchPayments = useCallback(() => {
     const params = {
-      page: paginationData.pageIndex + 1,
-      limit: paginationData.pageSize,
       ...filters,
+      page: pageIndex + 1,
+      limit: pageSize,
     };
     const cleanedParams = cleanObject(params);
     dispatch(getReceiptPaymentList(cleanedParams));
-  }, [dispatch, filters, paginationData]);
+  }, [dispatch, filters, pageIndex, pageSize]);
 
   useEffect(() => {
     fetchPayments();
   }, [fetchPayments]);
 
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((keyword: string) => {
+        updateFilters((prev) => ({
+          ...prev,
+          keyword,
+        }));
+      }, 700),
+    [updateFilters]
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
+
   // Search functionality
   const filterSearchData = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value.trim();
-    setFilters(prev => ({
-      ...prev,
-      keyword,
-      page: 1,
-    }));
+    debouncedSearch(keyword);
   };
 
   // Reset filters
   const resetFilters = () => {
-    setFilters({
-      page: 1,
-      limit: 10,
-    });
+    updateFilters({});
 
     if (searchInputRef.current) {
       searchInputRef.current.value = "";
     }
   };
+
+  const clearSearch = useCallback(() => {
+    updateFilters(prev => ({
+      ...prev,
+      keyword: undefined,
+    }));
+  }, [updateFilters]);
 
   // Delete functionality
   const deleteToggle = () => setDeleteModal(!deleteModal);
@@ -137,7 +202,7 @@ const ReceiptPaymentList: React.FC = () => {
         cell: (cell: any) => (
           <Link
             to={`/receipt-payment/detail/${cell.row.original.id}`}
-            className="transition-all duration-150 ease-linear text-custom-500 hover:text-custom-600"
+            className="font-medium transition-all duration-150 ease-linear text-custom-500 hover:text-custom-600"
           >
             {cell.getValue()}
           </Link>
@@ -150,7 +215,11 @@ const ReceiptPaymentList: React.FC = () => {
         enableSorting: true,
         cell: (cell: any) => {
           const date = cell.getValue();
-          return date ? formatDateTime(date, true) : '-';
+          return (
+            <span className="whitespace-nowrap">
+              {date ? formatDateTime(date, true) : "-"}
+            </span>
+          );
         },
       },
       {
@@ -173,7 +242,11 @@ const ReceiptPaymentList: React.FC = () => {
         cell: (cell: any) => {
           const value = cell.getValue();
           const supplier = cell.row.original.supplier;
-          return value || supplier?.name || "-";
+          return (
+            <span className="block max-w-[14rem] whitespace-normal break-words text-slate-700 dark:text-zink-100">
+              {value || supplier?.name || "-"}
+            </span>
+          );
         },
       },
       {
@@ -182,7 +255,7 @@ const ReceiptPaymentList: React.FC = () => {
         enableColumnFilter: false,
         enableSorting: true,
         cell: (cell: any) => (
-          <span className="font-semibold text-slate-700 dark:text-zink-100">
+          <span className="font-semibold whitespace-nowrap text-slate-700 dark:text-zink-100">
             {formatMoney(cell.getValue())}
           </span>
         ),
@@ -202,7 +275,7 @@ const ReceiptPaymentList: React.FC = () => {
         cell: (cell: any) => {
           const notes = cell.getValue();
           return notes ? (
-            <span className="text-sm text-slate-500 dark:text-zink-200">
+            <span className="block max-w-[18rem] whitespace-normal break-words text-sm text-slate-500 dark:text-zink-200">
               {notes.length > 50 ? `${notes.substring(0, 50)}...` : notes}
             </span>
           ) : "-";
@@ -289,8 +362,8 @@ const ReceiptPaymentList: React.FC = () => {
       />
 
       {/* Filters and Search */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 mb-5">
-        <div className="lg:col-span-4">
+      <div className="grid grid-cols-1 gap-4 mb-5 xl:grid-cols-12">
+        <div className="xl:col-span-3">
           <div className="relative">
             <input
               ref={searchInputRef}
@@ -298,28 +371,31 @@ const ReceiptPaymentList: React.FC = () => {
               className="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
               placeholder="Tìm kiếm theo mã phiếu, đối tượng chi..."
               autoComplete="off"
-              onChange={debounce(filterSearchData, 700)}
+              onChange={filterSearchData}
+              onBlur={() => {
+                if (!searchInputRef.current?.value.trim()) clearSearch();
+              }}
             />
             <Search className="inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-600" />
           </div>
         </div>
 
-        <div className="lg:col-span-6">
-          <ReceiptPaymentFilters filters={filters} setFilters={setFilters} />
+        <div className="xl:col-span-7">
+          <ReceiptPaymentFilters filters={filters} setFilters={updateFilters} />
         </div>
 
-        <div className="lg:col-span-2">
-          <div className="flex gap-2">
+        <div className="xl:col-span-2">
+          <div className="flex flex-col gap-2 sm:flex-row xl:justify-end">
             <button
               type="button"
-              className="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-700 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
+              className="w-full text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-700 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10 sm:w-auto"
               onClick={resetFilters}
             >
               Xóa lọc
             </button>
             <Link
               to="/receipt-payment/create"
-              className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600"
+              className="w-full text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 sm:w-auto"
             >
               <Plus className="inline-block size-4" />
               <span className="align-middle">Tạo phiếu chi</span>
@@ -345,7 +421,20 @@ const ReceiptPaymentList: React.FC = () => {
       </div>
 
       {/* Table */}
-      {payments && payments.length > 0 ? (
+      {loading ? (
+        <div
+          className="mt-5 space-y-3"
+          aria-busy="true"
+          aria-label="Đang tải danh sách phiếu chi"
+        >
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div
+              key={index}
+              className="h-11 animate-pulse rounded-md bg-slate-100 dark:bg-zink-600"
+            />
+          ))}
+        </div>
+      ) : payments && payments.length > 0 ? (
         <TableCustom
           isPagination={true}
           columns={columns}
@@ -353,10 +442,9 @@ const ReceiptPaymentList: React.FC = () => {
           totalData={pagination.totalItems}
           pageCount={pagination.totalPages}
           pagination={paginationData}
-          setPaginationData={setPaginationData}
-          customPageSize={10}
-          divclassName="mt-5"
-          tableclassName="w-full whitespace-nowrap"
+          setPaginationData={updatePaginationData}
+          divclassName="mt-5 overflow-x-auto"
+          tableclassName="w-full min-w-[980px]"
           theadclassName="ltr:text-left rtl:text-right bg-slate-100 dark:bg-zink-600"
           thclassName="px-3.5 py-2.5 font-semibold text-slate-500 border-b border-slate-200 dark:border-zink-500 dark:text-zink-200"
           tdclassName="px-3.5 py-2.5 border-y border-slate-200 dark:border-zink-500"
