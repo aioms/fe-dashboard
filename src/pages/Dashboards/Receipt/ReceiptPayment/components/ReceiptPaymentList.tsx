@@ -113,11 +113,16 @@ const ReceiptPaymentList: React.FC = () => {
     setSelectedPayment(payment);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (selectedPayment) {
-      dispatch(deleteReceiptPayment(selectedPayment.id));
-      setDeleteModal(false);
-      setSelectedPayment(null);
+      try {
+        await dispatch(deleteReceiptPayment(selectedPayment.id)).unwrap();
+        setDeleteModal(false);
+        setSelectedPayment(null);
+        fetchPayments();
+      } catch {
+        // The thunk displays the API error and keeps the modal open for retry.
+      }
     }
   };
 
@@ -211,6 +216,7 @@ const ReceiptPaymentList: React.FC = () => {
           <Dropdown className="relative">
             <Dropdown.Trigger className="flex items-center justify-center size-[30px] p-0 text-slate-500 btn bg-slate-100 hover:text-white hover:bg-slate-600 focus:text-white focus:bg-slate-600 dark:bg-slate-500/20 dark:text-slate-400 dark:hover:bg-slate-500 dark:hover:text-white">
               <MoreHorizontal className="size-3" />
+              <span className="sr-only">Mở menu thao tác</span>
             </Dropdown.Trigger>
             <Dropdown.Content className="absolute z-[1001] list-none py-2 px-1 bg-white rounded-md shadow-lg border border-slate-200 dropdown-menu min-w-[10rem] dark:bg-zink-600 dark:border-zink-500">
               <li>
@@ -233,7 +239,8 @@ const ReceiptPaymentList: React.FC = () => {
               </li>
               <li>
                 <button
-                  className="block w-full px-4 py-1.5 text-base transition-all duration-200 ease-linear text-left text-slate-600 hover:bg-slate-100 hover:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200"
+                  type="button"
+                  className="block w-full px-4 py-1.5 text-base transition-all duration-200 ease-linear text-left text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-500/10 dark:hover:text-red-300"
                   onClick={() => onClickDelete(cell.row.original)}
                 >
                   <Trash2 className="inline-block size-3 ltr:mr-1 rtl:ml-1" />
