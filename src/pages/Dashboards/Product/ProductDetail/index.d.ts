@@ -59,6 +59,34 @@ export interface IInventoryLogsQueryParams {
   sortOrder?: "asc" | "desc";
 }
 
+export type ProductPriceType = "cost_price" | "selling_price" | "retail_price";
+
+export interface IPriceLog {
+  id: string;
+  productId: string;
+  priceType: ProductPriceType;
+  previousPrice: number;
+  newPrice: number;
+  priceChange: number;
+  sourceType: string;
+  referenceId: string | null;
+  user: {
+    id: string;
+    fullname: string;
+  };
+  createdAt: string;
+}
+
+export interface IPriceLogsQueryParams {
+  page?: number;
+  limit?: number;
+  sortField?: string;
+  sortOrder?: "asc" | "desc";
+  startDate?: string;
+  endDate?: string;
+  priceType?: ProductPriceType;
+}
+
 export interface IProductSupplier {
   id: string;
   code: string;
