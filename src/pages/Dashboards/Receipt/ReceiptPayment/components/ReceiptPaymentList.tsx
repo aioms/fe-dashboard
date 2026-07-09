@@ -26,8 +26,7 @@ import { formatMoney, cleanObject, formatDateTime } from "helpers/utils";
 
 // Types and actions
 import {
-  ReceiptPaymentFilterDto,
-  ReceiptPaymentStatus
+  ReceiptPaymentFilterDto
 } from "types/receiptPayment";
 import {
   getReceiptPaymentList,
