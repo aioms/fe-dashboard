@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import BreadCrumb from "Common/BreadCrumb";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { ArrowLeft, Save } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
@@ -14,7 +14,7 @@ import { ReceiptImportSelector } from "./components/ReceiptImportSelector";
 
 // Types and actions
 import {
-  CreateReceiptPaymentRequestDto,
+  UpdateReceiptPaymentRequestDto,
   ReceiptPaymentExpenseType,
   ReceiptPaymentStatus,
   PaymentMethod,
@@ -22,7 +22,7 @@ import {
   UnpaidReceiptImport,
   UnpaidReceiptImportListResponse
 } from "types/receiptPayment";
-import { createReceiptPayment, getUnpaidReceipts } from "slices/receipt-payment/thunk";
+import { getReceiptPaymentDetail, updateReceiptPayment, getUnpaidReceipts } from "slices/receipt-payment/thunk";
 
 const expenseTypeOptions = [
   { value: ReceiptPaymentExpenseType.SUPPLIER_PAYMENT, label: "Chi tiền hàng NCC" },
@@ -45,19 +45,13 @@ const statusOptions = [
   { value: ReceiptPaymentStatus.DEBT_PAYMENT, label: "Nợ chi" },
 ];
 
-const ReceiptPaymentCreate: React.FC = () => {
+const ReceiptPaymentEdit: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<any>();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState<CreateReceiptPaymentRequestDto>({
-    paymentDate: new Date().toISOString().split('T')[0],
-    expenseType: ReceiptPaymentExpenseType.SUPPLIER_PAYMENT,
-    amount: 0,
-    paymentMethod: PaymentMethod.CASH,
-    status: ReceiptPaymentStatus.PAID,
-    attachments: [],
-  });
-
+  const [formData, setFormData] = useState<UpdateReceiptPaymentRequestDto>({});
+  const [initialLoading, setInitialLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [loadingReceipts, setLoadingReceipts] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
@@ -65,10 +59,75 @@ const ReceiptPaymentCreate: React.FC = () => {
   const [selectedSupplierName, setSelectedSupplierName] = useState<string>("");
   const [selectedReceiptIds, setSelectedReceiptIds] = useState<string[]>([]);
   const [unpaidReceipts, setUnpaidReceipts] = useState<UnpaidReceiptImport[]>([]);
+  const [defaultReceiptImports, setDefaultReceiptImports] = useState<UnpaidReceiptImport[]>([]);
   const [isDirectExport, setIsDirectExport] = useState(false);
   const [useSupplierForPaymentObject, setUseSupplierForPaymentObject] = useState(false);
   const [paymentObjectSupplierId, setPaymentObjectSupplierId] = useState<string | null>(null);
   const [paymentObjectSupplierName, setPaymentObjectSupplierName] = useState<string>("");
+
+  useEffect(() => {
+    if (id) {
+      fetchPaymentDetail();
+    }
+  }, [id]);
+
+  const fetchPaymentDetail = async () => {
+    try {
+      setInitialLoading(true);
+      const response = await dispatch(getReceiptPaymentDetail(id!)).unwrap();
+      
+      setFormData({
+        paymentDate: response.paymentDate ? response.paymentDate.substring(0, 10) : '',
+        expenseType: response.expenseType,
+        expenseTypeName: response.expenseTypeName,
+        amount: response.amount,
+        paymentMethod: response.paymentMethod,
+        status: response.status,
+        notes: response.notes,
+        supplierId: response.supplierId,
+        receiptImportIds: response.receiptImportIds,
+        isDirectExport: response.isDirectExport,
+        paymentObject: response.paymentObject,
+      });
+
+      if (response.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT) {
+        if (response.supplier) {
+          setSelectedSupplierId(response.supplier.id);
+          setSelectedSupplierName(response.supplier.name);
+        } else if (response.supplierId) {
+          setSelectedSupplierId(response.supplierId);
+          setSelectedSupplierName(response.supplierName || "");
+        }
+        
+        setIsDirectExport(!!response.isDirectExport);
+        if (response.receiptImportIds) {
+          setSelectedReceiptIds(response.receiptImportIds);
+        }
+        if (response.receiptImports) {
+          setDefaultReceiptImports(response.receiptImports);
+        }
+      } else {
+        // Non-supplier payment object logic could be extracted here if it was a supplier
+        // To simplify, we just set the paymentObject
+      }
+
+      // Initialize attachments
+      if (response.attachments) {
+        setUploadedFiles(response.attachments.map((att: Attachment) => ({
+          id: att.id,
+          name: att.name,
+          url: att.path,
+          type: att.type,
+          size: att.size,
+        })));
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Không thể tải thông tin phiếu chi");
+      navigate("/receipt-payment");
+    } finally {
+      setInitialLoading(false);
+    }
+  };
 
   // Load unpaid receipts when supplier is selected
   useEffect(() => {
@@ -89,17 +148,22 @@ const ReceiptPaymentCreate: React.FC = () => {
         });
     } else {
       setUnpaidReceipts([]);
-      setSelectedReceiptIds([]);
+      if (!initialLoading) {
+        setSelectedReceiptIds([]);
+      }
     }
   }, [selectedSupplierId, formData.expenseType, dispatch]);
 
   // Reset supplier and receipts when expense type changes
   useEffect(() => {
+    if (initialLoading) return;
+
     if (formData.expenseType !== ReceiptPaymentExpenseType.SUPPLIER_PAYMENT) {
       setSelectedSupplierId(null);
       setSelectedSupplierName("");
       setSelectedReceiptIds([]);
       setUnpaidReceipts([]);
+      setDefaultReceiptImports([]);
       setIsDirectExport(false);
       setUseSupplierForPaymentObject(false);
       setPaymentObjectSupplierId(null);
@@ -108,13 +172,25 @@ const ReceiptPaymentCreate: React.FC = () => {
         ...prev,
         receiptImportIds: undefined,
         supplierId: undefined,
-        paymentObject: getPaymentObjectName(prev.expenseType),
+        paymentObject: getPaymentObjectName(prev.expenseType as ReceiptPaymentExpenseType),
       }));
     }
-  }, [formData.expenseType]);
+  }, [formData.expenseType, initialLoading]);
+
+  const mergedReceipts = useMemo(() => {
+    const list = [...defaultReceiptImports];
+    unpaidReceipts.forEach(u => {
+      if (!list.find(m => m.id === u.id)) {
+        list.push(u);
+      }
+    });
+    return list;
+  }, [defaultReceiptImports, unpaidReceipts]);
 
   // Update form data when supplier or receipts are selected
   useEffect(() => {
+    if (initialLoading) return;
+    
     if (formData.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT) {
       if (selectedSupplierId) {
         if (isDirectExport) {
@@ -124,9 +200,10 @@ const ReceiptPaymentCreate: React.FC = () => {
             receiptImportIds: undefined,
             paymentObject: `Chạy hàng/Xuất thẳng - ${selectedSupplierName}`,
             amount: prev.amount || 0,
+            isDirectExport: true,
           }));
         } else if (selectedReceiptIds.length > 0) {
-          const selectedReceipts = unpaidReceipts.filter(r => selectedReceiptIds.includes(r.id));
+          const selectedReceipts = mergedReceipts.filter(r => selectedReceiptIds.includes(r.id));
           const totalAmount = selectedReceipts.reduce((sum, r) => sum + r.totalAmount, 0);
           const receiptNumbers = selectedReceipts.map(r => r.receiptNumber).join(', ');
           const supplierName = selectedSupplierName || '';
@@ -137,22 +214,26 @@ const ReceiptPaymentCreate: React.FC = () => {
             receiptImportIds: selectedReceiptIds,
             paymentObject: `${receiptNumbers} - ${supplierName}`,
             amount: totalAmount,
+            isDirectExport: false,
           }));
         } else {
           setFormData(prev => ({
             ...prev,
             supplierId: selectedSupplierId,
-            receiptImportIds: undefined,
+            receiptImportIds: [],
             paymentObject: undefined,
             amount: 0,
+            isDirectExport: false,
           }));
         }
       }
     }
-  }, [selectedSupplierId, selectedReceiptIds, unpaidReceipts, formData.expenseType, selectedSupplierName, isDirectExport]);
+  }, [selectedSupplierId, selectedReceiptIds, mergedReceipts, formData.expenseType, selectedSupplierName, isDirectExport, initialLoading]);
 
   // Update attachments when files change
   useEffect(() => {
+    if (initialLoading) return;
+    
     const attachments: Attachment[] = uploadedFiles.map(file => ({
       id: file.id,
       name: file.name,
@@ -166,9 +247,9 @@ const ReceiptPaymentCreate: React.FC = () => {
       ...prev,
       attachments,
     }));
-  }, [uploadedFiles]);
+  }, [uploadedFiles, initialLoading]);
 
-  const handleInputChange = (field: keyof CreateReceiptPaymentRequestDto, value: any) => {
+  const handleInputChange = (field: keyof UpdateReceiptPaymentRequestDto, value: any) => {
     setFormData(prev => ({
       ...prev,
       [field]: value,
@@ -179,6 +260,7 @@ const ReceiptPaymentCreate: React.FC = () => {
     setSelectedSupplierId(supplierId);
     setSelectedSupplierName(supplierName);
     setSelectedReceiptIds([]);
+    setDefaultReceiptImports([]);
     setIsDirectExport(false);
   };
 
@@ -206,7 +288,7 @@ const ReceiptPaymentCreate: React.FC = () => {
       setFormData(prev => ({
         ...prev,
         supplierId: undefined,
-        paymentObject: getPaymentObjectName(formData.expenseType),
+        paymentObject: getPaymentObjectName(formData.expenseType as ReceiptPaymentExpenseType),
       }));
     }
   };
@@ -219,7 +301,7 @@ const ReceiptPaymentCreate: React.FC = () => {
       setFormData(prev => ({
         ...prev,
         supplierId: undefined,
-        paymentObject: getPaymentObjectName(formData.expenseType),
+        paymentObject: getPaymentObjectName(formData.expenseType as ReceiptPaymentExpenseType),
       }));
     }
   };
@@ -242,6 +324,8 @@ const ReceiptPaymentCreate: React.FC = () => {
         return "";
     }
   };
+
+
 
   const isAmountDisabled = 
     formData.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT &&
@@ -271,20 +355,28 @@ const ReceiptPaymentCreate: React.FC = () => {
         isDirectExport: formData.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT ? isDirectExport : undefined,
       };
 
-      await dispatch(createReceiptPayment(submitData)).unwrap();
-      toast.success('Tạo phiếu chi thành công!');
+      await dispatch(updateReceiptPayment({ id: id!, data: submitData })).unwrap();
+      toast.success('Cập nhật phiếu chi thành công!');
       navigate('/receipt-payment');
     } catch (error: any) {
-      console.error('Error creating receipt payment:', error);
-      toast.error(error.message || 'Có lỗi xảy ra khi tạo phiếu chi');
+      console.error('Error updating receipt payment:', error);
+      toast.error(error.message || 'Có lỗi xảy ra khi cập nhật phiếu chi');
     } finally {
       setLoading(false);
     }
   };
 
+  if (initialLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-custom-500"></div>
+      </div>
+    );
+  }
+
   return (
     <React.Fragment>
-      <BreadCrumb title="Tạo phiếu chi" pageTitle="Phiếu chi" />
+      <BreadCrumb title="Cập nhật phiếu chi" pageTitle="Phiếu chi" />
       <ToastContainer closeButton={false} limit={1} />
 
       <div className="card">
@@ -298,7 +390,7 @@ const ReceiptPaymentCreate: React.FC = () => {
                 <ArrowLeft className="size-4" />
               </Link>
               <h4 className="text-lg font-medium text-slate-700 dark:text-zink-100">
-                Tạo phiếu chi mới
+                Cập nhật phiếu chi
               </h4>
             </div>
           </div>
@@ -313,7 +405,7 @@ const ReceiptPaymentCreate: React.FC = () => {
                 <input
                   type="date"
                   className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
-                  value={formData.paymentDate}
+                  value={formData.paymentDate || ''}
                   onChange={(e) => handleInputChange('paymentDate', e.target.value)}
                   required
                 />
@@ -406,7 +498,7 @@ const ReceiptPaymentCreate: React.FC = () => {
               {formData.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT && selectedSupplierId && !isDirectExport && (
                 <div className="lg:col-span-2">
                   <ReceiptImportSelector
-                    receipts={unpaidReceipts}
+                    receipts={mergedReceipts}
                     selectedReceiptIds={selectedReceiptIds}
                     onSelectionChange={handleReceiptSelectionChange}
                     loading={loadingReceipts}
@@ -445,7 +537,7 @@ const ReceiptPaymentCreate: React.FC = () => {
                       type="text"
                       className="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500"
                       placeholder="Nhập tên đối tượng chi"
-                      value={formData.paymentObject || getPaymentObjectName(formData.expenseType)}
+                      value={formData.paymentObject || getPaymentObjectName(formData.expenseType as ReceiptPaymentExpenseType)}
                       onChange={(e) => handleInputChange('paymentObject', e.target.value)}
                     />
                   )}
@@ -507,10 +599,6 @@ const ReceiptPaymentCreate: React.FC = () => {
                 </select>
               </div>
 
-
-
-
-
               {/* Notes */}
               <div className="lg:col-span-2">
                 <label className="inline-block mb-2 text-base font-medium">
@@ -567,7 +655,7 @@ const ReceiptPaymentCreate: React.FC = () => {
                 ) : (
                   <>
                     <Save className="inline-block size-4 mr-2" />
-                    Lưu phiếu chi
+                    Cập nhật phiếu chi
                   </>
                 )}
               </button>
@@ -579,4 +667,4 @@ const ReceiptPaymentCreate: React.FC = () => {
   );
 };
 
-export default ReceiptPaymentCreate;
+export default ReceiptPaymentEdit;

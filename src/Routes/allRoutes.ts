@@ -28,6 +28,7 @@ import ReceiptCheckList from "pages/Dashboards/Receipt/ReceiptCheck/ReceiptCheck
 // receipt payment
 import ReceiptPaymentManagement from "pages/Dashboards/Receipt/ReceiptPayment/ReceiptPaymentManagement";
 import ReceiptPaymentCreate from "pages/Dashboards/Receipt/ReceiptPayment/ReceiptPaymentCreate";
+import ReceiptPaymentEdit from "pages/Dashboards/Receipt/ReceiptPayment/ReceiptPaymentEdit";
 import ReceiptPaymentDetail from "pages/Dashboards/Receipt/ReceiptPayment/ReceiptPaymentDetail";
 import ReceiptDebtDetail from "pages/Dashboards/Receipt/ReceiptPayment/ReceiptDebtDetail";
 
@@ -81,6 +82,7 @@ const authProtectedRoutes: Array<RouteObject> = [
   // receipt payment
   { path: "/receipt-payment", component: ReceiptPaymentManagement },
   { path: "/receipt-payment/create", component: ReceiptPaymentCreate },
+  { path: "/receipt-payment/edit/:id", component: ReceiptPaymentEdit },
   { path: "/receipt-payment/detail/:id", component: ReceiptPaymentDetail },
   { path: "/receipt-debt/detail/:id", component: ReceiptDebtDetail },
 

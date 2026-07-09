@@ -5,6 +5,7 @@ export enum ReceiptPaymentExpenseType {
   UTILITIES = "utilities",
   RENT = "rent",
   LABOR = "labor",
+  CASH_WITHDRAWAL_SANG = "cash_withdrawal_sang",
   OTHER = "other",
 }
 
@@ -54,8 +55,14 @@ export interface ReceiptPayment {
   status: ReceiptPaymentStatus;
   supplier?: Supplier;
   supplierId?: string;
-  receiptImportId?: string;
+  supplierName?: string;
+  receiptImportIds?: string[];
+  isDirectExport?: boolean;
   userId: string;
+  user?: {
+    id: string;
+    fullname: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -72,6 +79,7 @@ export interface CreateReceiptPaymentRequestDto {
   status?: ReceiptPaymentStatus;
   supplierId?: string;
   receiptImportIds?: string[];
+  isDirectExport?: boolean;
 }
 
 export interface UpdateReceiptPaymentRequestDto {
@@ -86,6 +94,7 @@ export interface UpdateReceiptPaymentRequestDto {
   status?: ReceiptPaymentStatus;
   supplierId?: string;
   receiptImportIds?: string[];
+  isDirectExport?: boolean;
 }
 
 export interface ReceiptPaymentFilterDto {

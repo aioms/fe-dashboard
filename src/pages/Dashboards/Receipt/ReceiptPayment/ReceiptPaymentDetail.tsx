@@ -49,7 +49,7 @@ const ReceiptPaymentDetail: React.FC = () => {
 
       // Initialize edit form
       setEditForm({
-        paymentDate: response.paymentDate.split('T')[0], // Format for date input
+        paymentDate: response.paymentDate ? response.paymentDate.substring(0, 10) : "", // Format for date input
         amount: response.amount,
         amountDisplay: formatMoney(response.amount),
         paymentMethod: response.paymentMethod,
@@ -78,7 +78,7 @@ const ReceiptPaymentDetail: React.FC = () => {
     // Reset form to original values
     if (payment) {
       setEditForm({
-        paymentDate: payment.paymentDate.split('T')[0],
+        paymentDate: payment.paymentDate ? payment.paymentDate.substring(0, 10) : "",
         amount: payment.amount,
         amountDisplay: formatMoney(payment.amount),
         paymentMethod: payment.paymentMethod,
@@ -301,7 +301,7 @@ const ReceiptPaymentDetail: React.FC = () => {
                     <div>
                       <div className="text-sm text-slate-500 dark:text-zink-200">Đối tượng chi</div>
                       <div className="font-medium text-slate-700 dark:text-zink-100">
-                        {payment.paymentObject || payment.supplier?.name || "-"}
+                        {payment.paymentObject || payment.supplierName || payment.supplier?.name || "-"}
                       </div>
                     </div>
                   </div>
@@ -451,6 +451,12 @@ const ReceiptPaymentDetail: React.FC = () => {
                 </h5>
 
                 <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500 dark:text-zink-200">Người tạo:</span>
+                    <span className="text-slate-700 dark:text-zink-100">
+                      {payment.user?.fullname || 'Hệ thống'}
+                    </span>
+                  </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500 dark:text-zink-200">Ngày tạo:</span>
                     <span className="text-slate-700 dark:text-zink-100">
