@@ -29,6 +29,22 @@ export interface ReceiptPaymentState {
   selectedPayment: ReceiptPayment | null;
   selectedDebt: ReceiptDebt | null;
   paymentHistory: ReceiptDebtPaymentHistory | null;
+  summary: {
+    totalCount: number;
+    totalPaidAmount: number;
+    totalPaidCount: number;
+    totalDebtAmount: number;
+    totalDebtCount: number;
+  } | null;
+  summaryLoading: boolean;
+  debtSummary: {
+    totalCount: number;
+    totalRemainingAmount: number;
+    totalPaidAmount: number;
+    totalOverdueDebts: number;
+    totalCancelledDebts: number;
+  } | null;
+  debtSummaryLoading: boolean;
 }
 
 const initialState: ReceiptPaymentState = {
@@ -53,6 +69,10 @@ const initialState: ReceiptPaymentState = {
   selectedPayment: null,
   selectedDebt: null,
   paymentHistory: null,
+  summary: null,
+  summaryLoading: false,
+  debtSummary: null,
+  debtSummaryLoading: false,
 };
 
 const receiptPaymentSlice = createSlice({
@@ -75,6 +95,21 @@ const receiptPaymentSlice = createSlice({
       state.error = action.payload;
     },
 
+    // Receipt Payment Summary Actions
+    getReceiptPaymentSummaryStart: (state) => {
+      state.summaryLoading = true;
+      state.error = null;
+    },
+    getReceiptPaymentSummarySuccess: (state, action: PayloadAction<any>) => {
+      state.summaryLoading = false;
+      state.summary = action.payload;
+      state.error = null;
+    },
+    getReceiptPaymentSummaryFailure: (state, action: PayloadAction<string>) => {
+      state.summaryLoading = false;
+      state.error = action.payload;
+    },
+
     // Receipt Debt Actions (consolidated)
     getReceiptDebtListStart: (state) => {
       state.debtLoading = true;
@@ -88,6 +123,21 @@ const receiptPaymentSlice = createSlice({
     },
     getReceiptDebtListFailure: (state, action: PayloadAction<string>) => {
       state.debtLoading = false;
+      state.error = action.payload;
+    },
+
+    // Receipt Debt Summary Actions
+    getReceiptDebtSummaryStart: (state) => {
+      state.debtSummaryLoading = true;
+      state.error = null;
+    },
+    getReceiptDebtSummarySuccess: (state, action: PayloadAction<any>) => {
+      state.debtSummaryLoading = false;
+      state.debtSummary = action.payload;
+      state.error = null;
+    },
+    getReceiptDebtSummaryFailure: (state, action: PayloadAction<string>) => {
+      state.debtSummaryLoading = false;
       state.error = action.payload;
     },
 
@@ -200,9 +250,15 @@ export const {
   getReceiptPaymentListStart,
   getReceiptPaymentListSuccess,
   getReceiptPaymentListFailure,
+  getReceiptPaymentSummaryStart,
+  getReceiptPaymentSummarySuccess,
+  getReceiptPaymentSummaryFailure,
   getReceiptDebtListStart,
   getReceiptDebtListSuccess,
   getReceiptDebtListFailure,
+  getReceiptDebtSummaryStart,
+  getReceiptDebtSummarySuccess,
+  getReceiptDebtSummaryFailure,
   getReceiptDebtDetailStart,
   getReceiptDebtDetailSuccess,
   getReceiptDebtDetailFailure,

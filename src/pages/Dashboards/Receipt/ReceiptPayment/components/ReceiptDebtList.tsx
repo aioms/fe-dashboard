@@ -7,16 +7,10 @@ import { createSelector } from "reselect";
 // Icons
 import {
   Search,
-  Download,
-  Upload,
   MoreHorizontal,
   Trash2,
-  FileEdit,
   Eye,
   AlertTriangle,
-  Plus,
-  Mail,
-  Printer,
 } from "lucide-react";
 
 // Components
@@ -34,7 +28,7 @@ import {
   ReceiptDebtStatus,
   ReceiptDebtType
 } from "types/receiptPayment";
-import { getReceiptDebtList, deleteReceiptDebt } from "slices/receipt-payment/thunk";
+import { getReceiptDebtList, deleteReceiptDebt, getReceiptDebtSummary } from "slices/receipt-payment/thunk";
 
 // Status filter options
 const statusOptions = [
@@ -55,10 +49,12 @@ const ReceiptDebtList: React.FC = () => {
       pagination: state?.debtPagination || {},
       loading: state?.debtLoading || false,
       error: state?.error || null,
+      summary: state?.debtSummary || null,
+      summaryLoading: state?.debtSummaryLoading || false,
     })
   );
 
-  const { data: collections, pagination, error } = useSelector(selectDataList);
+  const { data: collections, pagination, error, summary, summaryLoading } = useSelector(selectDataList);
 
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [perPage, setPerPage] = useState<number>(10);
@@ -85,6 +81,7 @@ const ReceiptDebtList: React.FC = () => {
     };
     const cleanedParams = cleanObject(params);
     dispatch(getReceiptDebtList(cleanedParams));
+    dispatch(getReceiptDebtSummary(cleanedParams));
   }, [dispatch, currentPage, perPage, searchKeyword, statusFilter, customerFilter, startDate, endDate]);
 
   useEffect(() => {
@@ -356,48 +353,6 @@ const ReceiptDebtList: React.FC = () => {
                 </Link>
               </li>
               <li>
-                <Link
-                  to={`/receipt-debt/payment/${cell.row.original.id}`}
-                  className="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-green-600 hover:bg-green-50 hover:text-green-700 dark:text-green-400 dark:hover:bg-green-500/10 dark:hover:text-green-300"
-                >
-                  <Plus className="inline-block size-3 ltr:mr-1 rtl:ml-1" />
-                  <span className="align-middle">Thêm đợt thanh toán</span>
-                </Link>
-              </li>
-              <li>
-                <button
-                  className="block w-full px-4 py-1.5 text-base transition-all duration-200 ease-linear text-left text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-blue-500/10 dark:hover:text-blue-300"
-                  onClick={() => {
-                    // Handle email reminder
-                    console.log('Send email reminder for:', cell.row.original.id);
-                  }}
-                >
-                  <Mail className="inline-block size-3 ltr:mr-1 rtl:ml-1" />
-                  <span className="align-middle">Gửi email nhắc</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  className="block w-full px-4 py-1.5 text-base transition-all duration-200 ease-linear text-left text-slate-600 hover:bg-slate-100 hover:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200"
-                  onClick={() => {
-                    // Handle print
-                    console.log('Print receipt for:', cell.row.original.id);
-                  }}
-                >
-                  <Printer className="inline-block size-3 ltr:mr-1 rtl:ml-1" />
-                  <span className="align-middle">In phiếu thu</span>
-                </button>
-              </li>
-              <li>
-                <Link
-                  to={`/receipt-debt/edit/${cell.row.original.id}`}
-                  className="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 hover:bg-slate-100 hover:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200"
-                >
-                  <FileEdit className="inline-block size-3 ltr:mr-1 rtl:ml-1" />
-                  <span className="align-middle">Cập nhật</span>
-                </Link>
-              </li>
-              <li>
                 <button
                   className="block w-full px-4 py-1.5 text-base transition-all duration-200 ease-linear text-left text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-500/10 dark:hover:text-red-300"
                   onClick={() => onClickDelete(cell.row.original)}
@@ -414,20 +369,7 @@ const ReceiptDebtList: React.FC = () => {
     [currentPage, perPage]
   );
 
-  // Summary calculations
-  const summary = useMemo(() => {
-    const totalDebts = collections.length;
-    const totalRemainingDebt = collections.reduce((sum: number, debt: any) => sum + debt.remainingAmount, 0);
-    const overdueDebts = collections.filter((debt: any) =>
-      isOverdue(debt.dueDate, debt.status)
-    ).length;
-
-    return {
-      totalDebts,
-      totalRemainingDebt,
-      overdueDebts
-    };
-  }, [collections]);
+  // Summary is now fetched from the API and stored in Redux state
 
   if (error) {
     return (
@@ -528,52 +470,59 @@ const ReceiptDebtList: React.FC = () => {
           />
         </div>
 
-        {/* Action Buttons - Export/Import */}
-        <div className="lg:col-span-2">
-          <div className="flex gap-2 justify-end">
-            <button
-              type="button"
-              className="text-green-500 bg-white btn hover:text-green-500 hover:bg-green-100 focus:text-green-500 focus:bg-green-100 active:text-green-500 active:bg-green-100 dark:bg-zink-700 dark:hover:bg-green-500/10 dark:focus:bg-green-500/10 dark:active:bg-green-500/10"
-              onClick={() => {
-                // Handle export
-                console.log('Export receipt collections');
-              }}
-            >
-              <Download className="inline-block size-4 mr-1" />
-              Xuất danh sách
-            </button>
-            <button
-              type="button"
-              className="text-blue-500 bg-white btn hover:text-blue-500 hover:bg-blue-100 focus:text-blue-500 focus:bg-blue-100 active:text-blue-500 active:bg-blue-100 dark:bg-zink-700 dark:hover:bg-blue-500/10 dark:focus:bg-blue-500/10 dark:active:bg-blue-500/10"
-              onClick={() => {
-                // Handle import
-                console.log('Import receipt collections');
-              }}
-            >
-              <Upload className="inline-block size-4 mr-1" />
-              Tải danh sách
-            </button>
-          </div>
-        </div>
+
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 mb-5">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5 mb-5">
         <div className="p-4 bg-slate-50 dark:bg-zink-600 rounded-md">
-          <div className="text-sm text-slate-500 dark:text-zink-200">Tổng số khoản nợ</div>
+          <div className="text-sm text-slate-500 dark:text-zink-200">Tổng số phiếu</div>
           <div className="text-2xl font-bold text-slate-700 dark:text-zink-100">
-            {summary.totalDebts}
+            {summaryLoading ? (
+              <span className="text-slate-400 text-lg">Đang tính...</span>
+            ) : (
+              summary?.totalCount ?? 0
+            )}
           </div>
-          {summary.overdueDebts > 0 && (
-            <div className="text-xs text-red-500 mt-1">
-              {summary.overdueDebts} khoản quá hạn
-            </div>
-          )}
         </div>
         <div className="p-4 bg-red-50 dark:bg-red-500/10 rounded-md">
-          <div className="text-sm text-red-500">Tổng số tiền còn lại</div>
+          <div className="text-sm text-red-500">Tổng tiền còn lại</div>
           <div className="text-2xl font-bold text-red-600">
-            {formatMoney(summary.totalRemainingDebt)}
+            {summaryLoading ? (
+              <span className="text-slate-400 text-lg">Đang tính...</span>
+            ) : (
+              summary?.totalRemainingAmount ? formatMoney(summary.totalRemainingAmount) : "0"
+            )}
+          </div>
+        </div>
+        <div className="p-4 bg-green-50 dark:bg-green-500/10 rounded-md">
+          <div className="text-sm text-green-500">Tổng đã thanh toán</div>
+          <div className="text-2xl font-bold text-green-600">
+            {summaryLoading ? (
+              <span className="text-slate-400 text-lg">Đang tính...</span>
+            ) : (
+              summary?.totalPaidAmount ? formatMoney(summary.totalPaidAmount) : "0"
+            )}
+          </div>
+        </div>
+        <div className="p-4 bg-orange-50 dark:bg-orange-500/10 rounded-md">
+          <div className="text-sm text-orange-500">Tổng phiếu quá hạn</div>
+          <div className="text-2xl font-bold text-orange-600">
+            {summaryLoading ? (
+              <span className="text-slate-400 text-lg">Đang tính...</span>
+            ) : (
+              summary?.totalOverdueDebts ?? 0
+            )}
+          </div>
+        </div>
+        <div className="p-4 bg-slate-100 dark:bg-zink-500/10 rounded-md border border-slate-200 dark:border-zink-500">
+          <div className="text-sm text-slate-600 dark:text-zink-300">Tổng phiếu đã hủy</div>
+          <div className="text-2xl font-bold text-slate-700 dark:text-zink-100">
+            {summaryLoading ? (
+              <span className="text-slate-400 text-lg">Đang tính...</span>
+            ) : (
+              summary?.totalCancelledDebts ?? 0
+            )}
           </div>
         </div>
       </div>

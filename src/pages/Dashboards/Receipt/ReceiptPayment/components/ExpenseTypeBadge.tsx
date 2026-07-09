@@ -34,6 +34,11 @@ const ExpenseTypeBadge: React.FC<ExpenseTypeBadgeProps> = ({ type, customName })
           label: "Nhân công",
           className: "bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300",
         };
+      case ReceiptPaymentExpenseType.CASH_WITHDRAWAL_SANG:
+        return {
+          label: "Rút Tiền Mặt - Cô Sang",
+          className: "bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300",
+        };
       case ReceiptPaymentExpenseType.OTHER:
         return {
           label: customName || "Khác",

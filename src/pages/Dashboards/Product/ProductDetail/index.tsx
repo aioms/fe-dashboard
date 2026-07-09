@@ -13,6 +13,7 @@ import Tab from "Common/Components/Tab/Tab";
 import { Nav } from "Common/Components/Tab/Nav";
 import ProductInformation from "./components/ProductInformation";
 import InventoryHistory from "./components/InventoryHistory";
+import PriceHistory from "./components/PriceHistory";
 import SupplierInfo from "./components/SupplierInfo";
 
 // Types
@@ -144,6 +145,16 @@ function ProductDetail(props: any) {
                   <span className="align-middle">Lịch sử tồn kho</span>
                 </a>
               </Nav.Item>
+              <Nav.Item eventKey="price-history" className="group">
+                <a
+                  href="#!"
+                  data-tab-toggle
+                  data-target="price-history"
+                  className="inline-block px-4 py-2 text-base transition-all duration-300 ease-linear rounded-t-md text-slate-500 dark:text-zink-200 border border-transparent group-[.active]:text-custom-500 group-[.active]:border-slate-200 dark:group-[.active]:border-zink-500 group-[.active]:border-b-white dark:group-[.active]:border-b-zink-700 hover:text-custom-500 active:text-custom-500 dark:hover:text-custom-500 dark:active:text-custom-500 -mb-[1px]"
+                >
+                  <span className="align-middle">Lịch sử giá</span>
+                </a>
+              </Nav.Item>
               <Nav.Item eventKey="supplier-info" className="group">
                 <a
                   href="#!"
@@ -163,6 +174,10 @@ function ProductDetail(props: any) {
 
               <Tab.Pane eventKey="inventory-history">
                 <InventoryHistory productId={id!} />
+              </Tab.Pane>
+
+              <Tab.Pane eventKey="price-history">
+                <PriceHistory productId={id!} />
               </Tab.Pane>
 
               <Tab.Pane eventKey="supplier-info">

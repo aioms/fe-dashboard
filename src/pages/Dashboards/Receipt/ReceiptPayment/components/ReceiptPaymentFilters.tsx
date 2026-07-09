@@ -19,6 +19,7 @@ const expenseTypeOptions = [
   { value: ReceiptPaymentExpenseType.UTILITIES, label: "Tiện ích" },
   { value: ReceiptPaymentExpenseType.RENT, label: "Thuê mặt bằng" },
   { value: ReceiptPaymentExpenseType.LABOR, label: "Nhân công" },
+  { value: ReceiptPaymentExpenseType.CASH_WITHDRAWAL_SANG, label: "Rút Tiền Mặt - Cô Sang" },
   { value: ReceiptPaymentExpenseType.OTHER, label: "Khác" },
 ];
 
