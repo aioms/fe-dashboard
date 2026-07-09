@@ -31,7 +31,8 @@ import {
 } from "types/receiptPayment";
 import {
   getReceiptPaymentList,
-  deleteReceiptPayment
+  deleteReceiptPayment,
+  getReceiptPaymentSummary
 } from "slices/receipt-payment/thunk";
 
 // Components
@@ -46,6 +47,8 @@ const selectDataList = createSelector(
     pagination: state?.pagination || {},
     loading: state?.loading || false,
     error: state?.error || null,
+    summary: state?.summary || null,
+    summaryLoading: state?.summaryLoading || false,
   })
 );
 
@@ -63,7 +66,7 @@ const areFiltersEqual = (
 const ReceiptPaymentList: React.FC = () => {
   const dispatch = useDispatch<any>();
 
-  const { data: payments, pagination, loading, error } = useSelector(selectDataList);
+  const { data: payments, pagination, loading, error, summary, summaryLoading } = useSelector(selectDataList);
 
   const [filters, setFilters] = useState<ReceiptPaymentFilterDto>({});
 
@@ -127,9 +130,15 @@ const ReceiptPaymentList: React.FC = () => {
     dispatch(getReceiptPaymentList(cleanedParams));
   }, [dispatch, filters, pageIndex, pageSize]);
 
+  const fetchSummary = useCallback(() => {
+    const cleanedParams = cleanObject(filters);
+    dispatch(getReceiptPaymentSummary(cleanedParams));
+  }, [dispatch, filters]);
+
   useEffect(() => {
     fetchPayments();
-  }, [fetchPayments]);
+    fetchSummary();
+  }, [fetchPayments, fetchSummary]);
 
   const debouncedSearch = useMemo(
     () =>
@@ -328,15 +337,7 @@ const ReceiptPaymentList: React.FC = () => {
     []
   );
 
-  // Summary calculations
-  const summary = useMemo(() => {
-    const totalPayments = payments.length;
-    const totalDebt = payments
-      .filter((p: any) => p.status === ReceiptPaymentStatus.DEBT_PAYMENT)
-      .reduce((sum: number, p: any) => sum + p.amount, 0);
-
-    return { totalPayments, totalDebt };
-  }, [payments]);
+  // Summary calculations now handled by backend via getReceiptPaymentSummary
 
   if (error) {
     return (
@@ -405,17 +406,29 @@ const ReceiptPaymentList: React.FC = () => {
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 mb-5">
-        <div className="p-4 bg-slate-50 dark:bg-zink-600 rounded-md">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 mb-5">
+        <div className="p-4 bg-slate-50 dark:bg-zink-600 rounded-md flex flex-col justify-center">
           <div className="text-sm text-slate-500 dark:text-zink-200">Tổng số phiếu</div>
           <div className="text-xl font-semibold text-slate-700 dark:text-zink-100">
-            {summary.totalPayments}
+            {summaryLoading ? "-" : (summary?.totalCount ?? 0)}
           </div>
         </div>
         <div className="p-4 bg-red-50 dark:bg-red-500/10 rounded-md">
           <div className="text-sm text-red-500">Tổng Nợ Chi</div>
           <div className="text-xl font-semibold text-red-600">
-            {formatMoney(summary.totalDebt)}
+            {summaryLoading ? "-" : (summary?.totalDebtAmount ? formatMoney(summary.totalDebtAmount) : "0")}
+          </div>
+          <div className="text-xs text-red-400 mt-1">
+            Số lượng: {summary?.totalDebtCount ?? 0} phiếu
+          </div>
+        </div>
+        <div className="p-4 bg-green-50 dark:bg-green-500/10 rounded-md">
+          <div className="text-sm text-green-500">Tổng Đã Chi</div>
+          <div className="text-xl font-semibold text-green-600">
+            {summaryLoading ? "-" : (summary?.totalPaidAmount ? formatMoney(summary.totalPaidAmount) : "0")}
+          </div>
+          <div className="text-xs text-green-400 mt-1">
+            Số lượng: {summary?.totalPaidCount ?? 0} phiếu
           </div>
         </div>
       </div>

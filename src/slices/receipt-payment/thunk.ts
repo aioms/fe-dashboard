@@ -4,9 +4,15 @@ import {
   getReceiptPaymentListStart,
   getReceiptPaymentListSuccess,
   getReceiptPaymentListFailure,
+  getReceiptPaymentSummaryStart,
+  getReceiptPaymentSummarySuccess,
+  getReceiptPaymentSummaryFailure,
   getReceiptDebtListStart,
   getReceiptDebtListSuccess,
   getReceiptDebtListFailure,
+  getReceiptDebtSummaryStart,
+  getReceiptDebtSummarySuccess,
+  getReceiptDebtSummaryFailure,
   getReceiptDebtDetailStart,
   getReceiptDebtDetailSuccess,
   getReceiptDebtDetailFailure,
@@ -59,6 +65,33 @@ export const getReceiptPaymentList = createAsyncThunk(
     }
   }
 );
+
+// Get Receipt Payment Summary
+export const getReceiptPaymentSummary = createAsyncThunk(
+  "receiptPayment/getSummary",
+  async (filters: ReceiptPaymentFilterDto, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(getReceiptPaymentSummaryStart());
+      const data = await receiptPaymentAPI.getReceiptPaymentsSummary(filters);
+      dispatch(getReceiptPaymentSummarySuccess(data));
+      return data;
+    } catch (error: any) {
+      const errorMessage = error.message || 'An error occurred while fetching receipt payments summary';
+      dispatch(getReceiptPaymentSummaryFailure(errorMessage));
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
+export const getReceiptDebtSummary = (payload: any) => async (dispatch: any) => {
+  try {
+    dispatch(getReceiptDebtSummaryStart());
+    const data = await receiptPaymentAPI.getReceiptDebtSummary(payload);
+    dispatch(getReceiptDebtSummarySuccess(data));
+  } catch (error: any) {
+    dispatch(getReceiptDebtSummaryFailure(error.message || "Failed to fetch debt summary"));
+  }
+};
 
 // Get Single Receipt Payment
 export const getReceiptPaymentDetail = createAsyncThunk(

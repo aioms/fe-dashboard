@@ -34,6 +34,26 @@ export const getReceiptPayments = async (
   };
 };
 
+// Get Receipt Payments Summary
+export const getReceiptPaymentsSummary = async (
+  payload: ReceiptPaymentFilterDto
+) => {
+  const cleanedPayload = cleanObject(payload);
+  const query = convertObjToQueryString(cleanedPayload);
+
+  const response: IHttpResponse = await request.get(`/receipt-payments/summary${query ? `?${query}` : ''}`);
+  const { isHasError, message } = ErrorHandler.checkResponse(
+    response,
+    HttpStatusCode.OK
+  );
+
+  if (isHasError) {
+    throw new Error(message);
+  }
+
+  return response.data;
+};
+
 // Get Receipt Debts List (Phiếu Thu / Công Nợ)
 export const getReceiptDebtList = async (
   payload: ReceiptDebtFilterDto
@@ -55,6 +75,24 @@ export const getReceiptDebtList = async (
     data: response.data,
     metadata: response.metadata,
   };
+};
+
+// Get Receipt Debts Summary
+export const getReceiptDebtSummary = async (payload: ReceiptDebtFilterDto) => {
+  const cleanedPayload = cleanObject(payload);
+  const query = convertObjToQueryString(cleanedPayload);
+
+  const response: IHttpResponse = await request.get(`/receipt-debt/summary${query ? `?${query}` : ''}`);
+  const { isHasError, message } = ErrorHandler.checkResponse(
+    response,
+    HttpStatusCode.OK
+  );
+
+  if (isHasError) {
+    throw new Error(message);
+  }
+
+  return response.data;
 };
 
 // Get Single Receipt Debt
