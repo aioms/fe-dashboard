@@ -66,68 +66,68 @@ const ReceiptPaymentEdit: React.FC = () => {
   const [paymentObjectSupplierName, setPaymentObjectSupplierName] = useState<string>("");
 
   useEffect(() => {
+    const fetchPaymentDetail = async () => {
+      try {
+        setInitialLoading(true);
+        const response = await dispatch(getReceiptPaymentDetail(id!)).unwrap();
+        
+        setFormData({
+          paymentDate: response.paymentDate ? response.paymentDate.substring(0, 10) : '',
+          expenseType: response.expenseType,
+          expenseTypeName: response.expenseTypeName,
+          amount: response.amount,
+          paymentMethod: response.paymentMethod,
+          status: response.status,
+          notes: response.notes,
+          supplierId: response.supplierId,
+          receiptImportIds: response.receiptImportIds,
+          isDirectExport: response.isDirectExport,
+          paymentObject: response.paymentObject,
+        });
+
+        if (response.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT) {
+          if (response.supplier) {
+            setSelectedSupplierId(response.supplier.id);
+            setSelectedSupplierName(response.supplier.name);
+          } else if (response.supplierId) {
+            setSelectedSupplierId(response.supplierId);
+            setSelectedSupplierName(response.supplierName || "");
+          }
+          
+          setIsDirectExport(!!response.isDirectExport);
+          if (response.receiptImportIds) {
+            setSelectedReceiptIds(response.receiptImportIds);
+          }
+          if (response.receiptImports) {
+            setDefaultReceiptImports(response.receiptImports);
+          }
+        } else {
+          // Non-supplier payment object logic could be extracted here if it was a supplier
+          // To simplify, we just set the paymentObject
+        }
+
+        // Initialize attachments
+        if (response.attachments) {
+          setUploadedFiles(response.attachments.map((att: Attachment) => ({
+            id: att.id,
+            name: att.name,
+            url: att.path,
+            type: att.type,
+            size: att.size,
+          })));
+        }
+      } catch (err: any) {
+        toast.error(err.message || "Không thể tải thông tin phiếu chi");
+        navigate("/receipt-payment");
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+
     if (id) {
       fetchPaymentDetail();
     }
-  }, [id]);
-
-  const fetchPaymentDetail = async () => {
-    try {
-      setInitialLoading(true);
-      const response = await dispatch(getReceiptPaymentDetail(id!)).unwrap();
-      
-      setFormData({
-        paymentDate: response.paymentDate ? response.paymentDate.substring(0, 10) : '',
-        expenseType: response.expenseType,
-        expenseTypeName: response.expenseTypeName,
-        amount: response.amount,
-        paymentMethod: response.paymentMethod,
-        status: response.status,
-        notes: response.notes,
-        supplierId: response.supplierId,
-        receiptImportIds: response.receiptImportIds,
-        isDirectExport: response.isDirectExport,
-        paymentObject: response.paymentObject,
-      });
-
-      if (response.expenseType === ReceiptPaymentExpenseType.SUPPLIER_PAYMENT) {
-        if (response.supplier) {
-          setSelectedSupplierId(response.supplier.id);
-          setSelectedSupplierName(response.supplier.name);
-        } else if (response.supplierId) {
-          setSelectedSupplierId(response.supplierId);
-          setSelectedSupplierName(response.supplierName || "");
-        }
-        
-        setIsDirectExport(!!response.isDirectExport);
-        if (response.receiptImportIds) {
-          setSelectedReceiptIds(response.receiptImportIds);
-        }
-        if (response.receiptImports) {
-          setDefaultReceiptImports(response.receiptImports);
-        }
-      } else {
-        // Non-supplier payment object logic could be extracted here if it was a supplier
-        // To simplify, we just set the paymentObject
-      }
-
-      // Initialize attachments
-      if (response.attachments) {
-        setUploadedFiles(response.attachments.map((att: Attachment) => ({
-          id: att.id,
-          name: att.name,
-          url: att.path,
-          type: att.type,
-          size: att.size,
-        })));
-      }
-    } catch (err: any) {
-      toast.error(err.message || "Không thể tải thông tin phiếu chi");
-      navigate("/receipt-payment");
-    } finally {
-      setInitialLoading(false);
-    }
-  };
+  }, [id, dispatch, navigate]);
 
   // Load unpaid receipts when supplier is selected
   useEffect(() => {
@@ -152,7 +152,7 @@ const ReceiptPaymentEdit: React.FC = () => {
         setSelectedReceiptIds([]);
       }
     }
-  }, [selectedSupplierId, formData.expenseType, dispatch]);
+  }, [selectedSupplierId, formData.expenseType, dispatch, initialLoading]);
 
   // Reset supplier and receipts when expense type changes
   useEffect(() => {
