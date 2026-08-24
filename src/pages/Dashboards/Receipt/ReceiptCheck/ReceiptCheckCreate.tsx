@@ -63,14 +63,23 @@ const CreateReceiptCheck = (props: any) => {
       return;
     }
 
-    const items = rows.map((row) => ({
-      productId: row.id,
-      productCode: row.productCode,
-      productName: row.name,
-      quantity: 1,
-      inventory: row.inventory,
-      costPrice: row.price,
-    }));
+    const items = rows.map((row) => {
+      const rawProductCode = row.productCode ?? row.code;
+      const numericProductCode =
+        typeof rawProductCode === "number"
+          ? rawProductCode
+          : parseInt(String(rawProductCode || "").replace(/\D/g, ""), 10) || 0;
+
+      return {
+        productId: row.id,
+        productCode: numericProductCode,
+        productName: row.name || row.productName || "",
+        quantity: 1,
+        inventory: row.inventory ?? 0,
+        actualInventory: row.actualInventory ?? row.inventory ?? 0,
+        costPrice: row.price ?? row.costPrice ?? 0,
+      };
+    });
 
     const payload = {
       date: getDate(values.date).format(),
