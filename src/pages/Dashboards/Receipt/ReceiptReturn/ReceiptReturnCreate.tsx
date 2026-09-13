@@ -26,6 +26,10 @@ import withRouter from "Common/withRouter";
 import { getDate } from "helpers/date";
 import AsyncPaginatedSelect from "Common/Components/Select/AsyncPaginatedSelect";
 import { createSupplier } from "apis/supplier";
+import {
+  findSupplierReturnOverstockItem,
+  getSupplierReturnOverstockMessage,
+} from "./helpers/validate-supplier-return-stock";
 
 const customerReasons = ["Sản phẩm lỗi", "Đổi sản phẩm", "Lý do khác"];
 const supplierReasons = ["Ngừng bán", "Lỗi sản xuất", "Lý do khác"];
@@ -74,6 +78,14 @@ const CreateReceiptReturn = (props: any) => {
       return;
     }
 
+    if (values.type === "supplier") {
+      const overstock = findSupplierReturnOverstockItem(rows);
+      if (overstock) {
+        toast.warn(getSupplierReturnOverstockMessage(overstock));
+        return;
+      }
+    }
+
     const items = rows.map((row) => ({
       productId: row.id,
       productCode: row.productCode,
@@ -91,10 +103,10 @@ const CreateReceiptReturn = (props: any) => {
       status: values.status,
       type: values.type,
       returnDate: getDate(values.returnDate).format(),
-      warehouse: values.warehouse,
+      store: values.warehouse,
       totalProduct: rows.length,
       totalAmount,
-      quantity,
+      totalQuantity: quantity,
       items,
     };
 
@@ -496,6 +508,9 @@ const CreateReceiptReturn = (props: any) => {
                               Tên
                             </th>
                             <th className="px-3.5 py-2.5 font-semibold text-slate-500 dark:text-zink-200 border-b border-slate-200 dark:border-zink-500">
+                              Tồn kho
+                            </th>
+                            <th className="px-3.5 py-2.5 font-semibold text-slate-500 dark:text-zink-200 border-b border-slate-200 dark:border-zink-500">
                               Số lượng
                             </th>
                             <th className="px-3.5 py-2.5 font-semibold text-slate-500 dark:text-zink-200 border-b border-slate-200 dark:border-zink-500">
@@ -515,6 +530,9 @@ const CreateReceiptReturn = (props: any) => {
                               </td>
                               <td className="px-3.5 py-2.5 border-b border-slate-200 dark:border-zink-500">
                                 <h6 className="mb-1 text-wrap">{row.name}</h6>
+                              </td>
+                              <td className="px-3.5 py-2.5 border-b border-slate-200 dark:border-zink-500">
+                                {row.inventory ?? 0}
                               </td>
                               <td className="px-3.5 py-2.5 border-b border-slate-200 dark:border-zink-500">
                                 <Counter
@@ -566,18 +584,22 @@ const CreateReceiptReturn = (props: any) => {
                     Hủy bỏ
                   </Link>
                   <button
-                    type="submit"
+                    type="button"
                     className="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
-                    onClick={(e) =>
-                      validation.setFieldValue("status", "processing")
-                    }
+                    onClick={async () => {
+                      await validation.setFieldValue("status", "completed");
+                      validation.handleSubmit();
+                    }}
                   >
                     Tạo phiếu
                   </button>
                   <button
-                    type="submit"
+                    type="button"
                     className="text-white bg-gray-500 border-gray-500 btn hover:text-white hover:bg-gray-600 hover:border-gray-600 focus:text-white focus:bg-gray-600 focus:border-gray-600 focus:ring focus:ring-gray-100 active:text-white active:bg-gray-600 active:border-gray-600 active:ring active:ring-gray-100 dark:ring-gray-400/10"
-                    onClick={(e) => validation.setFieldValue("status", "draft")}
+                    onClick={async () => {
+                      await validation.setFieldValue("status", "draft");
+                      validation.handleSubmit();
+                    }}
                   >
                     Tạo nháp
                   </button>

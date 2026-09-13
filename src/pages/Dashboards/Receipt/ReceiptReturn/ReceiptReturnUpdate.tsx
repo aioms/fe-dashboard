@@ -157,11 +157,11 @@ const UpdateReceiptReturn = (props: any) => {
       status: values.status,
       type: values.type,
       returnDate: getDate(values.returnDate).format(),
-      warehouse: values.warehouse,
+      store: values.warehouse,
       supplier: values.supplier?.id,
       totalProduct: rows.length,
       totalAmount,
-      quantity,
+      totalQuantity: quantity,
       items,
     };
 
@@ -230,6 +230,7 @@ const UpdateReceiptReturn = (props: any) => {
       name: item.productName,
       quantity: item.quantity,
       price: item.costPrice,
+      inventory: Number(item.inventory ?? 0),
     }));
 
     setRows(items);
@@ -288,6 +289,7 @@ const UpdateReceiptReturn = (props: any) => {
                 name: item.name,
                 quantity: 1,
                 price: item.price,
+                inventory: item.inventory,
               };
             });
 
