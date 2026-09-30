@@ -18,6 +18,7 @@ import OrdersTable from "./components/OrdersTable";
 import ReceiptDebtsTable from "./components/ReceiptDebtsTable";
 import { TimePicker } from "Common/Components/TimePIcker";
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 import { getTransactionSummary } from "apis/transaction";
 import {
   RECEIPT_CHECK_STATUS_OPTIONS,
@@ -30,6 +31,7 @@ import {
 } from "./types";
 
 const SummaryReport = () => {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([new Date(), new Date()]);
 
@@ -190,8 +192,11 @@ const SummaryReport = () => {
             iconClass="success"
             items={[
               { label: "Tổng Doanh thu", value: data?.totalRevenue ?? 0, isCurrency: true },
+              { label: t("Confirmed refunds"), value: data?.refundTotal ?? 0, isCurrency: true },
               { label: "Doanh thu Đơn hàng", value: data?.breakdown.orders.revenue ?? 0, isCurrency: true },
               { label: "Doanh thu Công nợ", value: data?.breakdown.debts.revenue ?? 0, isCurrency: true },
+              { label: t("Operating expenses"), value: data?.operatingExpense ?? 0, isCurrency: true },
+              { label: t("Daily profit"), value: data?.dailyProfit ?? 0, isCurrency: true },
             ]}
           />
           <SummaryCard
@@ -205,6 +210,11 @@ const SummaryReport = () => {
             ]}
           />
         </div>
+        {data?.warnings?.length ? (
+          <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            {data.warnings.join(" ")}
+          </div>
+        ) : null}
 
         {/* Top Row: Orders and Debt */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -351,4 +361,3 @@ const SummaryReport = () => {
 };
 
 export default SummaryReport;
-

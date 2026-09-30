@@ -120,10 +120,14 @@ export interface RevenueBreakdown {
 
 export interface RevenueData {
   totalRevenue: number;
+  refundTotal: number;
+  operatingExpense: number;
+  dailyProfit: number;
   orderCost: number;
   debtCost: number;
   totalCost: number;
   grossProfit: number;
+  warnings: string[];
   breakdown: {
     orders: RevenueBreakdown;
     debts: RevenueBreakdown;
