@@ -156,6 +156,7 @@ export interface ReceiptDebt {
   totalAmount: number; // Total amount
   paidAmount: number; // Đã thanh toán
   remainingAmount: number; // Còn lại
+  isOrderRevenue?: boolean; // Cashbook revenue bucket
   paymentDate?: string | null; // Actual payment date
   notes?: string;
   note?: string; // Alternative field name
