@@ -65,3 +65,9 @@ Component → dispatch(thunk) → slice → src/apis/<domain>/ → backend
 
 - Complex features (reporting logic, receipt/payment flows, cross-domain screens) require a doc in `fe-dashboard/docs/` covering purpose, data flow, and edge cases.
 - Before finishing: `yarn build` must pass (it type-checks the project).
+
+## Receipt Return Reference
+
+| Feature | Component | Documentation |
+| --- | --- | --- |
+| Debt return/exchange v3 review | ReceiptReturn/components/DebtReturnReview | docs/receipt-debt-return-exchange.md |

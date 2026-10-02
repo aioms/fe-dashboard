@@ -16,6 +16,8 @@ export const getChangeTypeLabel = (changeType: InventoryChangeType) => {
       return "Điều chỉnh hệ thống";
     case InventoryChangeType.ORDER:
       return "Đơn hàng";
+    case InventoryChangeType.EXCHANGE:
+      return "Đổi hàng";
     default:
       return changeType;
   }

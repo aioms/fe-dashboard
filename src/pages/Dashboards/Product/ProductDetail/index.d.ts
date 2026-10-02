@@ -33,6 +33,7 @@ export enum InventoryChangeType {
   MANUAL = "manual", // Manual adjustment 
   SYSTEM = "system", // System adjustment 
   ORDER = "order", // From order (negative inventory change) 
+  EXCHANGE = "exchange", // From product exchange
 }
 
 export interface IInventoryLog {
