@@ -18,7 +18,6 @@ import OrdersTable from "./components/OrdersTable";
 import ReceiptDebtsTable from "./components/ReceiptDebtsTable";
 import { TimePicker } from "Common/Components/TimePIcker";
 import dayjs from "dayjs";
-import { useTranslation } from "react-i18next";
 import { getTransactionSummary } from "apis/transaction";
 import {
   RECEIPT_CHECK_STATUS_OPTIONS,
@@ -31,7 +30,6 @@ import {
 } from "./types";
 
 const SummaryReport = () => {
-  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([new Date(), new Date()]);
 
@@ -192,11 +190,11 @@ const SummaryReport = () => {
             iconClass="success"
             items={[
               { label: "Tổng Doanh thu", value: data?.totalRevenue ?? 0, isCurrency: true },
-              { label: t("Confirmed refunds"), value: data?.refundTotal ?? 0, isCurrency: true },
+              { label: "Hoàn tiền đã xác nhận", value: data?.refundTotal ?? 0, isCurrency: true },
               { label: "Doanh thu Đơn hàng", value: data?.breakdown.orders.revenue ?? 0, isCurrency: true },
               { label: "Doanh thu Công nợ", value: data?.breakdown.debts.revenue ?? 0, isCurrency: true },
-              { label: t("Operating expenses"), value: data?.operatingExpense ?? 0, isCurrency: true },
-              { label: t("Daily profit"), value: data?.dailyProfit ?? 0, isCurrency: true },
+              { label: "Chi phí hoạt động", value: data?.operatingExpense ?? 0, isCurrency: true },
+              { label: "Lợi nhuận trong ngày", value: data?.dailyProfit ?? 0, isCurrency: true },
             ]}
           />
           <SummaryCard

@@ -123,3 +123,10 @@ export const getReceiptReturnByReceiptNumber = createAsyncThunk(
     }
   }
 );
+export const updateDebtReturn = createAsyncThunk(
+  `${TYPE_PREFIX}/updateDebtReturn`,
+  async ({ id, status, note }: { id: string; status: import("types/debt-return").DebtReturnReceipt["status"]; note: string }) => {
+    const { updateDebtReturnReceipt } = await import("apis/receipt-return");
+    return updateDebtReturnReceipt(id, status, note);
+  }
+);
