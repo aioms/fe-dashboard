@@ -50,7 +50,7 @@ export default function DebtReturnReview({ receipt, receiptId, items }: Props) {
   return (
     <div className="card">
       <div className="card-body space-y-4">
-        <h1 className="text-lg font-semibold">{t("debtReturn.title")} {receipt.receiptNumber}</h1>
+        <h1 data-cy="debt-return-review" className="text-lg font-semibold">{t("debtReturn.title")} {receipt.receiptNumber}</h1>
         <p>{t("debtReturn.source")}: {receipt.refId}</p>
         <p className="text-sm text-slate-500">{t("debtReturn.noCash")}</p>
         <ul>
@@ -78,6 +78,7 @@ export default function DebtReturnReview({ receipt, receiptId, items }: Props) {
             <label className="block">
               {t("debtReturn.status")}
               <select
+                data-cy="debt-return-status"
                 disabled={pending}
                 className="form-input"
                 value={status}
@@ -99,7 +100,7 @@ export default function DebtReturnReview({ receipt, receiptId, items }: Props) {
               />
             </label>
             {error && <p role="alert" className="text-red-500">{error}</p>}
-            <button disabled={pending} type="button" className="btn bg-custom-500 text-white" onClick={submit}>
+            <button data-cy="debt-return-save" disabled={pending} type="button" className="btn bg-custom-500 text-white" onClick={submit}>
               {error ? t("debtReturn.retry") : t("debtReturn.save")}
             </button>
           </>
