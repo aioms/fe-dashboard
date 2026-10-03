@@ -461,7 +461,7 @@ const ReceiptDebtDetail: React.FC = () => {
                     <div>
                       <div className="text-sm text-slate-500 dark:text-zink-200">Tổng số tiền</div>
                       <div className="text-2xl font-bold text-slate-700 dark:text-zink-100 mt-1">
-                        {formatMoney(debt.totalAmount)} VND
+                        <span data-cy="debt-total">{formatMoney(debt.totalAmount)} VND</span>
                       </div>
                     </div>
                     <CreditCard className="size-8 text-slate-300" />
@@ -471,7 +471,7 @@ const ReceiptDebtDetail: React.FC = () => {
                     <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                       <div className="text-sm text-green-600 dark:text-green-400">Đã thanh toán</div>
                       <div className="text-xl font-semibold text-green-700 dark:text-green-300 mt-1">
-                        {formatMoney(debt.paidAmount)} VND
+                        <span data-cy="debt-paid">{formatMoney(debt.paidAmount)} VND</span>
                       </div>
                       {debt.paymentDate && (
                         <div className="text-xs text-green-600 dark:text-green-400 mt-1">
@@ -483,7 +483,7 @@ const ReceiptDebtDetail: React.FC = () => {
                     <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
                       <div className="text-sm text-orange-600 dark:text-orange-400">Còn lại</div>
                       <div className="text-xl font-semibold text-orange-700 dark:text-orange-300 mt-1">
-                        {formatMoney(debt.remainingAmount)} VND
+                        <span data-cy="debt-remaining">{formatMoney(debt.remainingAmount)} VND</span>
                       </div>
                       {debt.remainingAmount > 0 && (
                         <div className="text-xs text-orange-600 dark:text-orange-400 mt-1">
