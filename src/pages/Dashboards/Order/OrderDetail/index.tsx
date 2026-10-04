@@ -16,11 +16,13 @@ import {
 import "./OrderDetail.css";
 
 interface OrderDetailData {
+  document?: import("types/order-document").OrderDocument;
   id: string;
   code: string;
   customer: {
     id: string;
     name: string;
+    address?: string | null;
   };
   paymentMethod: string;
   note: string;
