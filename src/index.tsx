@@ -7,6 +7,7 @@ import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 
 import App from "./App";
+import { installClientErrorTracking } from "./helpers/api-telemetry";
 import rootReducer from "./slices";
 import { isDev, getEnvironment } from "helpers/utils";
 import { Environment } from "Common/enums/common-enum";
@@ -20,21 +21,18 @@ const store = configureStore({
   devTools: isDev,
 });
 
-if (getEnvironment() === Environment.PRODUCTION) {
+if ([Environment.PRODUCTION, Environment.STAGING].includes(getEnvironment())) {
   posthog.init(process.env.REACT_APP_PUBLIC_POSTHOG_KEY!, {
     api_host: process.env.REACT_APP_POSTHOG_HOST || "https://us.i.posthog.com",
     defaults: "2025-05-24",
+    capture_exceptions: false,
+    loaded: (client) => { client.register({ source: "dashboard", release: process.env.REACT_APP_RELEASE || "unknown" }); installClientErrorTracking(); },
   });
 
   root.render(
     <React.StrictMode>
       <PostHogProvider
         client={posthog}
-        // apiKey={process.env.REACT_APP_PUBLIC_POSTHOG_KEY!}
-        // options={{
-        //   api_host:
-        //     process.env.REACT_APP_POSTHOG_HOST || "https://eu.i.posthog.com",
-        // }}
       >
         <Provider store={store}>
           <BrowserRouter

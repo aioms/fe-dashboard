@@ -71,3 +71,9 @@ Component → dispatch(thunk) → slice → src/apis/<domain>/ → backend
 | Feature | Component | Documentation |
 | --- | --- | --- |
 | Debt return/exchange v3 review | ReceiptReturn/components/DebtReturnReview | docs/receipt-debt-return-exchange.md |
+
+## Observability Reference
+
+| Feature | Implementation | Documentation |
+| --- | --- | --- |
+| Safe client exceptions and API correlation | src/helpers/api-telemetry.ts, source-maps.ts | docs/observability.md |

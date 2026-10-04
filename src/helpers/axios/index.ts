@@ -1,4 +1,5 @@
 import axios from "axios";
+import { beginApiRequest, captureApiFailure, finishApiRequest } from "../api-telemetry";
 import type { IExtraConfig, IHttpRequestConfig } from "../../types";
 
 const {
@@ -82,7 +83,7 @@ export class HttpRequest {
         if (token) {
           config.headers.Authorization = `Bearer ${token}`; // Attach the token to the Authorization header
         }
-        return config;
+        return beginApiRequest(config);
       },
       function (error) {
         // Do something with request error
@@ -92,6 +93,7 @@ export class HttpRequest {
 
     instance.interceptors.response.use(
       function (response) {
+        finishApiRequest(response);
         if (response.status === 204) {
           return {
             statusCode: response.status,
@@ -102,11 +104,11 @@ export class HttpRequest {
         return response.data;
       },
       function (error) {
+        captureApiFailure(error);
         const resp = error.response;
         const data = resp?.data;
-        console.log({ data, resp, error });
 
-        if (resp.status === 401 || resp.statusText === "Unauthorized") {
+        if (resp && (resp.status === 401 || resp.statusText === "Unauthorized")) {
           localStorage.removeItem("jwt");
           localStorage.removeItem("authUser");
           window.location.replace("/login");
