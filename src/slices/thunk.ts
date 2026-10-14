@@ -22,3 +22,4 @@ export * from "./receipt-check/thunk";
 export * from "./receipt-payment/thunk";
 export * from "./supplier/thunk";
 export * from "./customer/thunk";
+export * from "./ai-connection/thunk";
