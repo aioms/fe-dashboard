@@ -25,6 +25,7 @@ import ReceiptPaymentReducer from "./receipt-payment/reducer";
 import SupplierReducer from "./supplier/reducer";
 import CustomerReducer from "./customer/reducer";
 import OrderReducer from "./order/reducer";
+import AiConnectionReducer from "./ai-connection/reducer";
 
 const rootReducer = combineReducers({
   Layout: LayoutReducer,
@@ -39,6 +40,7 @@ const rootReducer = combineReducers({
   Supplier: SupplierReducer,
   Customer: CustomerReducer,
   Order: OrderReducer,
+  AiConnection: AiConnectionReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

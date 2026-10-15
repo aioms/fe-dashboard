@@ -43,6 +43,9 @@ import SummaryReport from "pages/Dashboards/SummaryReport";
 import CustomerList from "pages/Dashboards/Customer/CustomerList";
 import CustomerDetail from "pages/Dashboards/Customer/CustomerDetail";
 
+// ai connections
+import AiConnectionList from "pages/Dashboards/AiConnection";
+
 // order
 import OrderList from "pages/Dashboards/Order/OrderList";
 import OrderDetail from "pages/Dashboards/Order/OrderDetail";
@@ -97,6 +100,9 @@ const authProtectedRoutes: Array<RouteObject> = [
   // order
   { path: "/orders", component: OrderList },
   { path: "/orders/:id", component: OrderDetail },
+
+  // ai connections
+  { path: "/ai-connections", component: AiConnectionList },
 
   // profile
   { path: "/user-profile", component: UserProfile },

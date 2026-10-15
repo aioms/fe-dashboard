@@ -2,6 +2,7 @@ import {
   CalendarDays,
   MonitorDot,
   PictureInPicture2,
+  PlugZap,
   RadioTower,
   ScrollText,
 } from "lucide-react";
@@ -217,6 +218,12 @@ const menuData: any = [
         parentId: "hr-dashboard",
       },
     ],
+  },
+  {
+    id: "ai-connection-page",
+    label: "Kết nối AI",
+    link: "/ai-connections",
+    icon: <PlugZap />,
   },
   {
     id: "notes",
