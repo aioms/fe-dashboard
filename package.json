@@ -11,9 +11,10 @@
     "start": "react-scripts start",
     "dev:temp": "TMPDIR=\"$(pwd)/.yarn-tmp\" yarn start",
     "dev": "yarn start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && yarn maps:finalize",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "maps:finalize": "tsc source-maps.ts --outDir node_modules/.cache/aiom-source-maps --module commonjs --target es2020 --skipLibCheck --types node && node node_modules/.cache/aiom-source-maps/source-maps.js"
   },
   "dependencies": {
     "@headlessui/react": "^0.0.0-insiders.0933dd5",
@@ -88,6 +89,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@chromatic-com/storybook": "^5.0.0",
+    "@posthog/cli": "0.16.2",
     "@types/node": "^24.0.4",
     "@types/prismjs": "^1.26.5",
     "@types/react": "^19.1.8",
