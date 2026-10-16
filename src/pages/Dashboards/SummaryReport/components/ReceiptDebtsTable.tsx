@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ChevronDown, ChevronRight, CreditCard } from "lucide-react";
 import { ReceiptDebtDetail, ReceiptDebtStatus } from "../types";
+import { formatProductCode } from "helpers/utils";
 
 interface ReceiptDebtsTableProps {
   receiptDebts: ReceiptDebtDetail[];
@@ -134,7 +135,7 @@ const ReceiptDebtsTable = ({ receiptDebts, onStatusChange }: ReceiptDebtsTablePr
                               <tr key={`${debt.id}-item-${idx}`}>
                                 <td className="py-3 text-gray-600 dark:text-zink-300">
                                   {item.productName} <br/>
-                                  <span className="text-sm text-gray-400">{item.productCode}</span>
+                                  <span className="text-sm text-gray-400">{formatProductCode(item.productCode)}</span>
                                 </td>
                                 <td className="py-3 text-right text-gray-600 dark:text-zink-300">{item.quantity}</td>
                                 <td className="py-3 text-right text-gray-600 dark:text-zink-300">{formatCurrency(item.costPrice)}</td>

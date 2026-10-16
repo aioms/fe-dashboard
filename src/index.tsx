@@ -21,7 +21,7 @@ const store = configureStore({
   devTools: isDev,
 });
 
-if ([Environment.PRODUCTION, Environment.STAGING].includes(getEnvironment())) {
+if (getEnvironment() === Environment.PRODUCTION) {
   posthog.init(process.env.REACT_APP_PUBLIC_POSTHOG_KEY!, {
     api_host: process.env.REACT_APP_POSTHOG_HOST || "https://us.i.posthog.com",
     defaults: "2025-05-24",
