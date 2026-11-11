@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, {
   useCallback,
   useEffect,
@@ -60,6 +61,7 @@ const paymentMethodOptions = [
 ];
 
 const OrderList = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch<any>();
 
   const [searchKeyword, setSearchKeyword] = useState<string>("");
@@ -207,7 +209,7 @@ const OrderList = () => {
               to={`/orders/${data.id}`}
               className="transition-all duration-150 ease-linear text-custom-500 hover:text-custom-600 order-id"
             >
-              {cell.getValue()}
+              {cell.getValue()} {data.orderType === "dmsg_bulk" && <span className="text-xs">{t("DMSG title")}</span>}
             </Link>
           );
         },

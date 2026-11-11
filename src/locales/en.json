@@ -1,4 +1,23 @@
 {
+    "DMSG title": "Đơn gộp ĐMSG",
+    "DMSG invoice": "Tổng hóa đơn gồm VAT",
+    "DMSG before VAT": "Giá trị trước VAT",
+    "DMSG VAT": "Tiền VAT",
+    "DMSG revenue": "Doanh thu ĐMSG",
+    "DMSG customer transfer": "Tiền cần chuyển khách",
+    "DMSG cost": "Tổng vốn nhập tay chưa VAT",
+    "DMSG fee": "Phí hóa đơn",
+    "DMSG profit": "Lợi nhuận ĐMSG",
+    "DMSG received": "Đã nhận (trừ hoàn)",
+    "DMSG transferred": "Đã chuyển khách",
+    "DMSG back": "Quay lại danh sách",
+    "DMSG status": "Trạng thái",
+    "DMSG draft hint": "Nháp đã xuất kho; tài chính dự kiến chưa cộng báo cáo.",
+    "DMSG cancelled hint": "Đơn đã hủy và hoàn kho; giữ lịch sử tiền để đối soát.",
+    "DMSG completed hint": "Đã ghi nhận tài chính; khách có thể chuyển tiền sau.",
+    "DMSG goods": "Sản phẩm đã xuất kho",
+    "DMSG mobile editing": "Tạo, sửa tài chính và ghi nhận thu/chi ĐMSG trên Mobile/PWA.",
+
     "menu": "Menu",
     "Dashboards": "Dashboards",
     "Confirmed refunds": "Hoàn tiền đã xác nhận",
@@ -207,5 +226,11 @@
   "aiConnection.neverUsed": "Chưa dùng",
   "aiConnection.revoke": "Thu hồi",
   "aiConnection.revokeTitle": "Thu hồi kết nối?",
-  "aiConnection.revokeMessage": "Ứng dụng này sẽ không truy cập được dữ liệu AIOM nữa."
+  "aiConnection.revokeMessage": "Ứng dụng này sẽ không truy cập được dữ liệu AIOM nữa.",
+  "DMSG documents": "Chứng từ đính kèm",
+  "DMSG no documents": "Chưa có chứng từ",
+  "DMSG cost image": "Ảnh giá vốn",
+  "DMSG invoice PDF": "PDF hóa đơn",
+  "DMSG file error": "Không tải được chứng từ. Bấm lại để thử lại.",
+  "DMSG profit margin": "Biên lợi nhuận"
 }
