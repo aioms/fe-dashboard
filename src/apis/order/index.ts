@@ -76,3 +76,8 @@ export const updateOrder = async (payload: Record<string, any>) => {
     ...body,
   };
 };
+export const getDmsgFile = async ({ id, fileId }: { id: string; fileId: string }) => {
+  const response: IHttpResponse<{ url: string; name: string; size: number }> = await request.get(`/orders/${id}/dmsg-files/${fileId}`);
+  if (!response.success || !response.data) throw new Error(response.message || "Cannot load document");
+  return response.data;
+};

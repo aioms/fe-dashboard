@@ -1,3 +1,4 @@
+import DmsgOrderDetail from "./components/DmsgOrderDetail";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ArrowLeft, CreditCard, Package, FileText } from "lucide-react";
@@ -17,6 +18,8 @@ import "./OrderDetail.css";
 
 interface OrderDetailData {
   document?: import("types/order-document").OrderDocument;
+  dmsg?: import("types/dmsg").DmsgFinancials;
+  dmsgSettlements?: { netReceived: number; customerTransferred: number; feesPaid: number };
   id: string;
   code: string;
   customer: {
@@ -156,6 +159,8 @@ const OrderDetail = (props: any) => {
       </React.Fragment>
     );
   }
+
+  if (orderData.dmsg) return <DmsgOrderDetail order={{ ...orderData, dmsg: orderData.dmsg }} onBack={handleBackToList} />;
 
   return (
     <React.Fragment>

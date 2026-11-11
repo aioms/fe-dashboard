@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, {
   useCallback,
   useEffect,
@@ -48,6 +49,7 @@ const statusOptions = [
 ];
 
 const paymentMethodOptions = [
+  { value: PaymentMethod.MIXED, label: PAYMENT_METHOD_LABELS[PaymentMethod.MIXED] },
   { value: "", label: "Tất cả phương thức" },
   {
     value: PaymentMethod.CASH,
@@ -60,6 +62,7 @@ const paymentMethodOptions = [
 ];
 
 const OrderList = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch<any>();
 
   const [searchKeyword, setSearchKeyword] = useState<string>("");
@@ -207,7 +210,7 @@ const OrderList = () => {
               to={`/orders/${data.id}`}
               className="transition-all duration-150 ease-linear text-custom-500 hover:text-custom-600 order-id"
             >
-              {cell.getValue()}
+              {cell.getValue()} {data.orderType === "dmsg_bulk" && <span className="text-xs">{t("DMSG title")}</span>}
             </Link>
           );
         },
@@ -355,7 +358,7 @@ const OrderList = () => {
               >
                 {statusOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {option.value === PaymentMethod.MIXED ? t("order.paymentMethod.mixed", "Cả hai (TM + CK)") : option.label}
                   </option>
                 ))}
               </select>
@@ -368,7 +371,7 @@ const OrderList = () => {
               >
                 {paymentMethodOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {option.value === PaymentMethod.MIXED ? t("order.paymentMethod.mixed", "Cả hai (TM + CK)") : option.label}
                   </option>
                 ))}
               </select>

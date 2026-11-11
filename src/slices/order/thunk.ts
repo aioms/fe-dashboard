@@ -16,3 +16,7 @@ export const updateOrderThunk = createAsyncThunk(
   "orders/updateOrder",
   updateOrder
 );
+export const getDmsgFileThunk = createAsyncThunk("orders/getDmsgFile", async (input: { id: string; fileId: string }) => {
+  const { getDmsgFile } = await import("apis/order");
+  return getDmsgFile(input);
+});
