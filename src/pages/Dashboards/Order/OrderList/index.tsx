@@ -49,6 +49,7 @@ const statusOptions = [
 ];
 
 const paymentMethodOptions = [
+  { value: PaymentMethod.MIXED, label: PAYMENT_METHOD_LABELS[PaymentMethod.MIXED] },
   { value: "", label: "Tất cả phương thức" },
   {
     value: PaymentMethod.CASH,
@@ -357,7 +358,7 @@ const OrderList = () => {
               >
                 {statusOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {option.value === PaymentMethod.MIXED ? t("order.paymentMethod.mixed", "Cả hai (TM + CK)") : option.label}
                   </option>
                 ))}
               </select>
@@ -370,7 +371,7 @@ const OrderList = () => {
               >
                 {paymentMethodOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {option.value === PaymentMethod.MIXED ? t("order.paymentMethod.mixed", "Cả hai (TM + CK)") : option.label}
                   </option>
                 ))}
               </select>
