@@ -77,3 +77,9 @@ Component → dispatch(thunk) → slice → src/apis/<domain>/ → backend
 | Feature | Implementation | Documentation |
 | --- | --- | --- |
 | Safe client exceptions and API correlation | src/helpers/api-telemetry.ts, source-maps.ts | docs/observability.md |
+
+## ĐMSG Reference
+
+| Feature | Implementation | Documentation |
+| --- | --- | --- |
+| ĐMSG read-only detail | `Order/OrderDetail/components/DmsgOrderDetail.tsx` | `docs/dmsg-orders.md` |
